@@ -15,6 +15,7 @@ class Login extends DBConnection {
 	public function index(){
 		echo "<h1>Access Denied</h1> <a href='".base_url."'>Go Back.</a>";
 	}
+	
 	public function login(){
 		extract($_POST);
 
@@ -26,17 +27,19 @@ class Login extends DBConnection {
 				}
 
 			}
-			$this->settings->set_userdata('login_type',1);
+			$this->settings->set_userdata('login_type','');
 		return json_encode(array('status'=>'success'));
 		}else{
 		return json_encode(array('status'=>'incorrect','last_qry'=>"SELECT * from users where username = '$username' and password = md5('$password') "));
 		}
 	}
+	
 	public function logout(){
 		if($this->settings->sess_des()){
-			redirect('admin/login.php');
+			redirect('/');
 		}
 	}
+
 	function login_user(){
 		extract($_POST);
 		$qry = $this->conn->query("SELECT * from clients where email = '$email' and password = md5('$password') ");

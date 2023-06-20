@@ -26,10 +26,11 @@
     <link rel="stylesheet" href="<?php echo base_url ?>plugins/icheck-bootstrap/icheck-bootstrap.min.css">
     <!-- JQVMap -->
     <link rel="stylesheet" href="<?php echo base_url ?>plugins/jqvmap/jqvmap.min.css">
+    <!-- jQuery UI 1.11.4 -->
+    <link rel="stylesheet" href="<?php echo base_url ?>plugins/jquery-ui/jquery-ui.min.css">
     <!-- Theme style -->
     <link rel="stylesheet" href="<?php echo base_url ?>dist/css/adminlte.css">
     <link rel="stylesheet" href="<?php echo base_url ?>dist/css/custom.css">
-    <link rel="stylesheet" href="<?php echo base_url ?>assets/css/styles.css">
     <!-- overlayScrollbars -->
     <link rel="stylesheet" href="<?php echo base_url ?>plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <!-- Daterange picker -->
@@ -54,26 +55,5 @@
         var _base_url_ = '<?php echo base_url ?>';
     </script>
     <script src="<?php echo base_url ?>dist/js/script.js"></script>
-    <script src="<?php echo base_url ?>assets/js/scripts.js"></script>
-    <style>
-    #main-header{
-        position:relative;
-        background: rgb(0,0,0)!important;
-        background: radial-gradient(circle, rgba(0,0,0,0.48503151260504207) 22%, rgba(0,0,0,0.39539565826330536) 49%, rgba(0,212,255,0) 100%)!important;
-    }
-    #main-header:before{
-        content:"";
-        position:absolute;
-        top:0;
-        left:0;
-        width:100%;
-        height:100%;
-        background-image:url(<?php echo base_url.$_settings->info('cover') ?>);
-        background-repeat: no-repeat;
-        background-size: cover;
-        filter: drop-shadow(0px 7px 6px black);
-        z-index:-1;
-    }
 
- </style>
   </head>

@@ -7,9 +7,11 @@ Class Users extends DBConnection {
 		$this->settings = $_settings;
 		parent::__construct();
 	}
+
 	public function __destruct(){
 		parent::__destruct();
 	}
+
 	public function save_users(){
 		extract($_POST);
 		$data = '';
@@ -68,6 +70,7 @@ Class Users extends DBConnection {
 			
 		}
 	}
+
 	public function delete_users(){
 		extract($_POST);
 		$avatar = $this->conn->query("SELECT avatar FROM users where id = '{$id}'")->fetch_array()['avatar'];
@@ -82,6 +85,7 @@ Class Users extends DBConnection {
 		}
 		return json_encode($resp);
 	}
+	
 	public function save_fusers(){
 		extract($_POST);
 		$data = "";

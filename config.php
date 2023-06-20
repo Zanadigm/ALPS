@@ -1,7 +1,7 @@
 <?php
 ob_start();
-ini_set('date.timezone','Asia/Manila');
-date_default_timezone_set('Asia/Manila');
+ini_set('date.timezone','Africa/Nairobi');
+date_default_timezone_set('Africa/Nairobi');
 session_start();
 
 require_once('initialize.php');
@@ -14,6 +14,7 @@ function redirect($url=''){
 	if(!empty($url))
 	echo '<script>location.href="'.base_url .$url.'"</script>';
 }
+
 function validate_image($file){
 	if(!empty($file)){
 			// exit;
@@ -26,6 +27,7 @@ function validate_image($file){
 		return base_url.'dist/img/no-image-available.png';
 	}
 }
+
 function isMobileDevice(){
     $aMobileUA = array(
         '/iphone/i' => 'iPhone', 
