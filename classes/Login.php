@@ -27,7 +27,7 @@ class Login extends DBConnection {
 				}
 
 			}
-			$this->settings->set_userdata('login_type','');
+			$this->settings->set_userdata('type','');
 		return json_encode(array('status'=>'success'));
 		}else{
 		return json_encode(array('status'=>'incorrect','last_qry'=>"SELECT * from users where username = '$username' and password = md5('$password') "));
@@ -47,7 +47,7 @@ class Login extends DBConnection {
 			foreach($qry->fetch_array() as $k => $v){
 				$this->settings->set_userdata($k,$v);
 			}
-			$this->settings->set_userdata('login_type',1);
+			$this->settings->set_userdata('type',1);
 		$resp['status'] = 'success';
 		}else{
 		$resp['status'] = 'incorrect';
