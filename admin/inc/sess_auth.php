@@ -29,7 +29,7 @@ if (isset($_SESSION['userdata'])) {
     $moduleIndex = ($userRole >= 1 && $userRole < count($module)) ? $userRole : 0;
     $modulePath = $modulePaths[$moduleIndex];
     
-    if ($modulePath !== '' && !strpos($link, $modulePath) && $_SESSION['userdata']['login_type'] != 1) {
+    if ($modulePath !== '' && !strpos($link, $modulePath) && $_SESSION['userdata']['type'] != 1) {
         redirect($modulePath);
     }
 }

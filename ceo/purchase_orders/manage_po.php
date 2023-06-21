@@ -24,7 +24,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		-webkit-appearance: none;
 		margin: 0;
 		}
-		
+
 		[name="tax_percentage"],[name="discount_percentage"]{
 			width:5vw;
 		}
@@ -38,29 +38,28 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 			<div class="row">
 				<div class="col-md-6 form-group">
-				<label for="supplier_id">Supplier</label>
-				<select name="supplier_id" id="supplier_id" class="custom-select custom-select-sm rounded-0 select2">
+				    <label for="supplier_id">Supplier</label>
+					
+				    <select name="supplier_id" id="supplier_id"  class="custom-select custom-select-sm rounded-0 select2">
 						<option value="" disabled <?php echo !isset($supplier_id) ? "selected" :'' ?>></option>
-						<?php 
+						<?php
 							$supplier_qry = $conn->query("SELECT * FROM `supplier_list` order by `name` asc");
 							while($row = $supplier_qry->fetch_assoc()):
 						?>
 						<option value="<?php echo $row['id'] ?>" <?php echo isset($supplier_id) && $supplier_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
-						<?php endwhile; ?>
+						<?php endwhile; ?> 
 					</select>
 				</div>
 				<div class="col-md-6 form-group">
 					<label for="po_no">PO # <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" value="<?php echo isset($po_no) ? $po_no : '' ?>">
-					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
+					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" value="<?php echo isset($po_no) ? $po_no : '' ?>" readonly>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table table-striped table-bordered" id="item-list">
 						<colgroup>
-							<col width="5%">
-							<col width="5%">
+							<col width="10%">
 							<col width="10%">
 							<col width="20%">
 							<col width="30%">
@@ -69,7 +68,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						</colgroup>
 						<thead>
 							<tr class="bg-navy disabled">
-								<th class="px-1 py-1 text-center"></th>
 								<th class="px-1 py-1 text-center">Qty</th>
 								<th class="px-1 py-1 text-center">Unit</th>
 								<th class="px-1 py-1 text-center">Item</th>
@@ -86,22 +84,19 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 							while($row = $order_items_qry->fetch_assoc()):
 							?>
 							<tr class="po-item" data-id="">
-								<td class="align-middle p-1 text-center">
-									<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
-								</td>
 								<td class="align-middle p-0 text-center">
-									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>"/>
+									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" readonly value="<?php echo $row['quantity'] ?>"/>
 								</td>
 								<td class="align-middle p-1">
-									<input type="text" class="text-center w-100 border-0" name="unit[]" value="<?php echo $row['unit'] ?>"/>
+									<input type="text" class="text-center w-100 border-0" name="unit[]" readonly value="<?php echo $row['unit'] ?>"/>
 								</td>
 								<td class="align-middle p-1">
 									<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
-									<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required/>
+									<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>"/>
 								</td>
 								<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
 								<td class="align-middle p-1">
-									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>"/>
+									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" readonly value="<?php echo ($row['unit_price']) ?>"/>
 								</td>
 								<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 							</tr>
@@ -110,23 +105,23 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						<tfoot>
 							<tr class="bg-lightblue">
 								<tr>
-									<th class="p-1 text-right" colspan="6"><span><button class="btn btn btn-sm btn-flat btn-primary py-0 mx-1" type="button" id="add_row">Add Row</button></span> Sub Total</th>
+									<th class="p-1 text-right" colspan="5"> Sub Total</th>
 									<th class="p-1 text-right" id="sub_total">0</th>
 								</tr>
 								<tr>
-									<th class="p-1 text-right" colspan="6">Discount (%)
-									<input type="number" step="any" name="discount_percentage" class="border-light text-right" value="<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>">
+									<th class="p-1 text-right" colspan="5">Discount (%)
+									    <input type="number" step="any" name="discount_percentage" class="text-right border-0" readonly value="<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>">
 									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
+									<th class="p-1"><input type="text" class="w-100 border-0 text-right"  readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
 								</tr>
 								<tr>
-									<th class="p-1 text-right" colspan="6">Tax Inclusive (%)
-									<input type="number" step="any" name="tax_percentage" class="border-light text-right" value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
+									<th class="p-1 text-right" colspan="5">Tax Inclusive (%)
+									<input type="number" step="any" name="tax_percentage" class="text-right border-0"  readonly value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
 									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
+									<th class="p-1"><input type="text" class="w-100 border-0 text-right"  readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
 								</tr>
 								<tr>
-									<th class="p-1 text-right" colspan="6">Total</th>
+									<th class="p-1 text-right" colspan="5">Total</th>
 									<th class="p-1 text-right" id="total">0</th>
 								</tr>
 							</tr>
@@ -138,11 +133,11 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
 						<div class="col-md-6">
-							<label for="status" class="control-label">Status</label>
+							<label for="status" class="control-label">Actions</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>
-								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Approved</option>
-								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected': '' ?>>Denied</option>
+								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Approve</option>
+								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected': '' ?>>Deny</option>
 							</select>
 						</div>
 					</div>

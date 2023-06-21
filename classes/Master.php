@@ -20,6 +20,9 @@ Class Master extends DBConnection {
 			exit;
 		}
 	}
+
+	/*...........................Supplier........................................*/
+
 	function save_supplier(){
 		extract($_POST);
 		$data = "";
@@ -71,6 +74,74 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 
 	}
+
+	/*...........................Projects........................................*/
+
+	function save_project(){
+		extract($_POST);
+		$data = "";
+		foreach($_POST as $k =>$v){
+			if(!in_array($k,array('id','project_name'))){
+				if(!empty($data)) $data .=",";
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+		if(isset($_POST['project_name'])){
+			if(!empty($data)) $data .=",";
+				$data .= " `project_name`='".addslashes(htmlentities($project_name))."' ";
+		}
+		$check = $this->conn->query("SELECT * FROM `projects` where `project_name` = '{$project_name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
+		if($this->capture_err())
+			return $this->capture_err();
+		if($check > 0){
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Project already exist.";
+			return json_encode($resp);
+			exit;
+		}
+		if(empty($id)){
+			$sql = "INSERT INTO `projects` set {$data} ";
+		}else{
+			$sql = "UPDATE `projects` set {$data} where id = '{$id}' ";
+		}
+		$save = $this->conn->query($sql);
+		if($save){
+			$resp['status'] = 'success';
+			if(empty($id))
+				$this->settings->set_flashdata('success',"New project successfully saved.");
+			else
+				$this->settings->set_flashdata('success',"project successfully updated.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error."[{$sql}]";
+		}
+		return json_encode($resp);
+	}
+	function delete_project(){
+		extract($_POST);
+		$del = $this->conn->query("DELETE FROM `projects` where id = '{$id}'");
+		if($del){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success',"project successfully deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+
+	}
+	function search_projects(){
+		extract($_POST);
+		$qry = $this->conn->query("SELECT * FROM projects where `project_name` LIKE '%{$q}%'");
+		$data = array();
+		while($row = $qry->fetch_assoc()){
+			$data[] = array("label"=>$row['project_name'],"id"=>$row['id'],"project_description"=>$row['project_description']);
+		}
+		return json_encode($data);
+	}
+
+	/*...........................Items......................................*/
+
 	function save_item(){
 		extract($_POST);
 		$data = "";
@@ -133,6 +204,9 @@ Class Master extends DBConnection {
 		}
 		return json_encode($data);
 	}
+
+	/*...........................Purchase Orders........................................*/
+
 	function save_po(){
 		extract($_POST);
 		$data = "";
@@ -197,7 +271,7 @@ Class Master extends DBConnection {
 	}
 	function delete_po(){
 		extract($_POST);
-		$del = $this->conn->query("DELETE FROM `po_list` where unit_id = '{$id}'");
+		$del = $this->conn->query("DELETE FROM `po_list` where id = '{$id}'");
 		if($del){
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success',"Purchase Order successfully deleted.");
@@ -208,7 +282,85 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 
 	}
-	
+	function get_price(){
+		extract($_POST);
+		 $qry = $this->conn->query("SELECT * FROM price_list where unit_id = '{$unit_id}'");
+		 $this->capture_err();
+		 if($qry->num_rows > 0){
+			 $res = $qry->fetch_array();
+			 switch($rent_type){
+				 case '1':
+					$resp['price'] = $res['monthly'];
+					break;
+				case '2':
+					$resp['price'] = $res['quarterly'];
+					break;
+				case '3':
+					$resp['price'] = $res['annually'];
+					break;
+			 }
+		 }else{
+			 $resp['price'] = "0";
+		 }
+		 return json_encode($resp);
+	}
+	function save_rent(){
+		extract($_POST);
+		$data = "";
+		foreach($_POST as $k =>$v){
+			if(!in_array($k,array('id')) && !is_array($_POST[$k])){
+				if(!empty($data)) $data .=",";
+				$v = addslashes($v);
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+		switch ($rent_type) {
+			case 1:
+				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +1 month'))."' ";
+				break;
+			
+			case 2:
+				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +3 month'))."' ";
+				break;
+			case 3:
+				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +1 year'))."' ";
+				break;
+			default:
+				# code...
+				break;
+		}
+		if(empty($id)){
+			$sql = "INSERT INTO `rent_list` set {$data} ";
+		}else{
+			$sql = "UPDATE `rent_list` set {$data} where id = '{$id}' ";
+		}
+		$save = $this->conn->query($sql);
+		if($save){
+			$resp['status'] = 'success';
+			if(empty($id))
+				$this->settings->set_flashdata('success',"New Rent successfully saved.");
+			else
+				$this->settings->set_flashdata('success',"Rent successfully updated.");
+			$this->settings->conn->query("UPDATE `unit_list` set `status` = '{$status}' where id = '{$unit_id}'");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error."[{$sql}]";
+		}
+		return json_encode($resp);
+	}
+	function delete_rent(){
+		extract($_POST);
+		$del = $this->conn->query("DELETE FROM `rent_list` where id = '{$id}'");
+		if($del){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success',"Rent successfully deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+
+	}
 	function delete_img(){
 		extract($_POST);
 		if(is_file($path)){
@@ -224,7 +376,34 @@ Class Master extends DBConnection {
 		}
 		return json_encode($resp);
 	}
-	
+	function renew_rent(){
+		extract($_POST);
+		$qry = $this->conn->query("SELECT * FROM `rent_list` where id ='{$id}'");
+		$res = $qry->fetch_array();
+		switch ($res['rent_type']) {
+			case 1:
+				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +1 month'))."' ";
+				break;
+			case 2:
+				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +3 month'))."' ";
+				break;
+			case 3:
+				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +1 year'))."' ";
+				break;
+			default:
+				# code...
+				break;
+		}
+		$update = $this->conn->query("UPDATE `rent_list` set {$date_end}, date_rented = date_end where id = '{$id}' ");
+		if($update){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success'," Rent successfully renewed.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
 }
 
 $Master = new Master();
@@ -252,6 +431,19 @@ switch ($action) {
 	case 'delete_po':
 		echo $Master->delete_po();
 	break;
+	case 'get_price':
+		echo $Master->get_price();
+		break;
+	case 'save_rent':
+		echo $Master->save_rent();
+	break;
+	case 'delete_rent':
+		echo $Master->delete_rent();
+	break;
+	case 'renew_rent':
+		echo $Master->renew_rent();
+	break;
+	
 	default:
 		// echo $sysset->index();
 		break;

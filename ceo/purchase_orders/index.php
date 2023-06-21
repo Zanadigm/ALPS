@@ -6,9 +6,9 @@
 <div class="card card-outline card-primary">
 	<div class="card-header">
 		<h3 class="card-title">List of Purchase Orders</h3>
-		<div class="card-tools">
+		<!-- <div class="card-tools">
 			<a href="?page=purchase_orders/manage_po" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
-		</div>
+		</div> -->
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
@@ -75,8 +75,6 @@
 								  	<a class="dropdown-item" href="?page=purchase_orders/view_po&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
 				                    <div class="dropdown-divider"></div>
 				                    <a class="dropdown-item" href="?page=purchase_orders/manage_po&id=<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Edit</a>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
 				                  </div>
 							</td>
 						</tr>
@@ -90,7 +88,7 @@
 <script>
 	$(document).ready(function(){
 		$('.delete_data').click(function(){
-			_conf("Are you sure to delete this purchase order permanently?","delete_po",[$(this).attr('data-id')])
+			_conf("Are you sure to delete this rent permanently?","delete_rent",[$(this).attr('data-id')])
 		})
 		$('.view_details').click(function(){
 			uni_modal("Reservaton Details","purchase_orders/view_details.php?id="+$(this).attr('data-id'),'mid-large')
@@ -101,10 +99,10 @@
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();
 	})
-	function delete_po($id){
+	function delete_rent($id){
 		start_loader();
 		$.ajax({
-			url:_base_url_+"classes/Master.php?f=delete_po",
+			url:_base_url_+"classes/Master.php?f=delete_rent",
 			method:"POST",
 			data:{id: $id},
 			dataType:"json",

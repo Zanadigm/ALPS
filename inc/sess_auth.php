@@ -22,7 +22,7 @@ if (isset($_SESSION['userdata']) && strpos($link, 'index.php')) {
 }
 
 $module = array('', 'admin', 'p_manager', 'ceo', 's_manager','driver');
-$modulePaths = array('', 'admin/', 'p_manager/', 'ceo/', 's_manager','driver/'); // Define the module paths for each role
+$modulePaths = array('', 'admin/', 'p_manager/', 'ceo/', 's_manager/','driver/'); // Define the module paths for each role
 
 if (isset($_SESSION['userdata'])) {
     $userRole = $_SESSION['userdata']['type']; // Assuming 'role' is the field name in the users table that stores the user's role
