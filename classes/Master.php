@@ -81,16 +81,13 @@ Class Master extends DBConnection {
 		extract($_POST);
 		$data = "";
 		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id','project_name'))){
+			if(!in_array($k,array('id'))){
+				$v = addslashes(trim($v));
 				if(!empty($data)) $data .=",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		if(isset($_POST['project_name'])){
-			if(!empty($data)) $data .=",";
-				$data .= " `project_name`='".addslashes(htmlentities($project_name))."' ";
-		}
-		$check = $this->conn->query("SELECT * FROM `projects` where `project_name` = '{$project_name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
+		$check = $this->conn->query("SELECT * FROM `project_list` where `name` = '{$name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
 		if($this->capture_err())
 			return $this->capture_err();
 		if($check > 0){
@@ -100,44 +97,39 @@ Class Master extends DBConnection {
 			exit;
 		}
 		if(empty($id)){
-			$sql = "INSERT INTO `projects` set {$data} ";
+			$sql = "INSERT INTO `project_list` set {$data} ";
+			$save = $this->conn->query($sql);
 		}else{
-			$sql = "UPDATE `projects` set {$data} where id = '{$id}' ";
+			$sql = "UPDATE `project_list` set {$data} where id = '{$id}' ";
+			$save = $this->conn->query($sql);
 		}
-		$save = $this->conn->query($sql);
 		if($save){
 			$resp['status'] = 'success';
 			if(empty($id))
-				$this->settings->set_flashdata('success',"New project successfully saved.");
+				$this->settings->set_flashdata('success',"New Project successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"project successfully updated.");
+				$this->settings->set_flashdata('success',"Project successfully updated.");
 		}else{
 			$resp['status'] = 'failed';
 			$resp['err'] = $this->conn->error."[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_project(){
-		extract($_POST);
-		$del = $this->conn->query("DELETE FROM `projects` where id = '{$id}'");
+		$id = $_POST['id'];
+		$del = $this->conn->prepare("DELETE FROM `project_list` where id = ?");
+		$del->bind_param("s",$id);
+		$del->execute();
 		if($del){
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"project successfully deleted.");
+			$this->settings->set_flashdata('success',"Project successfully deleted.");
 		}else{
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
 
-	}
-	function search_projects(){
-		extract($_POST);
-		$qry = $this->conn->query("SELECT * FROM projects where `project_name` LIKE '%{$q}%'");
-		$data = array();
-		while($row = $qry->fetch_assoc()){
-			$data[] = array("label"=>$row['project_name'],"id"=>$row['id'],"project_description"=>$row['project_description']);
-		}
-		return json_encode($data);
 	}
 
 	/*...........................Items......................................*/
@@ -415,6 +407,12 @@ switch ($action) {
 	break;
 	case 'delete_supplier':
 		echo $Master->delete_supplier();
+	break;
+	case 'save_project':
+		echo $Master->save_project();
+	break;
+	case 'delete_project':
+		echo $Master->delete_project();
 	break;
 	case 'save_item':
 		echo $Master->save_item();

@@ -27,10 +27,10 @@ $modulePaths = array('', 'admin/', 'p_manager/', 'ceo/', 's_manager/','driver/')
 if (isset($_SESSION['userdata'])) {
     $userRole = $_SESSION['userdata']['type']; // Assuming 'role' is the field name in the users table that stores the user's role
     $moduleIndex = ($userRole >= 1 && $userRole < count($module)) ? $userRole : 0;
-    $url = $modulePaths[$moduleIndex];
+    $modulePath = $modulePaths[$moduleIndex];
     
-    if ($url !== '' && $_SESSION['userdata']['type'] != 1) {
-        redirect($url);
+    if ($modulePath !== '' && $_SESSION['userdata']['type'] != 1) {
+        redirect($modulePath);
     }
     
 }
