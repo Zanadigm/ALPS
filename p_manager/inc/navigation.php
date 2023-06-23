@@ -32,6 +32,14 @@
                       </a>
                     </li> 
                     <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>p_manager/?page=projects" class="nav-link nav-projects">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                        Project List
+                        </p>
+                      </a>
+                    </li>
+                    <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>p_manager/?page=purchase_orders" class="nav-link nav-purchase_orders">
                         <i class="nav-icon fas fa-file-invoice"></i>
                         <p>
@@ -47,14 +55,7 @@
                         </p>
                       </a>
                     </li>
-                    <li class="nav-item dropdown">
-                      <a href="<?php echo base_url ?>p_manager/?page=projects" class="nav-link nav-projects">
-                        <i class="nav-icon fas fa-truck-loading"></i>
-                        <p>
-                        Project List
-                        </p>
-                      </a>
-                    </li>
+                    
                   </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

@@ -31,11 +31,30 @@
                         </p>
                       </a>
                     </li> 
+
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>ceo/?page=projects" class="nav-link nav-projects">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                        Project List
+                        </p>
+                      </a>
+                    </li>
+
                     <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>ceo/?page=purchase_orders" class="nav-link nav-purchase_orders">
                         <i class="nav-icon fas fa-file-invoice"></i>
                         <p>
                           Purchase Orders
+                        </p>
+                      </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>ceo/?page=suppliers" class="nav-link nav-suppliers">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                        Supplier List
                         </p>
                       </a>
                     </li>
