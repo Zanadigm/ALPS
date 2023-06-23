@@ -1,4 +1,4 @@
-<h1 class="text-dark">Welcome to <?php echo $_settings->info('name') ?></h1>
+<h1 class="text-dark">Hello, welcome <?php echo $_settings->userdata('firstname') ?>!</h1>
 <hr class="border-dark">
 <div class="row">
           <div class="col-12 col-sm-6 col-md-3">
