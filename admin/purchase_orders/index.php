@@ -19,9 +19,10 @@
 					<col width="15%">
 					<col width="15%">
 					<col width="20%">
-					<col width="10%">
 					<col width="15%">
+					<col width="5%">
 					<col width="10%">
+					<col width="5%">
 					<col width="10%">
 				</colgroup>
 				<thead>
@@ -29,6 +30,7 @@
 						<th>#</th>
 						<th>Date Created</th>
 						<th>PO #</th>
+						<th>Project</th>
 						<th>Supplier</th>
 						<th>Items</th>
 						<th>Total Amount</th>
@@ -39,7 +41,7 @@
 				<tbody>
 					<?php 
 					$i = 1;
-						$qry = $conn->query("SELECT po.*, s.name as sname FROM `po_list` po inner join `supplier_list` s on po.supplier_id = s.id order by unix_timestamp(po.date_updated) ");
+					$qry = $conn->query("SELECT po.*, s.name as sname,p.name as pname FROM `po_list` po inner join `supplier_list` s on po.supplier_id = s.id inner join `project_list` p on po.project_id = p.id order by unix_timestamp(po.date_updated)");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM order_items where po_id = '{$row['id']}'")->num_rows;
 							$row['total_amount'] = $conn->query("SELECT sum(quantity * unit_price) as total FROM order_items where po_id = '{$row['id']}'")->fetch_array()['total'];
@@ -48,6 +50,7 @@
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td class=""><?php echo date("M d,Y H:i",strtotime($row['date_created'])) ; ?></td>
 							<td class=""><?php echo $row['po_no'] ?></td>
+							<td class=""><?php echo $row['pname'] ?></td>
 							<td class=""><?php echo $row['sname'] ?></td>
 							<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
 							<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>

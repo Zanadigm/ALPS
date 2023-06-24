@@ -37,7 +37,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 			<div class="row">
-				<div class="col-md-6 form-group">
+				<div class="col-md-4 form-group">
 				    <label for="supplier_id">Supplier</label>
 					
 				    <select name="supplier_id" id="supplier_id"  class="custom-select custom-select-sm rounded-0 select2">
@@ -50,7 +50,21 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						<?php endwhile; ?> 
 					</select>
 				</div>
-				<div class="col-md-6 form-group">
+
+				<div class="col-md-4 form-group">
+				<label for="project_id">Project</label>
+				<select name="project_id" id="project_id" class="custom-select custom-select-sm rounded-0 select2">
+						<option value="" disabled <?php echo !isset($project_id) ? "selected" :'' ?>></option>
+						<?php 
+							$project_qry = $conn->query("SELECT * FROM `project_list` WHERE `status` = 0 order by `name` asc");
+							while($row = $project_qry->fetch_assoc()):
+						?>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($project_id) && $project_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 1? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
+						<?php endwhile; ?>
+					</select>
+				</div>
+				
+				<div class="col-md-4 form-group">
 					<label for="po_no">PO # <span class="po_err_msg text-danger"></span></label>
 					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" value="<?php echo isset($po_no) ? $po_no : '' ?>" readonly>
 				</div>
