@@ -1,5 +1,3 @@
-Certainly! Here's the regenerated README in Markdown format:
-
 # ALPS (Automated Logistics and Procurement System) Readme
 
 ## Introduction
@@ -24,7 +22,7 @@ To install ALPS on your system, please follow these steps:
 
 1. Clone the ALPS repository to your local machine.
 ```
-git clone https://github.com/your-username/ALPS.git
+git clone https://github.com/Zanadigm/ALPS.git
 ```
 
 2. Configure the database settings by updating the `config.php` file with your MySQL database credentials.
