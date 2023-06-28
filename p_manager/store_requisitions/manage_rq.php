@@ -1,6 +1,6 @@
 <?php
 if(isset($_GET['id']) && $_GET['id'] > 0){
-    $qry = $conn->query("SELECT * from `po_list` where id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT * from `rq_list` where id = '{$_GET['id']}' ");
     if($qry->num_rows > 0){
         foreach($qry->fetch_assoc() as $k => $v){
             $$k=$v;
@@ -25,34 +25,59 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		margin: 0;
 		}
 		
-		[name="tax_percentage"],[name="discount_percentage"]{
-			width:5vw;
-		}
 </style>
 <div class="card card-outline card-info">
 	<div class="card-header">
-		<h3 class="card-title"><?php echo isset($id) ? "Update Purchase Order Details": "New Purchase Order" ?> </h3>
+		<h3 class="card-title"><?php echo isset($id) ? "Update Store Requisition Details": "New Requisition Order" ?> </h3>
 	</div>
 	<div class="card-body">
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
+             <?php
+			//   $users_query = $conn->query("SELECT type, type FROM users");
+			//   while($row = $users_query->fetch_assoc());
+              $ordered_by = 2;
+			  $approved_by = 3;
+			  $fulfilled_by = 4;
+			  $checked_by = 5;
+			 ?>
+			<input type="hidden" name ="ordered_by" value="<?php echo isset($ordered_by) ? $ordered_by : '' ?>">
+			<input type="hidden" name ="approved_by" value="<?php echo isset($approved_by) ? $approved_by : '' ?>">
+			<input type="hidden" name ="fulfilled_by" value="<?php echo isset($fulfilled_by) ? $fulfilled_by : '' ?>">
+			<input type="hidden" name ="checked_by" value="<?php echo isset($checked_by) ? $checked_by : '' ?>">
+
 			<div class="row">
+			    <div class="col-md-4 form-group">
+					<label for="deliver_to">Deliver To <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="deliver_to" name="deliver_to" value="<?php echo isset($deliver_to) ? $deliver_to : '' ?>">
+				</div>
+
+				<div class="col-md-4 form-group">
+					<label for="department_name">Department Name <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="department_name" name="department_name" value="<?php echo isset($department_name) ? $department_name : '' ?>">
+				</div>
+
+				<div class="col-md-4 form-group">
+					<label for="building_name">Building Name & Room Number<span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="building_name" name="building_name" value="<?php echo isset($building_name) ? $building_name : '' ?>">
+				</div>
+
 				<div class="col-md-6 form-group">
-				<label for="supplier_id">Supplier</label>
-				<select name="supplier_id" id="supplier_id" class="custom-select custom-select-sm rounded-0 select2">
-						<option value="" disabled <?php echo !isset($supplier_id) ? "selected" :'' ?>></option>
+				<label for="p_id">Cost Center/Account to Charge</label>
+				<select name="p_id" id="p_id" class="custom-select custom-select-sm rounded-0 select2">
+						<option value="" disabled <?php echo !isset($p_id) ? "selected" :'' ?>></option>
 						<?php 
-							$supplier_qry = $conn->query("SELECT * FROM `supplier_list` order by `name` asc");
-							while($row = $supplier_qry->fetch_assoc()):
+							$project_qry = $conn->query("SELECT * FROM `project_list` order by `name` asc");
+							while($row = $project_qry->fetch_assoc()):
 						?>
-						<option value="<?php echo $row['id'] ?>" <?php echo isset($supplier_id) && $supplier_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($p_id) && $p_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 1? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
 						<?php endwhile; ?>
 					</select>
 				</div>
 
 				<div class="col-md-6 form-group">
-					<label for="po_no">PO # <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" value="<?php echo isset($po_no) ? $po_no : '' ?>">
+					<label for="rq_no">RQ # <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="rq_no" name="rq_no" value="<?php echo isset($rq_no) ? $rq_no : '' ?>">
 					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
 				</div>
 			</div>
@@ -82,9 +107,9 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						<tbody>
 							<?php 
 							if(isset($id)):
-							$order_items_qry = $conn->query("SELECT o.*,i.name, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
+							$requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
 							echo $conn->error;
-							while($row = $order_items_qry->fetch_assoc()):
+							while($row = $requested_items_qry->fetch_assoc()):
 							?>
 							<tr class="po-item" data-id="">
 								<td class="align-middle p-1 text-center">
@@ -114,18 +139,18 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 									<th class="p-1 text-right" colspan="6"><span><button class="btn btn btn-sm btn-flat btn-primary py-0 mx-1" type="button" id="add_row">Add Row</button></span> Sub Total</th>
 									<th class="p-1 text-right" id="sub_total">0</th>
 								</tr>
-								<tr>
+								<!-- <tr>
 									<th class="p-1 text-right" colspan="6">Discount (%)
 									<input type="number" step="any" name="discount_percentage" class="border-light text-right" value="<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>">
 									</th>
 									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
-								</tr>
-								<tr>
+								</tr> -->
+								<!-- <tr>
 									<th class="p-1 text-right" colspan="6">Tax Inclusive (%)
 									<input type="number" step="any" name="tax_percentage" class="border-light text-right" value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
 									</th>
 									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
-								</tr>
+								</tr> -->
 								<tr>
 									<th class="p-1 text-right" colspan="6">Total</th>
 									<th class="p-1 text-right" id="total">0</th>
@@ -142,8 +167,8 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>
-								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Approved</option>
-								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected': '' ?>>Denied</option>
+								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Processing</option>
+								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected': '' ?>>Fulfilled</option>
 							</select>
 						</div>
 					</div>
@@ -153,7 +178,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 	</div>
 	<div class="card-footer">
 		<button class="btn btn-flat btn-primary" form="po-form">Save</button>
-		<a class="btn btn-flat btn-default" href="?page=purchase_orders">Cancel</a>
+		<a class="btn btn-flat btn-default" href="?page=store_requisitions">Cancel</a>
 	</div>
 </div>
 <table class="d-none" id="item-clone">
@@ -198,20 +223,20 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 				_price = _price.replace(/\,/gi,'')
 				_total += parseFloat(_price)
 		})
-		var discount_perc = 0
-		if($('[name="discount_percentage"]').val() > 0){
-			discount_perc = $('[name="discount_percentage"]').val()
-		}
-		var discount_amount = _total * (discount_perc/100);
-		$('[name="discount_amount"]').val(parseFloat(discount_amount).toLocaleString("en-US"))
-		var tax_perc = 0
-		if($('[name="tax_percentage"]').val() > 0){
-			tax_perc = $('[name="tax_percentage"]').val()
-		}
-		var tax_amount = _total * (tax_perc/100);
-		$('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
+		// var discount_perc = 0
+		// if($('[name="discount_percentage"]').val() > 0){
+		// 	discount_perc = $('[name="discount_percentage"]').val()
+		// }
+		// var discount_amount = _total * (discount_perc/100);
+		// $('[name="discount_amount"]').val(parseFloat(discount_amount).toLocaleString("en-US"))
+		// var tax_perc = 0
+		// if($('[name="tax_percentage"]').val() > 0){
+		// 	tax_perc = $('[name="tax_percentage"]').val()
+		// }
+		// var tax_amount = _total * (tax_perc/100);
+		// $('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
-		$('#total').text(parseFloat(_total-discount_amount).toLocaleString("en-US"))
+		$('#total').text(parseFloat(_total).toLocaleString("en-US"))
 	}
 
 	function _autocomplete(_item){
@@ -237,6 +262,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			}
 		})
 	}
+
 	$(document).ready(function(){
 		$('#add_row').click(function(){
 			var tr = $('#item-clone tr').clone()
@@ -245,9 +271,9 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
 				calculate()
 			})
-			$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress',function(e){
-				calculate()
-			})
+			// $('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress',function(e){
+			// 	calculate()
+			// })
 		})
 		if($('#item-list .po-item').length > 0){
 			$('#item-list .po-item').each(function(){
@@ -269,14 +295,14 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			e.preventDefault();
             var _this = $(this)
 			$('.err-msg').remove();
-			$('[name="po_no"]').removeClass('border-danger')
+			$('[name="rq_no"]').removeClass('border-danger')
 			if($('#item-list .po-item').length <= 0){
 				alert_toast(" Please add atleast 1 item on the list.",'warning')
 				return false;
 			}
 			start_loader();
 			$.ajax({
-				url:_base_url_+"classes/Master.php?f=save_po",
+				url:_base_url_+"classes/Master.php?f=save_rq",
 				data: new FormData($(this)[0]),
                 cache: false,
                 contentType: false,
@@ -291,16 +317,16 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 				},
 				success:function(resp){
 					if(typeof resp =='object' && resp.status == 'success'){
-						location.href = "./?page=purchase_orders/view_po&id="+resp.id;
-					}else if((resp.status == 'failed' || resp.status == 'po_failed') && !!resp.msg){
+						location.href = "./?page=store_requisitions/view_rq&id="+resp.id;
+					}else if((resp.status == 'failed' || resp.status == 'rq_failed') && !!resp.msg){
                         var el = $('<div>')
                             el.addClass("alert alert-danger err-msg").text(resp.msg)
                             _this.prepend(el)
                             el.show('slow')
                             $("html, body").animate({ scrollTop: 0 }, "fast");
                             end_loader()
-							if(resp.status == 'po_failed'){
-								$('[name="po_no"]').addClass('border-danger').focus()
+							if(resp.status == 'rq_failed'){
+								$('[name="rq_no"]').addClass('border-danger').focus()
 							}
                     }else{
 						alert_toast("An error occured",'error');
@@ -310,7 +336,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 				}
 			})
 		})
-
         
 	})
 </script>
