@@ -42,6 +42,15 @@
                     </li>
 
                     <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>ceo/?page=store_requisitions" class="nav-link nav-store_requisitions">
+                        <i class="nav-icon fas fa-file-invoice"></i>
+                        <p>
+                          Store Requisitions
+                        </p>
+                      </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>ceo/?page=purchase_orders" class="nav-link nav-purchase_orders">
                         <i class="nav-icon fas fa-file-invoice"></i>
                         <p>

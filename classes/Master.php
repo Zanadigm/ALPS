@@ -224,7 +224,7 @@ Class Master extends DBConnection {
 		}else{
 			$po_no ="";
 			while(true){
-				$po_no = "PO-".(sprintf("%'.011d", mt_rand(1,99999999999)));
+				$po_no = "PO-".(sprintf("%'.06d", mt_rand(1,999999)));
 				$check = $this->conn->query("SELECT * FROM `po_list` where `po_no` = '{$po_no}'")->num_rows;
 				if($check <= 0)
 				break;
@@ -274,28 +274,87 @@ Class Master extends DBConnection {
 		return json_encode($resp);
 
 	}
-	function get_price(){
+	
+	/*...........................Store Requisitions........................................*/
+
+	function save_rq(){
 		extract($_POST);
-		 $qry = $this->conn->query("SELECT * FROM price_list where unit_id = '{$unit_id}'");
-		 $this->capture_err();
-		 if($qry->num_rows > 0){
-			 $res = $qry->fetch_array();
-			 switch($rent_type){
-				 case '1':
-					$resp['price'] = $res['monthly'];
-					break;
-				case '2':
-					$resp['price'] = $res['quarterly'];
-					break;
-				case '3':
-					$resp['price'] = $res['annually'];
-					break;
-			 }
-		 }else{
-			 $resp['price'] = "0";
-		 }
-		 return json_encode($resp);
+		$data = "";
+		foreach($_POST as $k =>$v){
+			// if(in_array($k,array('discount_amount','tax_amount')))
+			// 	$v= str_replace(',','',$v);
+			if(!in_array($k,array('id','rq_no')) && !is_array($_POST[$k])){
+				$v = addslashes(trim($v));
+				if(!empty($data)) $data .=",";
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+		if(!empty($rq_no)){
+			$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}' ".($id > 0 ? " and id != '{$id}' ":""))->num_rows;
+			if($this->capture_err())
+				return $this->capture_err();
+			if($check > 0){
+				$resp['status'] = 'rq_failed';
+				$resp['msg'] = "Requisition Number already exist.";
+				return json_encode($resp);
+				exit;
+			}
+		}else{
+			$rq_no ="";
+			while(true){
+				$rq_no = "RQ-".(sprintf("%'.06d", mt_rand(1,999999)));
+				$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}'")->num_rows;
+				if($check <= 0)
+				break;
+			}
+		}
+		$data .= ", rq_no = '{$rq_no}' ";
+
+		if(empty($id)){
+			$sql = "INSERT INTO `rq_list` set {$data} ";
+		}else{
+			$sql = "UPDATE `rq_list` set {$data} where id = '{$id}' ";
+		}
+		$save = $this->conn->query($sql);
+		if($save){
+			$resp['status'] = 'success';
+			$rq_id = empty($id) ? $this->conn->insert_id : $id ;
+			$resp['id'] = $rq_id;
+			$data = "";
+			foreach($item_id as $k =>$v){
+				if(!empty($data)) $data .=",";
+				$data .= "('{$rq_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
+			}
+			if(!empty($data)){
+				$this->conn->query("DELETE FROM `requisition_items` where rq_id = '{$rq_id}'");
+				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
+			}
+			if(empty($id))
+				$this->settings->set_flashdata('success',"Requisition Order successfully saved.");
+			else
+				$this->settings->set_flashdata('success',"Requisition Order successfully updated.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error."[{$sql}]";
+		}
+		return json_encode($resp);
 	}
+	function delete_rq(){
+		extract($_POST);
+		$del = $this->conn->query("DELETE FROM `rq_list` where id = '{$id}'");
+		if($del){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success',"Requisition Order successfully deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+
+	}
+
+	//......................................
+
 	function save_rent(){
 		extract($_POST);
 		$data = "";
@@ -429,9 +488,12 @@ switch ($action) {
 	case 'delete_po':
 		echo $Master->delete_po();
 	break;
-	case 'get_price':
-		echo $Master->get_price();
-		break;
+	case 'save_rq':
+		echo $Master->save_rq();
+	break;
+	case 'delete_rq':
+		echo $Master->delete_rq();
+	break;
 	case 'save_rent':
 		echo $Master->save_rent();
 	break;
