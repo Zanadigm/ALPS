@@ -1,13 +1,4 @@
-<?php
-if(isset($_GET['id']) && $_GET['id'] > 0){
-    $qry = $conn->query("SELECT * from `rq_list` where id = '{$_GET['id']}' ");
-    if($qry->num_rows > 0){
-        foreach($qry->fetch_assoc() as $k => $v){
-            $$k=$v;
-        }
-    }
-}
-?>
+
 <style>
     span.select2-selection.select2-selection--single {
         border-radius: 0;
@@ -28,58 +19,52 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 </style>
 <div class="card card-outline card-info">
 	<div class="card-header">
-		<h3 class="card-title"><?php echo isset($id) ? "Update Store Requisition Details": "New Requisition Order" ?> </h3>
+		<h3 class="card-title"><?php echo isset($id) ? "Update Delivery Note": "New Delivery Note" ?> </h3>
 	</div>
 	<div class="card-body">
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
+
              <?php
-			//   $users_query = $conn->query("SELECT type, type FROM users");
-			//   while($row = $users_query->fetch_assoc());
-              $ordered_by = 2;
-			  $approved_by = 3;
-			  $fulfilled_by = 4;
-			  $checked_by = 5;
-			 ?>
-			<input type="hidden" name ="ordered_by" value="<?php echo isset($ordered_by) ? $ordered_by : '' ?>">
-			<input type="hidden" name ="approved_by" value="<?php echo isset($approved_by) ? $approved_by : '' ?>">
-			<input type="hidden" name ="fulfilled_by" value="<?php echo isset($fulfilled_by) ? $fulfilled_by : '' ?>">
-			<input type="hidden" name ="checked_by" value="<?php echo isset($checked_by) ? $checked_by : '' ?>">
+			   
+			    $order_id = $_GET['rqid'];
+				$qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
+				if($qry->num_rows > 0){
+					foreach($qry->fetch_assoc() as $k => $v){
+						$$k=$v;
+					}
+				}
+			?>
+
+            <input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 
 			<div class="row">
-			    <div class="col-md-4 form-group">
-					<label for="deliver_to">Deliver To <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="deliver_to" name="deliver_to" value="<?php echo isset($deliver_to) ? $deliver_to : '' ?>">
-				</div>
-
-				<div class="col-md-4 form-group">
-					<label for="department_name">Department Name <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="department_name" name="department_name" value="<?php echo isset($department_name) ? $department_name : '' ?>">
-				</div>
-
-				<div class="col-md-4 form-group">
-					<label for="building_name">Building Name & Room Number<span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="building_name" name="building_name" value="<?php echo isset($building_name) ? $building_name : '' ?>">
+			    <div class="col-md-6 form-group">
+					<label for="rq_no">RQ # <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="rq_no" name="rq_no" value="<?php echo isset($id) ? $id : '' ?>">
+					
 				</div>
 
 				<div class="col-md-6 form-group">
-				<label for="p_id">Cost Center/Account to Charge</label>
-				<select name="p_id" id="p_id" class="custom-select custom-select-sm rounded-0 select2">
-						<option value="" disabled <?php echo !isset($p_id) ? "selected" :'' ?>></option>
+					<label for="dn_no">DN # <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="dn_no" name="dn_no" readonly value="<?php echo isset($dn_no) ? $dn_no : '' ?>">
+					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
+				</div>
+
+				<div class="col-md-6 form-group">
+				<label for="driver_id">Delivery Agent</label>
+				<select name="driver_id" id="driver_id" class="custom-select custom-select-sm rounded-0 select2">
+						<option value="" disabled <?php echo !isset($driver_id) ? "selected" :'' ?>></option>
 						<?php 
-							$project_qry = $conn->query("SELECT * FROM `project_list` order by `name` asc");
-							while($row = $project_qry->fetch_assoc()):
+							$driver_qry = $conn->query("SELECT * FROM `users` WHERE `type` = 5 order by `username` asc");
+							while($row = $driver_qry->fetch_assoc()):
 						?>
-						<option value="<?php echo $row['id'] ?>" <?php echo isset($p_id) && $p_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 1? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
+						<option value="<?php echo $row['id'] ?>" <?php echo isset($driver_id) && $driver_id == $row['id'] ? 'selected' : '' ?>><?php echo $row['username'] ?></option>
 						<?php endwhile; ?>
 					</select>
 				</div>
 
-				<div class="col-md-6 form-group">
-					<label for="rq_no">RQ # <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="rq_no" name="rq_no" value="<?php echo isset($rq_no) ? $rq_no : '' ?>">
-					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
-				</div>
+				
 			</div>
 			<div class="row">
 				<div class="col-md-12">
@@ -119,38 +104,26 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>"/>
 								</td>
 								<td class="align-middle p-1">
-									<input type="text" class="text-center w-100 border-0" name="unit[]" value="<?php echo $row['unit'] ?>"/>
+									<input type="text" class="text-center w-100 border-0" name="unit[]" readonly value="<?php echo $row['unit'] ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
 								</td>
 								<td class="align-middle p-1">
 									<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
-									<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required/>
+									<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>" required style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
 								</td>
-								<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
+								<td class="align-middle p-1 item-description" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo $row['description'] ?></td>
 								<td class="align-middle p-1">
-									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>"/>
+									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
 								</td>
-								<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+								<td class="align-middle p-1 text-right total-price" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 							</tr>
 							<?php endwhile;endif; ?>
 						</tbody>
 						<tfoot>
 							<tr class="bg-lightblue">
 								<tr>
-									<th class="p-1 text-right" colspan="6"><span><button class="btn btn btn-sm btn-flat btn-primary py-0 mx-1" type="button" id="add_row">Add Row</button></span> Sub Total</th>
+									<th class="p-1 text-right" colspan="6">Sub Total</th>
 									<th class="p-1 text-right" id="sub_total">0</th>
 								</tr>
-								<!-- <tr>
-									<th class="p-1 text-right" colspan="6">Discount (%)
-									<input type="number" step="any" name="discount_percentage" class="border-light text-right" value="<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>">
-									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
-								</tr> -->
-								<!-- <tr>
-									<th class="p-1 text-right" colspan="6">Tax Inclusive (%)
-									<input type="number" step="any" name="tax_percentage" class="border-light text-right" value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
-									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
-								</tr> -->
 								<tr>
 									<th class="p-1 text-right" colspan="6">Total</th>
 									<th class="p-1 text-right" id="total">0</th>
@@ -163,12 +136,11 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6" hidden="true">
+						<div class="col-md-6">
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>
-								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Processing</option>
-								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected': '' ?>>Fulfilled</option>
+								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Confirmed</option>
 							</select>
 						</div>
 					</div>
@@ -295,14 +267,14 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			e.preventDefault();
             var _this = $(this)
 			$('.err-msg').remove();
-			$('[name="rq_no"]').removeClass('border-danger')
+			$('[name="dn_no"]').removeClass('border-danger')
 			if($('#item-list .po-item').length <= 0){
 				alert_toast(" Please add atleast 1 item on the list.",'warning')
 				return false;
 			}
 			start_loader();
 			$.ajax({
-				url:_base_url_+"classes/Master.php?f=save_rq",
+				url:_base_url_+"classes/Master.php?f=save_dn",
 				data: new FormData($(this)[0]),
                 cache: false,
                 contentType: false,
@@ -326,7 +298,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                             $("html, body").animate({ scrollTop: 0 }, "fast");
                             end_loader()
 							if(resp.status == 'rq_failed'){
-								$('[name="rq_no"]').addClass('border-danger').focus()
+								$('[name="dn_no"]').addClass('border-danger').focus()
 							}
                     }else{
 						alert_toast("An error occured",'error');
