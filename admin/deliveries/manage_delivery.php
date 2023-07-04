@@ -148,7 +148,7 @@
 	</div>
 	<div class="card-footer">
 		<button class="btn btn-flat btn-primary" form="po-form">Save</button>
-		<a class="btn btn-flat btn-default" href="?page=store_requisitions">Cancel</a>
+		<a class="btn btn-flat btn-default" href="?page=deliveries">Cancel</a>
 	</div>
 </div>
 <table class="d-none" id="item-clone">
@@ -195,30 +195,6 @@
 		})
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
 		$('#total').text(parseFloat(_total).toLocaleString("en-US"))
-	}
-
-	function _autocomplete(_item){
-		_item.find('.item_id').autocomplete({
-			source:function(request, response){
-				$.ajax({
-					url:_base_url_+"classes/Master.php?f=search_items",
-					method:'POST',
-					data:{q:request.term},
-					dataType:'json',
-					error:err=>{
-						console.log(err)
-					},
-					success:function(resp){
-						response(resp)
-					}
-				})
-			},
-			select:function(event,ui){
-				console.log(ui)
-				_item.find('input[name="item_id[]"]').val(ui.item.id)
-				_item.find('.item-description').text(ui.item.description)
-			}
-		})
 	}
 
 	$(document).ready(function(){

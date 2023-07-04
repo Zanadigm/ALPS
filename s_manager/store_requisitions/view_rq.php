@@ -35,7 +35,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
+            <?php if($status == 1 ): ?>
             <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
+            <?php endif;?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
@@ -178,25 +180,31 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </div>
 
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                        <label for="fulfilled_by" class="contorol-label">Fulfilled By:</label>
+                        <label for="approved_by" class="contorol-label">Fulflled By:</label>
                         <?php
-                        if ($status == 3) {?>
-                            <p><?php echo isset($fulfilled_by) ? $fulfilled_by : "" ?></p>
-                        <?php } else { ?>
-                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
-                        <?php }
-                        ?>
+                        if ($status == 3) {
+                            if (isset($fulfilled_by) && ($fulfilled_by == 4)) {
+                                $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 4");
+                                $row = $user_qry->fetch_assoc(); ?>
+                                <p><?php echo $row['name'] ?></p>
+                            <?php }
+                        } else { ?>
+                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                        <?php } ?>
                     </div>
 
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                        <label for="checked_by" class="contorol-label">Checked By:</label>
+                        <label for="approved_by" class="contorol-label">Checked By:</label>
                         <?php
-                        if ($status == 3) {?>
-                            <p><?php echo isset($checked_by) ? $checked_by : "" ?></p>
-                        <?php } else { ?>
-                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
-                        <?php }
-                        ?>
+                        if ($status == 3) {
+                            if (isset($checked_by) && ($checked_by == 5)) {
+                                $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 5");
+                                $row = $user_qry->fetch_assoc(); ?>
+                                <p><?php echo $row['name'] ?></p>
+                            <?php }
+                        } else { ?>
+                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                        <?php } ?>
                     </div>
 
                     <div class="col-4">

@@ -35,6 +35,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
+            <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-primary" href="?page=store_requisitions/manage_rq&id=<?php echo $id ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
@@ -78,7 +79,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <?php }
                 } else { ?>
                     <p style="color:red"><?php echo ("Pending Approval") ?></p>
-                <?php }?>
+                <?php } ?>
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
@@ -156,19 +157,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </tbody>
                     <tfoot>
                         <tr class="bg-lightblue">
-                            <!-- <tr>
-                                <th class="p-1 text-right" colspan="5">Sub Total</th>
-                                <th class="p-1 text-right" id="sub_total"><?php echo number_format($sub_total) ?></th>
-                            </tr> -->
-                            <!-- <tr>
-                                <th class="p-1 text-right" colspan="5">Discount (<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>%)
-                                </th>
-                                <th class="p-1 text-right"><?php echo isset($discount_amount) ? number_format($discount_amount) : 0 ?></th>
-                            </tr> -->
-                            <!-- <tr>
-                                <th class="p-1 text-right" colspan="5">Tax Inclusive (<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>%)</th>
-                                <th class="p-1 text-right"><?php echo isset($tax_amount) ? number_format($tax_amount) : 0 ?></th>
-                            </tr> -->
                         <tr>
                             <th class="p-1 text-right" colspan="5">Total</th>
                             <th class="p-1 text-right" id="total"><?php echo number_format($sub_total) ?></th>
@@ -182,7 +170,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="date_fulfilled" class="contorol-label">Date Fulfilled:</label>
                         <?php
-                        if ($status == 3) {?>
+                        if ($status == 3) { ?>
+
                             <p><?php echo isset($date_fulfilled) ? $date_fulfilled : "" ?></p>
                         <?php } else { ?>
                             <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
@@ -191,25 +180,31 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </div>
 
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                        <label for="fulfilled_by" class="contorol-label">Fulfilled By:</label>
+                        <label for="approved_by" class="contorol-label">Fulflled By:</label>
                         <?php
-                        if ($status == 3) {?>
-                            <p><?php echo isset($fulfilled_by) ? $fulfilled_by : "" ?></p>
-                        <?php } else { ?>
-                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
-                        <?php }
-                        ?>
+                        if ($status == 3) {
+                            if (isset($fulfilled_by) && ($fulfilled_by == 4)) {
+                                $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 4");
+                                $row = $user_qry->fetch_assoc(); ?>
+                                <p><?php echo $row['name'] ?></p>
+                            <?php }
+                        } else { ?>
+                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                        <?php } ?>
                     </div>
 
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                        <label for="checked_by" class="contorol-label">Checked By:</label>
+                        <label for="approved_by" class="contorol-label">Checked By:</label>
                         <?php
-                        if ($status == 3) {?>
-                            <p><?php echo isset($checked_by) ? $checked_by : "" ?></p>
-                        <?php } else { ?>
-                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
-                        <?php }
-                        ?>
+                        if ($status == 3) {
+                            if (isset($checked_by) && ($checked_by == 5)) {
+                                $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 5");
+                                $row = $user_qry->fetch_assoc(); ?>
+                                <p><?php echo $row['name'] ?></p>
+                            <?php }
+                        } else { ?>
+                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                        <?php } ?>
                     </div>
 
                     <div class="col-6">
@@ -225,7 +220,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 echo "<span class='py-2 px-4 btn-flat btn-success'>Approved</span>";
                                 break;
                             case 2:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Processing/span>";
+                                echo "<span class='py-2 px-4 btn-flat btn-success'>Processing</span>";
                                 break;
                             case 3:
                                 echo "<span class='py-2 px-4 btn-flat btn-success'>Fulfiled</span>";
