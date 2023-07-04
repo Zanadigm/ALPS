@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 30, 2023 at 11:16 PM
+-- Generation Time: Jul 04, 2023 at 03:54 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -35,6 +35,20 @@ CREATE TABLE `delivery_items` (
   `quantity` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `delivery_items`
+--
+
+INSERT INTO `delivery_items` (`dn_id`, `item_id`, `unit`, `unit_price`, `quantity`) VALUES
+(3, 4, 'pcs', 10000, 5),
+(3, 5, 'pcs', 9000, 6),
+(3, 6, 'pcs', 600, 16),
+(3, 9, 'rolls', 1500, 2),
+(3, 10, 'pcs', 150, 10),
+(3, 8, 'bags', 550, 5),
+(5, 4, 'Pcs', 10000, 3),
+(5, 5, 'Pcs', 9000, 3),
+(5, 6, 'Pcs', 200, 12);
 
 -- --------------------------------------------------------
 
@@ -54,6 +68,27 @@ CREATE TABLE `delivery_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `delivery_list`
+--
+
+INSERT INTO `delivery_list` (`id`, `dn_no`, `rq_no`, `driver_id`, `status`, `notes`, `received_by`, `date_received`, `date_created`, `date_updated`) VALUES
+(3, 'DN-452474', 10, 5, 1, '', '', '0000-00-00 00:00:00', '2023-07-04 13:33:38', NULL),
+(5, 'DN-662557', 9, 5, 1, '', '', '0000-00-00 00:00:00', '2023-07-04 13:34:17', NULL);
+
+--
+-- Triggers `delivery_list`
+--
+DELIMITER $$
+CREATE TRIGGER `update_order_status` AFTER INSERT ON `delivery_list` FOR EACH ROW BEGIN
+  -- Update the status in rq_list
+  UPDATE rq_list
+  SET status = 3
+  WHERE id = NEW.rq_no;
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -181,7 +216,13 @@ CREATE TABLE `requisition_items` (
 INSERT INTO `requisition_items` (`rq_id`, `item_id`, `unit`, `unit_price`, `quantity`) VALUES
 (9, 4, 'Pcs', 10000, 3),
 (9, 5, 'Pcs', 9000, 3),
-(9, 6, 'Pcs', 200, 12);
+(9, 6, 'Pcs', 200, 12),
+(10, 4, 'pcs', 10000, 5),
+(10, 5, 'pcs', 9000, 6),
+(10, 6, 'pcs', 600, 16),
+(10, 9, 'rolls', 1500, 2),
+(10, 10, 'pcs', 150, 10),
+(10, 8, 'bags', 550, 5);
 
 -- --------------------------------------------------------
 
@@ -212,7 +253,8 @@ CREATE TABLE `rq_list` (
 --
 
 INSERT INTO `rq_list` (`id`, `rq_no`, `deliver_to`, `ordered_by`, `approved_by`, `department_name`, `building_name`, `p_id`, `notes`, `status`, `date_fulfilled`, `fulfilled_by`, `checked_by`, `date_created`, `date_updated`) VALUES
-(9, 'RQ-667591', 'Mutomo Mission Hospital', 2, 3, 'Maintenance and Repairs', 'Maintenance Office 004', 3, '', 1, '2023-07-01 00:04:36', 4, 5, '2023-07-01 00:03:39', '2023-07-01 00:04:36');
+(9, 'RQ-667591', 'Mutomo Mission Hospital', 2, 3, 'Maintenance and Repairs', 'Maintenance Office 004', 3, '', 3, '2023-07-04 13:57:06', 4, 5, '2023-07-01 00:03:39', '2023-07-04 13:57:06'),
+(10, 'RQ-437375', 'Stenland', 2, 3, 'Security', 'Security Office Main Gate', 2, '', 3, '2023-07-04 13:57:21', 4, 5, '2023-07-04 01:55:30', '2023-07-04 13:57:21');
 
 -- --------------------------------------------------------
 
@@ -434,7 +476,8 @@ ALTER TABLE `users`
 -- Constraints for table `delivery_items`
 --
 ALTER TABLE `delivery_items`
-  ADD CONSTRAINT `delivery_items_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `item_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `delivery_items_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `item_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `delivery_items_ibfk_2` FOREIGN KEY (`dn_id`) REFERENCES `delivery_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `delivery_list`
