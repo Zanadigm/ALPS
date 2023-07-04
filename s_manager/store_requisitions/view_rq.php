@@ -35,9 +35,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
-            <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
+            <?php if($status == 1 ): ?>
+            <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
+            <?php endif;?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
-            <a class="btn btn-sm btn-flat btn-primary" href="?page=store_requisitions/manage_rq&id=<?php echo $id ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
@@ -59,7 +60,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <div class="row">
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">RQ #:</label>
+                <label for="rq_no" class="contorol-label">RQ #:</label>
                 <p><?php echo isset($rq_no) ? $rq_no : "" ?></p>
             </div>
 
@@ -79,7 +80,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <?php }
                 } else { ?>
                     <p style="color:red"><?php echo ("Pending Approval") ?></p>
-                <?php } ?>
+                <?php }?>
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
@@ -170,8 +171,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="date_fulfilled" class="contorol-label">Date Fulfilled:</label>
                         <?php
-                        if ($status == 3) { ?>
-
+                        if ($status == 3) {?>
                             <p><?php echo isset($date_fulfilled) ? $date_fulfilled : "" ?></p>
                         <?php } else { ?>
                             <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
@@ -207,11 +207,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <?php } ?>
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-4">
                         <label for="notes" class="control-label">Notes</label>
                         <p><?php echo isset($notes) ? $notes : '' ?></p>
                     </div>
-                    <div class="col-6">
+                    
+                    <div class="col-4">
                         <label for="status" class="control-label">Status</label>
                         <br>
                         <?php
@@ -220,7 +221,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 echo "<span class='py-2 px-4 btn-flat btn-success'>Approved</span>";
                                 break;
                             case 2:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Processing</span>";
+                                echo "<span class='py-2 px-4 btn-flat btn-success'>Processing/span>";
                                 break;
                             case 3:
                                 echo "<span class='py-2 px-4 btn-flat btn-success'>Fulfiled</span>";
@@ -231,11 +232,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         }
                         ?>
                     </div>
+                    
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 <table class="d-none" id="item-clone">
     <tr class="po-item" data-id="">
         <td class="align-middle p-1 text-center">

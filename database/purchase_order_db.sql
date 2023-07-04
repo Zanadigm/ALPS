@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2023 at 11:16 PM
+-- Generation Time: Jun 30, 2023 at 11:16 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -20,6 +20,40 @@ SET time_zone = "+00:00";
 --
 -- Database: `purchase_order_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `delivery_items`
+--
+
+CREATE TABLE `delivery_items` (
+  `dn_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `unit` varchar(50) NOT NULL,
+  `unit_price` float NOT NULL,
+  `quantity` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `delivery_list`
+--
+
+CREATE TABLE `delivery_list` (
+  `id` int(11) NOT NULL,
+  `dn_no` varchar(50) NOT NULL,
+  `rq_no` int(11) NOT NULL,
+  `driver_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0 COMMENT '0=pending, 1=confirmed',
+  `notes` text NOT NULL,
+  `received_by` varchar(250) NOT NULL,
+  `date_received` datetime NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -42,7 +76,11 @@ CREATE TABLE `item_list` (
 INSERT INTO `item_list` (`id`, `name`, `description`, `status`, `date_created`) VALUES
 (4, 'Flood Lights', '300 Wat Solar Led Flood Lights', 1, '2023-06-24 21:31:10'),
 (5, 'G.I Stands', '2&#039;&#039; Pipes', 1, '2023-06-24 21:31:44'),
-(6, 'Bolts', '3&#039;&#039; Bolts', 1, '2023-06-24 21:32:15');
+(6, 'Bolts', '3&#039;&#039; Bolts', 1, '2023-06-24 21:32:15'),
+(7, 'Chain link', 'Plastic coated Shamba chain link', 1, '2023-06-30 16:02:37'),
+(8, 'Cement', 'Simba cement', 1, '2023-06-30 16:02:57'),
+(9, 'Binding Wire', 'Roll of binding wire', 1, '2023-06-30 16:09:05'),
+(10, 'Concrete Posts', 'Concrete fencing posts', 1, '2023-06-30 16:09:44');
 
 -- --------------------------------------------------------
 
@@ -65,7 +103,9 @@ CREATE TABLE `order_items` (
 INSERT INTO `order_items` (`po_id`, `item_id`, `unit`, `unit_price`, `quantity`) VALUES
 (1, 4, 'Pcs', 10000, 3),
 (1, 5, 'Pcs', 9000, 3),
-(1, 6, 'Pcs', 200, 12);
+(1, 6, 'Pcs', 200, 12),
+(2, 4, 'Pcs', 10000, 5),
+(3, 4, 'Pcs', 10000, 5);
 
 -- --------------------------------------------------------
 
@@ -92,7 +132,9 @@ CREATE TABLE `po_list` (
 --
 
 INSERT INTO `po_list` (`id`, `po_no`, `supplier_id`, `discount_percentage`, `discount_amount`, `tax_percentage`, `tax_amount`, `notes`, `status`, `date_created`, `date_updated`) VALUES
-(1, 'PO-648826', 1, 0, 0, 0, 0, '', 1, '2023-06-28 14:54:19', '2023-06-28 20:53:47');
+(1, 'PO-648826', 1, 0, 0, 0, 0, '', 1, '2023-06-28 14:54:19', '2023-06-28 20:53:47'),
+(2, 'PO-637567', 2, 0, 0, 0, 0, '', 0, '2023-06-29 12:26:48', NULL),
+(3, 'PO-622911', 2, 0, 0, 0, 0, '', 0, '2023-06-29 12:28:05', NULL);
 
 -- --------------------------------------------------------
 
@@ -115,7 +157,8 @@ CREATE TABLE `project_list` (
 
 INSERT INTO `project_list` (`id`, `name`, `description`, `status`, `created_on`, `updated_on`) VALUES
 (1, 'Katundu', 'Dormitory and fencing', 0, '2023-06-24 13:23:59', '0000-00-00 00:00:00'),
-(2, 'Stenland Security Lights', 'Supply and Installation of 3 security lights', 0, '2023-06-24 20:39:33', '0000-00-00 00:00:00');
+(2, 'Stenland Security Lights', 'Supply and Installation of 3 security lights', 0, '2023-06-24 20:39:33', '0000-00-00 00:00:00'),
+(3, 'Mission Nursing School Fencing', 'Fencing of nursing school with chain link.', 0, '2023-06-30 16:01:14', '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -136,8 +179,9 @@ CREATE TABLE `requisition_items` (
 --
 
 INSERT INTO `requisition_items` (`rq_id`, `item_id`, `unit`, `unit_price`, `quantity`) VALUES
-(7, 4, 'Pcs', 10000, 5),
-(5, 4, 'Pcs', 10000, 10);
+(9, 4, 'Pcs', 10000, 3),
+(9, 5, 'Pcs', 9000, 3),
+(9, 6, 'Pcs', 200, 12);
 
 -- --------------------------------------------------------
 
@@ -168,8 +212,7 @@ CREATE TABLE `rq_list` (
 --
 
 INSERT INTO `rq_list` (`id`, `rq_no`, `deliver_to`, `ordered_by`, `approved_by`, `department_name`, `building_name`, `p_id`, `notes`, `status`, `date_fulfilled`, `fulfilled_by`, `checked_by`, `date_created`, `date_updated`) VALUES
-(5, 'RQ-060178', 'Stenland', 2, 3, 'Accounts', 'ACC-004', 2, '', 1, '2023-06-28 23:40:51', 4, 5, '2023-06-28 15:48:32', '2023-06-28 23:40:51'),
-(7, 'RQ-164931', 'Waterland', 2, 3, 'Water', 'Water office', 2, '', 0, NULL, 4, 5, '2023-06-28 23:31:06', NULL);
+(9, 'RQ-667591', 'Mutomo Mission Hospital', 2, 3, 'Maintenance and Repairs', 'Maintenance Office 004', 3, '', 1, '2023-07-01 00:04:36', 4, 5, '2023-07-01 00:03:39', '2023-07-01 00:04:36');
 
 -- --------------------------------------------------------
 
@@ -249,12 +292,29 @@ INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `password`, `ava
 (1, 'Adminstrator', 'Admin', 'admin', '0192023a7bbd73250516f069df18b500', 'uploads/1687336620_1624240500_avatar.png', NULL, 1, '2021-01-20 14:02:37', '2023-06-21 11:37:55'),
 (2, 'Chris', 'Ongeta', 'chris', '6b34fe24ac2ff8103f6fce1f0da2ef57', 'uploads/1687336620_1624240500_avatar.png', NULL, 2, '2023-06-21 11:37:24', NULL),
 (3, 'Remmy', 'Amya', 'remmy', '8769ddc9ece9050a5c3072d4fda6b49e', 'uploads/1687336680_1630999200_avatar5.png', NULL, 3, '2023-06-21 11:38:24', NULL),
-(4, 'Mariam', 'Lisa', 'mariam', '13c6cf272b6dc642b9712d5dfccc2e42', NULL, NULL, 4, '2023-06-28 11:41:00', NULL),
+(4, 'Mariam', 'Lisa', 'mariam', '13c6cf272b6dc642b9712d5dfccc2e42', 'uploads/1688150700_1687336620_1624240500_avatar.png', NULL, 4, '2023-06-28 11:41:00', '2023-06-30 21:45:29'),
 (5, 'Maneno', 'Mingi', 'maneno', 'c0c4651b65e030fa9a8056318ccff013', NULL, NULL, 5, '2023-06-28 11:41:42', NULL);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `delivery_items`
+--
+ALTER TABLE `delivery_items`
+  ADD KEY `po_id` (`dn_id`),
+  ADD KEY `item_no` (`item_id`),
+  ADD KEY `dn_id` (`dn_id`);
+
+--
+-- Indexes for table `delivery_list`
+--
+ALTER TABLE `delivery_list`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `dn_no` (`dn_no`),
+  ADD KEY `order_no` (`rq_no`),
+  ADD KEY `driver_id` (`driver_id`);
 
 --
 -- Indexes for table `item_list`
@@ -319,6 +379,12 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT for table `delivery_list`
+--
+ALTER TABLE `delivery_list`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `item_list`
 --
 ALTER TABLE `item_list`
@@ -363,6 +429,19 @@ ALTER TABLE `users`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `delivery_items`
+--
+ALTER TABLE `delivery_items`
+  ADD CONSTRAINT `delivery_items_ibfk_1` FOREIGN KEY (`item_id`) REFERENCES `item_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `delivery_list`
+--
+ALTER TABLE `delivery_list`
+  ADD CONSTRAINT `delivery_list_ibfk_1` FOREIGN KEY (`rq_no`) REFERENCES `rq_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `delivery_list_ibfk_2` FOREIGN KEY (`driver_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `order_items`

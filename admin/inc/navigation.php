@@ -60,6 +60,15 @@
                     </li>
 
                     <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>admin/?page=deliveries" class="nav-link nav-deliveries">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                          Deliveries
+                        </p>
+                      </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>admin/?page=suppliers" class="nav-link nav-suppliers">
                         <i class="nav-icon fas fa-truck-loading"></i>
                         <p>

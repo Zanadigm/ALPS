@@ -353,7 +353,83 @@ Class Master extends DBConnection {
 
 	}
 
-	//......................................
+	/*...........................Store Requisitions........................................*/
+
+	function save_dn(){
+		extract($_POST);
+		$data = "";
+		foreach($_POST as $k =>$v){
+			if(!in_array($k,array('id','dn_no')) && !is_array($_POST[$k])){
+				$v = addslashes(trim($v));
+				if(!empty($data)) $data .=",";
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+		if(!empty($dn_no)){
+			$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}' ".($id > 0 ? " and id != '{$id}' ":""))->num_rows;
+			if($this->capture_err())
+				return $this->capture_err();
+			if($check > 0){
+				$resp['status'] = 'dn_failed';
+				$resp['msg'] = "Delivery Number already exist.";
+				return json_encode($resp);
+				exit;
+			}
+		}else{
+			$dn_no ="";
+			while(true){
+				$dn_no = "DN-".(sprintf("%'.06d", mt_rand(1,999999)));
+				$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}'")->num_rows;
+				if($check <= 0)
+				break;
+			}
+		}
+		$data .= ", dn_no = '{$dn_no}' ";
+
+		if(empty($id)){
+			$sql = "INSERT INTO `delivery_list` set {$data} ";
+		}else{
+			$sql = "UPDATE `delivery_list` set {$data} where id = '{$id}' ";
+		}
+		$save = $this->conn->query($sql);
+		if($save){
+			$resp['status'] = 'success';
+			$dn_id = empty($id) ? $this->conn->insert_id : $id ;
+			$resp['id'] = $dn_id;
+			$data = "";
+			foreach($item_id as $k =>$v){
+				if(!empty($data)) $data .=",";
+				$data .= "('{$dn_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
+			}
+			if(!empty($data)){
+				$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
+				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
+			}
+			if(empty($id))
+				$this->settings->set_flashdata('success',"Delivery Note successfully saved.");
+			else
+				$this->settings->set_flashdata('success',"Delivery Note successfully updated.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error."[{$sql}]";
+		}
+		return json_encode($resp);
+	}
+	function delete_dn(){
+		extract($_POST);
+		$del = $this->conn->query("DELETE FROM `delivery_list` where id = '{$id}'");
+		if($del){
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success',"Delivery Note successfully deleted.");
+		}else{
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+
+	}
+
+	//.......................................................................................................
 
 	function save_rent(){
 		extract($_POST);
@@ -493,6 +569,12 @@ switch ($action) {
 	break;
 	case 'delete_rq':
 		echo $Master->delete_rq();
+	break;
+	case 'save_dn':
+		echo $Master->save_dn();
+	break;
+	case 'delete_dn':
+		echo $Master->delete_dn();
 	break;
 	case 'save_rent':
 		echo $Master->save_rent();
