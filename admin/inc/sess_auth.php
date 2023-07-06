@@ -34,8 +34,4 @@ if (isset($_SESSION['userdata'])) {
     }
 }
 
-// function redirect($url) {
-//     header("Location: $url");
-//     exit;
-// }
 ?>

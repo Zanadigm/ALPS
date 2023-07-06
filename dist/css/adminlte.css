@@ -1720,7 +1720,7 @@ pre code {
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: #0000000d;
 }
 
 .table-hover tbody tr:hover {

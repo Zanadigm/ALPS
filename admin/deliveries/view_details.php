@@ -2,10 +2,10 @@
     <script>
         alert_toast("<?php echo $_settings->flashdata('success') ?>", 'success')
     </script>
-<?php endif; ?>
-<?php
+<?php endif; 
+
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT d.*, u.username, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d inner join users u on d.driver_id = u.id inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT d.*, concat(u.firstname,' ', u.lastname) as username, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d inner join users u on d.driver_id = u.id inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -41,35 +41,31 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+           <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
+                
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info ('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_address')?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email')?></p>
                 </div>
             </div>
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>DELIVERY NOTE</b></h2>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>DELIVERY NOTE</H2>
+                    <p class="m-0">Ref No : <?php echo ($dn_no) ?></p>
+                    <p class="m-0">Requisition No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                </div>
             </div>
+            
         </div>
 
         <div class="row">
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Request No #:</label>
-                <p><?php echo isset($rq_no) ? $rq_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Ref No #:</label>
-                <p><?php echo isset($dn_no) ? $dn_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="date_created" class="contorol-label">Date Ordered:</label>
-                <p><?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-            </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                 <label for="deliver_to" class="contorol-label">Deliver To:</label>

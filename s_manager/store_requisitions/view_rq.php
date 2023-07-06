@@ -35,53 +35,39 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
-            <?php if($status == 1 ): ?>
-            <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
-            <?php endif;?>
+            <?php if ($status == 1) : ?>
+                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
+            <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
+
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
                     <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>STORE REQUISITION ORDER</b></h2>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>STORE REQUISITION ORDER</H2>
+                    <p class="m-0">RQ No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                </div>
             </div>
+
         </div>
 
         <div class="row">
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="rq_no" class="contorol-label">RQ #:</label>
-                <p><?php echo isset($rq_no) ? $rq_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="date_created" class="contorol-label">Date Ordered:</label>
-                <p><?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="approved_by" class="contorol-label">Approved By:</label>
-                <?php
-                if ($status != 0) {
-                    if (isset($approved_by) && ($approved_by == 3)) {
-                        $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 3");
-                        $row = $user_qry->fetch_assoc(); ?>
-                        <p><?php echo $row['name'] ?></p>
-                    <?php }
-                } else { ?>
-                    <p style="color:red"><?php echo ("Pending Approval") ?></p>
-                <?php }?>
-            </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                 <label for="ordered_by" class="contorol-label">Ordered By:</label>
@@ -95,6 +81,30 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
+                <label for="approved_by" class="contorol-label">Approved By:</label>
+                <?php
+                if ($status != 0) {
+                    if (isset($approved_by) && ($approved_by == 3)) {
+                        $user_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 3");
+                        $row = $user_qry->fetch_assoc(); ?>
+                        <p><?php echo $row['name'] ?></p>
+                    <?php }
+                } else { ?>
+                    <p style="color:red"><?php echo ("Pending Approval") ?></p>
+                <?php } ?>
+            </div>
+
+            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
+                <label for="p_id" class="control-label">Account to Charge/Cost Center:</label>
+                <p><?php echo isset($cost_center) ? $cost_center : '' ?></p>
+            </div>
+
+            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
+                <label for="deliver_to" class="contorol-label">Deliver To:</label>
+                <p><?php echo isset($deliver_to) ? $deliver_to : '' ?></p>
+            </div>
+
+            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                 <label for="department_name" class="control-label">Department Name:</label>
                 <p><?php echo isset($department_name) ? $department_name : '' ?></p>
             </div>
@@ -102,16 +112,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                 <label for="building_name" class="control-label">Building Name & Room Number:</label>
                 <p><?php echo isset($building_name) ? $building_name : '' ?></p>
-            </div>
-
-            <div class="col-md-6 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Deliver To:</label>
-                <p><?php echo isset($deliver_to) ? $deliver_to : '' ?></p>
-            </div>
-
-            <div class="col-md-6 form-group" style="border: 1px solid #dee2e6;">
-                <label for="p_id" class="control-label">Account to Charge/Cost Center:</label>
-                <p><?php echo isset($cost_center) ? $cost_center : '' ?></p>
             </div>
 
         </div>
@@ -171,7 +171,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="date_fulfilled" class="contorol-label">Date Fulfilled:</label>
                         <?php
-                        if ($status == 3) {?>
+                        if ($status == 3) { ?>
                             <p><?php echo isset($date_fulfilled) ? $date_fulfilled : "" ?></p>
                         <?php } else { ?>
                             <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
@@ -211,7 +211,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <label for="notes" class="control-label">Notes</label>
                         <p><?php echo isset($notes) ? $notes : '' ?></p>
                     </div>
-                    
+
                     <div class="col-4">
                         <label for="status" class="control-label">Status</label>
                         <br>
@@ -232,7 +232,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         }
                         ?>
                     </div>
-                    
+
                 </div>
             </div>
         </div>

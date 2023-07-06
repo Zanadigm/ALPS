@@ -93,10 +93,7 @@
 			_conf("Are you sure to delete this purchase order permanently?","delete_po",[$(this).attr('data-id')])
 		})
 		$('.view_details').click(function(){
-			uni_modal("Reservaton Details","purchase_orders/view_details.php?id="+$(this).attr('data-id'),'mid-large')
-		})
-		$('.renew_data').click(function(){
-			_conf("Are you sure to renew this rent data?","renew_rent",[$(this).attr('data-id')]);
+			uni_modal("Purchase Order Details","purchase_orders/view_details.php?id="+$(this).attr('data-id'),'mid-large')
 		})
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();
@@ -105,28 +102,6 @@
 		start_loader();
 		$.ajax({
 			url:_base_url_+"classes/Master.php?f=delete_po",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
-	function renew_rent($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=renew_rent",
 			method:"POST",
 			data:{id: $id},
 			dataType:"json",

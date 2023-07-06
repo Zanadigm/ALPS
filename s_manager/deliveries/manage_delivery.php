@@ -25,8 +25,7 @@
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 
-             <?php
-			   
+               <?php
 			    $order_id = $_GET['rqid'];
 				$qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
 				if($qry->num_rows > 0){
@@ -34,7 +33,7 @@
 						$$k=$v;
 					}
 				}
-			?>
+			   ?>
 
 			<div class="row">
 			    <div class="col-md-6 form-group">
@@ -61,9 +60,8 @@
 						<?php endwhile; ?>
 					</select>
 				</div>
-
-				
 			</div>
+			
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table table-striped table-bordered" id="item-list">
@@ -130,11 +128,11 @@
 						</tfoot>
 					</table>
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" hidden="true">
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>

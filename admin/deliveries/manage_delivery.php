@@ -173,6 +173,7 @@
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
 </table>
+
 <script>
 	function rem_item(_this){
 		_this.closest('tr').remove()
@@ -267,6 +268,5 @@
 				}
 			})
 		})
-        
 	})
 </script>

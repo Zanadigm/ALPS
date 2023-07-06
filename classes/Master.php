@@ -1,19 +1,23 @@
 <?php
 require_once('../config.php');
-Class Master extends DBConnection {
+class Master extends DBConnection
+{
 	private $settings;
-	public function __construct(){
+	public function __construct()
+	{
 		global $_settings;
 		$this->settings = $_settings;
 		parent::__construct();
 	}
-	public function __destruct(){
+	public function __destruct()
+	{
 		parent::__destruct();
 	}
-	function capture_err(){
-		if(!$this->conn->error)
+	function capture_err()
+	{
+		if (!$this->conn->error)
 			return false;
-		else{
+		else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 			return json_encode($resp);
@@ -21,516 +25,538 @@ Class Master extends DBConnection {
 		}
 	}
 
-	/*...........................Supplier........................................*/
+	/**
+    * Suppliers
+    * ====================================================
+    */
 
 	function save_supplier(){
+
 		extract($_POST);
+
 		$data = "";
-		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id'))){
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id'))) {
 				$v = addslashes(trim($v));
-				if(!empty($data)) $data .=",";
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		$check = $this->conn->query("SELECT * FROM `supplier_list` where `name` = '{$name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
-		if($this->capture_err())
+		$check = $this->conn->query("SELECT * FROM `supplier_list` where `name` = '{$name}' " . (!empty($id) ? " and id != {$id} " : "") . " ")->num_rows;
+		if ($this->capture_err())
 			return $this->capture_err();
-		if($check > 0){
+		if ($check > 0) {
 			$resp['status'] = 'failed';
 			$resp['msg'] = "Supplier already exist.";
 			return json_encode($resp);
 			exit;
 		}
-		if(empty($id)){
+
+		if (empty($id)) {
 			$sql = "INSERT INTO `supplier_list` set {$data} ";
 			$save = $this->conn->query($sql);
-		}else{
+		} else {
 			$sql = "UPDATE `supplier_list` set {$data} where id = '{$id}' ";
 			$save = $this->conn->query($sql);
 		}
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			if(empty($id))
-				$this->settings->set_flashdata('success',"New Supplier successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "New Supplier successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"Supplier successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "Supplier successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_supplier(){
+
 		extract($_POST);
+
 		$del = $this->conn->query("DELETE FROM `supplier_list` where id = '{$id}'");
-		if($del){
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Supplier successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Supplier successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
 
-	/*...........................Projects........................................*/
+	/**
+    * Projects/Cost Centers
+    * ====================================================
+    */
 
 	function save_project(){
+
 		extract($_POST);
+
 		$data = "";
-		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id'))){
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id'))) {
 				$v = addslashes(trim($v));
-				if(!empty($data)) $data .=",";
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		$check = $this->conn->query("SELECT * FROM `project_list` where `name` = '{$name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
-		if($this->capture_err())
+
+		$check = $this->conn->query("SELECT * FROM `project_list` where `name` = '{$name}' " . (!empty($id) ? " and id != {$id} " : "") . " ")->num_rows;
+
+		if ($this->capture_err())
 			return $this->capture_err();
-		if($check > 0){
+		if ($check > 0) {
 			$resp['status'] = 'failed';
 			$resp['msg'] = "Project already exist.";
 			return json_encode($resp);
 			exit;
 		}
-		if(empty($id)){
+
+		if (empty($id)) {
 			$sql = "INSERT INTO `project_list` set {$data} ";
 			$save = $this->conn->query($sql);
-		}else{
+		} else {
 			$sql = "UPDATE `project_list` set {$data} where id = '{$id}' ";
 			$save = $this->conn->query($sql);
 		}
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			if(empty($id))
-				$this->settings->set_flashdata('success',"New Project successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "New Project successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"Project successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "Project successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
 
 	function delete_project(){
+
 		$id = $_POST['id'];
+
 		$del = $this->conn->prepare("DELETE FROM `project_list` where id = ?");
-		$del->bind_param("s",$id);
+		$del->bind_param("s", $id);
 		$del->execute();
-		if($del){
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Project successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Project successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
 
-	/*...........................Items......................................*/
+	/**
+    * Items
+    * ====================================================
+    */
 
 	function save_item(){
+
 		extract($_POST);
+
 		$data = "";
-		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id','description'))){
-				if(!empty($data)) $data .=",";
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id', 'description'))) {
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		if(isset($_POST['description'])){
-			if(!empty($data)) $data .=",";
-				$data .= " `description`='".addslashes(htmlentities($description))."' ";
+
+		if (isset($_POST['description'])) {
+			if (!empty($data)) $data .= ",";
+			$data .= " `description`='" . addslashes(htmlentities($description)) . "' ";
 		}
-		$check = $this->conn->query("SELECT * FROM `item_list` where `name` = '{$name}' ".(!empty($id) ? " and id != {$id} " : "")." ")->num_rows;
-		if($this->capture_err())
+
+		$check = $this->conn->query("SELECT * FROM `item_list` where `name` = '{$name}' " . (!empty($id) ? " and id != {$id} " : "") . " ")->num_rows;
+
+		if ($this->capture_err())
 			return $this->capture_err();
-		if($check > 0){
+		if ($check > 0) {
 			$resp['status'] = 'failed';
 			$resp['msg'] = "Item Name already exist.";
 			return json_encode($resp);
 			exit;
 		}
-		if(empty($id)){
+
+		if (empty($id)) {
 			$sql = "INSERT INTO `item_list` set {$data} ";
-		}else{
+		} else {
 			$sql = "UPDATE `item_list` set {$data} where id = '{$id}' ";
 		}
+
 		$save = $this->conn->query($sql);
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			if(empty($id))
-				$this->settings->set_flashdata('success',"New item successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "New item successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"item successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "item successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_item(){
+
 		extract($_POST);
+
 		$del = $this->conn->query("DELETE FROM `item_list` where id = '{$id}'");
-		if($del){
+
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"item successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "item successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
+
 	function search_items(){
+
 		extract($_POST);
+
 		$qry = $this->conn->query("SELECT * FROM item_list where `name` LIKE '%{$q}%'");
+
 		$data = array();
-		while($row = $qry->fetch_assoc()){
-			$data[] = array("label"=>$row['name'],"id"=>$row['id'],"description"=>$row['description']);
+		while ($row = $qry->fetch_assoc()) {
+			$data[] = array("label" => $row['name'], "id" => $row['id'], "description" => $row['description']);
 		}
 		return json_encode($data);
 	}
 
-	/*...........................Purchase Orders........................................*/
+    /**
+    * Purchase Orders
+    * ====================================================
+    */
 
 	function save_po(){
+
 		extract($_POST);
 		$data = "";
-		foreach($_POST as $k =>$v){
-			if(in_array($k,array('discount_amount','tax_amount')))
-				$v= str_replace(',','',$v);
-			if(!in_array($k,array('id','po_no')) && !is_array($_POST[$k])){
+
+		foreach ($_POST as $k => $v) {
+			if (in_array($k, array('discount_amount', 'tax_amount')))
+				$v = str_replace(',', '', $v);
+			if (!in_array($k, array('id', 'po_no')) && !is_array($_POST[$k])) {
 				$v = addslashes(trim($v));
-				if(!empty($data)) $data .=",";
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		if(!empty($po_no)){
-			$check = $this->conn->query("SELECT * FROM `po_list` where `po_no` = '{$po_no}' ".($id > 0 ? " and id != '{$id}' ":""))->num_rows;
-			if($this->capture_err())
+
+		if (!empty($po_no)) {
+			$check = $this->conn->query("SELECT * FROM `po_list` where `po_no` = '{$po_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
+			if ($this->capture_err())
 				return $this->capture_err();
-			if($check > 0){
+			if ($check > 0) {
 				$resp['status'] = 'po_failed';
 				$resp['msg'] = "Purchase Order Number already exist.";
 				return json_encode($resp);
 				exit;
 			}
-		}else{
-			$po_no ="";
-			while(true){
-				$po_no = "PO-".(sprintf("%'.06d", mt_rand(1,999999)));
+		} else {
+			$po_no = "";
+			while (true) {
+				$po_no = "PO-" . (sprintf("%'.06d", mt_rand(1, 999999)));
 				$check = $this->conn->query("SELECT * FROM `po_list` where `po_no` = '{$po_no}'")->num_rows;
-				if($check <= 0)
-				break;
+				if ($check <= 0)
+					break;
 			}
 		}
+
 		$data .= ", po_no = '{$po_no}' ";
 
-		if(empty($id)){
+		if (empty($id)) {
 			$sql = "INSERT INTO `po_list` set {$data} ";
-		}else{
+		} else {
 			$sql = "UPDATE `po_list` set {$data} where id = '{$id}' ";
 		}
+
 		$save = $this->conn->query($sql);
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			$po_id = empty($id) ? $this->conn->insert_id : $id ;
+			$po_id = empty($id) ? $this->conn->insert_id : $id;
 			$resp['id'] = $po_id;
 			$data = "";
-			foreach($item_id as $k =>$v){
-				if(!empty($data)) $data .=",";
+			foreach ($item_id as $k => $v) {
+				if (!empty($data)) $data .= ",";
 				$data .= "('{$po_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
 			}
-			if(!empty($data)){
+			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `order_items` where po_id = '{$po_id}'");
 				$save = $this->conn->query("INSERT INTO `order_items` (`po_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
 			}
-			if(empty($id))
-				$this->settings->set_flashdata('success',"Purchase Order successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "Purchase Order successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"Purchase Order successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "Purchase Order successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_po(){
+
 		extract($_POST);
+
 		$del = $this->conn->query("DELETE FROM `po_list` where id = '{$id}'");
-		if($del){
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Purchase Order successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Purchase Order successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
-	
-	/*...........................Store Requisitions........................................*/
 
-	function save_rq(){
+	function approve_po(){
 		extract($_POST);
+		$confirm = $this->conn->query("UPDATE po_list SET status = 1 WHERE id = '{$id}'");
+		if ($confirm) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Purchase Order Succesfully Approved.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
+
+	/**
+    * Requisition Orders
+    * ====================================================
+    */
+
+	function save_rq()
+	{
+		extract($_POST);
+
 		$data = "";
-		foreach($_POST as $k =>$v){
-			// if(in_array($k,array('discount_amount','tax_amount')))
-			// 	$v= str_replace(',','',$v);
-			if(!in_array($k,array('id','rq_no')) && !is_array($_POST[$k])){
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id', 'rq_no')) && !is_array($_POST[$k])) {
 				$v = addslashes(trim($v));
-				if(!empty($data)) $data .=",";
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		if(!empty($rq_no)){
-			$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}' ".($id > 0 ? " and id != '{$id}' ":""))->num_rows;
-			if($this->capture_err())
+		
+		if (!empty($rq_no)) {
+			$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
+			if ($this->capture_err())
 				return $this->capture_err();
-			if($check > 0){
+			if ($check > 0) {
 				$resp['status'] = 'rq_failed';
 				$resp['msg'] = "Requisition Number already exist.";
 				return json_encode($resp);
 				exit;
 			}
-		}else{
-			$rq_no ="";
-			while(true){
-				$rq_no = "RQ-".(sprintf("%'.06d", mt_rand(1,999999)));
+		} else {
+			$rq_no = "";
+			while (true) {
+				$rq_no = "RQ-" . (sprintf("%'.06d", mt_rand(1, 999999)));
 				$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}'")->num_rows;
-				if($check <= 0)
-				break;
+				if ($check <= 0)
+					break;
 			}
 		}
+
 		$data .= ", rq_no = '{$rq_no}' ";
 
-		if(empty($id)){
+		if (empty($id)) {
 			$sql = "INSERT INTO `rq_list` set {$data} ";
-		}else{
+		} else {
 			$sql = "UPDATE `rq_list` set {$data} where id = '{$id}' ";
 		}
+
 		$save = $this->conn->query($sql);
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			$rq_id = empty($id) ? $this->conn->insert_id : $id ;
+			$rq_id = empty($id) ? $this->conn->insert_id : $id;
 			$resp['id'] = $rq_id;
 			$data = "";
-			foreach($item_id as $k =>$v){
-				if(!empty($data)) $data .=",";
+			foreach ($item_id as $k => $v) {
+				if (!empty($data)) $data .= ",";
 				$data .= "('{$rq_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
 			}
-			if(!empty($data)){
+			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `requisition_items` where rq_id = '{$rq_id}'");
 				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
 			}
-			if(empty($id))
-				$this->settings->set_flashdata('success',"Requisition Order successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "Requisition Order successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"Requisition Order successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "Requisition Order successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_rq(){
 		extract($_POST);
 		$del = $this->conn->query("DELETE FROM `rq_list` where id = '{$id}'");
-		if($del){
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Requisition Order successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Requisition Order successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
 
-	/*...........................Store Requisitions........................................*/
+	function approve_requisition(){
+		extract($_POST);
+		$confirm = $this->conn->query("UPDATE rq_list SET status = 1 WHERE id = '{$id}'");
+		if ($confirm) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Requisition Order Succesfully Approved.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
+
+	/**
+    * Deliveries
+    * ====================================================
+    */
 
 	function save_dn(){
+
 		extract($_POST);
+
 		$data = "";
-		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id','dn_no')) && !is_array($_POST[$k])){
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id', 'dn_no')) && !is_array($_POST[$k])) {
 				$v = addslashes(trim($v));
-				if(!empty($data)) $data .=",";
+				if (!empty($data)) $data .= ",";
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		if(!empty($dn_no)){
-			$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}' ".($id > 0 ? " and id != '{$id}' ":""))->num_rows;
-			if($this->capture_err())
+		if (!empty($dn_no)) {
+			$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
+			if ($this->capture_err())
 				return $this->capture_err();
-			if($check > 0){
+			if ($check > 0) {
 				$resp['status'] = 'dn_failed';
 				$resp['msg'] = "Delivery Number already exist.";
 				return json_encode($resp);
 				exit;
 			}
-		}else{
-			$dn_no ="";
-			while(true){
-				$dn_no = "DN-".(sprintf("%'.06d", mt_rand(1,999999)));
+		} else {
+			$dn_no = "";
+			while (true) {
+				$dn_no = "DN-" . (sprintf("%'.06d", mt_rand(1, 999999)));
 				$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}'")->num_rows;
-				if($check <= 0)
-				break;
+				if ($check <= 0)
+					break;
 			}
 		}
+
 		$data .= ", dn_no = '{$dn_no}' ";
 
-		if(empty($id)){
+		if (empty($id)) {
 			$sql = "INSERT INTO `delivery_list` set {$data} ";
-		}else{
+		} else {
 			$sql = "UPDATE `delivery_list` set {$data} where id = '{$id}' ";
 		}
+
 		$save = $this->conn->query($sql);
-		if($save){
+
+		if ($save) {
 			$resp['status'] = 'success';
-			$dn_id = empty($id) ? $this->conn->insert_id : $id ;
+			$dn_id = empty($id) ? $this->conn->insert_id : $id;
 			$resp['id'] = $dn_id;
 			$data = "";
-			foreach($item_id as $k =>$v){
-				if(!empty($data)) $data .=",";
+			foreach ($item_id as $k => $v) {
+				if (!empty($data)) $data .= ",";
 				$data .= "('{$dn_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
 			}
-			if(!empty($data)){
+			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
 				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
 			}
-			if(empty($id))
-				$this->settings->set_flashdata('success',"Delivery Note successfully saved.");
+			if (empty($id))
+				$this->settings->set_flashdata('success', "Delivery Note successfully saved.");
 			else
-				$this->settings->set_flashdata('success',"Delivery Note successfully updated.");
-		}else{
+				$this->settings->set_flashdata('success', "Delivery Note successfully updated.");
+		} else {
 			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
+			$resp['err'] = $this->conn->error . "[{$sql}]";
 		}
 		return json_encode($resp);
 	}
+
 	function delete_dn(){
+
 		extract($_POST);
+
 		$del = $this->conn->query("DELETE FROM `delivery_list` where id = '{$id}'");
-		if($del){
+		if ($del) {
 			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Delivery Note successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Delivery Note successfully deleted.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
 
-	//.......................................................................................................
-
-	function save_rent(){
+	function confirm_delivery(){
 		extract($_POST);
-		$data = "";
-		foreach($_POST as $k =>$v){
-			if(!in_array($k,array('id')) && !is_array($_POST[$k])){
-				if(!empty($data)) $data .=",";
-				$v = addslashes($v);
-				$data .= " `{$k}`='{$v}' ";
-			}
-		}
-		switch ($rent_type) {
-			case 1:
-				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +1 month'))."' ";
-				break;
-			
-			case 2:
-				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +3 month'))."' ";
-				break;
-			case 3:
-				$data .= ", `date_end`='".date("Y-m-d",strtotime($date_rented.' +1 year'))."' ";
-				break;
-			default:
-				# code...
-				break;
-		}
-		if(empty($id)){
-			$sql = "INSERT INTO `rent_list` set {$data} ";
-		}else{
-			$sql = "UPDATE `rent_list` set {$data} where id = '{$id}' ";
-		}
-		$save = $this->conn->query($sql);
-		if($save){
+		$confirm = $this->conn->query("UPDATE delivery_list SET status = 1 WHERE id = '{$id}'");
+		if ($confirm) {
 			$resp['status'] = 'success';
-			if(empty($id))
-				$this->settings->set_flashdata('success',"New Rent successfully saved.");
-			else
-				$this->settings->set_flashdata('success',"Rent successfully updated.");
-			$this->settings->conn->query("UPDATE `unit_list` set `status` = '{$status}' where id = '{$unit_id}'");
-		}else{
-			$resp['status'] = 'failed';
-			$resp['err'] = $this->conn->error."[{$sql}]";
-		}
-		return json_encode($resp);
-	}
-	function delete_rent(){
-		extract($_POST);
-		$del = $this->conn->query("DELETE FROM `rent_list` where id = '{$id}'");
-		if($del){
-			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success',"Rent successfully deleted.");
-		}else{
+			$this->settings->set_flashdata('success', "Delivery Succesfully Confirmed.");
+		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
-
 	}
+
+	//.............................................................................................//
+
 	function delete_img(){
+
 		extract($_POST);
-		if(is_file($path)){
-			if(unlink($path)){
+
+		if (is_file($path)) {
+			if (unlink($path)) {
 				$resp['status'] = 'success';
-			}else{
+			} else {
 				$resp['status'] = 'failed';
-				$resp['error'] = 'failed to delete '.$path;
+				$resp['error'] = 'failed to delete ' . $path;
 			}
-		}else{
+		} else {
 			$resp['status'] = 'failed';
-			$resp['error'] = 'Unkown '.$path.' path';
+			$resp['error'] = 'Unkown ' . $path . ' path';
 		}
 		return json_encode($resp);
 	}
-	function renew_rent(){
-		extract($_POST);
-		$qry = $this->conn->query("SELECT * FROM `rent_list` where id ='{$id}'");
-		$res = $qry->fetch_array();
-		switch ($res['rent_type']) {
-			case 1:
-				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +1 month'))."' ";
-				break;
-			case 2:
-				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +3 month'))."' ";
-				break;
-			case 3:
-				$date_end = " `date_end`='".date("Y-m-d",strtotime($res['date_end'].' +1 year'))."' ";
-				break;
-			default:
-				# code...
-				break;
-		}
-		$update = $this->conn->query("UPDATE `rent_list` set {$date_end}, date_rented = date_end where id = '{$id}' ");
-		if($update){
-			$resp['status'] = 'success';
-			$this->settings->set_flashdata('success'," Rent successfully renewed.");
-		}else{
-			$resp['status'] = 'failed';
-			$resp['error'] = $this->conn->error;
-		}
-		return json_encode($resp);
-	}
+
 }
 
 $Master = new Master();
@@ -539,53 +565,53 @@ $sysset = new SystemSettings();
 switch ($action) {
 	case 'save_supplier':
 		echo $Master->save_supplier();
-	break;
+		break;
 	case 'delete_supplier':
 		echo $Master->delete_supplier();
-	break;
+		break;
 	case 'save_project':
 		echo $Master->save_project();
-	break;
+		break;
 	case 'delete_project':
 		echo $Master->delete_project();
-	break;
+		break;
+	case 'confirm_delivery':
+		echo $Master->confirm_delivery();
+		break;
 	case 'save_item':
 		echo $Master->save_item();
-	break;
+		break;
 	case 'delete_item':
 		echo $Master->delete_item();
-	break;
+		break;
 	case 'search_items':
 		echo $Master->search_items();
-	break;
+		break;
 	case 'save_po':
 		echo $Master->save_po();
-	break;
+		break;
 	case 'delete_po':
 		echo $Master->delete_po();
-	break;
+		break;
+	case 'approve_po':
+		echo $Master->approve_po();
+		break;
 	case 'save_rq':
 		echo $Master->save_rq();
-	break;
+		break;
 	case 'delete_rq':
 		echo $Master->delete_rq();
-	break;
+		break;
+	case 'approve_requisition':
+		echo $Master->approve_requisition();
+		break;
 	case 'save_dn':
 		echo $Master->save_dn();
-	break;
+		break;
 	case 'delete_dn':
 		echo $Master->delete_dn();
-	break;
-	case 'save_rent':
-		echo $Master->save_rent();
-	break;
-	case 'delete_rent':
-		echo $Master->delete_rent();
-	break;
-	case 'renew_rent':
-		echo $Master->renew_rent();
-	break;
-	
+		break;
+
 	default:
 		// echo $sysset->index();
 		break;
