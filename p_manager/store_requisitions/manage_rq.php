@@ -34,9 +34,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
              <?php
-			//   $users_query = $conn->query("SELECT type, type FROM users");
-			//   while($row = $users_query->fetch_assoc());
-              $ordered_by = 2;
 			  $approved_by = 3;
 			  $fulfilled_by = 4;
 			  $checked_by = 5;
@@ -139,18 +136,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 									<th class="p-1 text-right" colspan="6"><span><button class="btn btn btn-sm btn-flat btn-primary py-0 mx-1" type="button" id="add_row">Add Row</button></span> Sub Total</th>
 									<th class="p-1 text-right" id="sub_total">0</th>
 								</tr>
-								<!-- <tr>
-									<th class="p-1 text-right" colspan="6">Discount (%)
-									<input type="number" step="any" name="discount_percentage" class="border-light text-right" value="<?php echo isset($discount_percentage) ? $discount_percentage : 0 ?>">
-									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
-								</tr> -->
-								<!-- <tr>
-									<th class="p-1 text-right" colspan="6">Tax Inclusive (%)
-									<input type="number" step="any" name="tax_percentage" class="border-light text-right" value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
-									</th>
-									<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
-								</tr> -->
 								<tr>
 									<th class="p-1 text-right" colspan="6">Total</th>
 									<th class="p-1 text-right" id="total">0</th>
@@ -223,18 +208,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 				_price = _price.replace(/\,/gi,'')
 				_total += parseFloat(_price)
 		})
-		// var discount_perc = 0
-		// if($('[name="discount_percentage"]').val() > 0){
-		// 	discount_perc = $('[name="discount_percentage"]').val()
-		// }
-		// var discount_amount = _total * (discount_perc/100);
-		// $('[name="discount_amount"]').val(parseFloat(discount_amount).toLocaleString("en-US"))
-		// var tax_perc = 0
-		// if($('[name="tax_percentage"]').val() > 0){
-		// 	tax_perc = $('[name="tax_percentage"]').val()
-		// }
-		// var tax_amount = _total * (tax_perc/100);
-		// $('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
 		$('#total').text(parseFloat(_total).toLocaleString("en-US"))
 	}
@@ -271,9 +244,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
 				calculate()
 			})
-			// $('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress',function(e){
-			// 	calculate()
-			// })
 		})
 		if($('#item-list .po-item').length > 0){
 			$('#item-list .po-item').each(function(){

@@ -33,8 +33,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo  "Delivery Note "?> </h3>
+        <h3 class="card-title"><?php echo  "Delivery Note " ?> </h3>
         <div class="card-tools">
+            <?php if ($status == 0) : ?>
+                <a class="btn btn-flat btn-primary confirm_delivery" href="javascript:void(0)" data-id="<?php echo $_GET['id']?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm this Delivery</a>
+            <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=deliveries">Back</a>
         </div>
@@ -107,20 +110,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </thead>
                     <tbody>
                         <?php
-                            if (isset($id)) :
+                        if (isset($id)) :
                             $requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
-                            while ($row = $requested_items_qry->fetch_assoc()) :?>
-                            <tr class="po-item" data-id="">
-                                <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
-                                <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
-                                <td class="align-middle p-1"><?php echo $row['name'] ?></td>
-                                <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                            </tr>
-                            <?php endwhile;
-                            endif; 
+                            while ($row = $requested_items_qry->fetch_assoc()) : ?>
+                                <tr class="po-item">
+                                    <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
+                                    <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
+                                    <td class="align-middle p-1"><?php echo $row['name'] ?></td>
+                                    <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
+                                </tr>
+                        <?php endwhile;
+                        endif;
                         ?>
                     </tbody>
-                    
+
                 </table>
 
                 <div class="row">
@@ -152,6 +155,35 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </div>
 
 <script>
+    $(document).ready(function() {
+        $('.confirm_delivery').click(function() {
+            _conf("Are you sure to confirm this delivery? Action cannot be undone.", "confirm_delivery", [$(this).attr('data-id')])
+        })
+    })
+
+    function confirm_delivery($id){
+		start_loader();
+		$.ajax({
+			url:_base_url_+"classes/Master.php?f=confirm_delivery",
+			method:"POST",
+			data:{id: $id},
+			dataType:"json",
+			error:err=>{
+				console.log(err)
+				alert_toast("An error occured.",'error');
+				end_loader();
+			},
+			success:function(resp){
+				if(typeof resp== 'object' && resp.status == 'success'){
+					location.reload();
+				}else{
+					alert_toast("An error occured.",'error');
+					end_loader();
+				}
+			}
+		})
+	}
+
     $(function() {
         $('#print').click(function(e) {
             e.preventDefault();

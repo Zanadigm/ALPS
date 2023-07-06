@@ -11,13 +11,11 @@ class SystemSettings extends DBConnection{
 		return($this->conn);
 	}
 	function load_system_info(){
-		// if(!isset($_SESSION['system_info'])){
-			$sql = "SELECT * FROM system_info";
-			$qry = $this->conn->query($sql);
-				while($row = $qry->fetch_assoc()){
-					$_SESSION['system_info'][$row['meta_field']] = $row['meta_value'];
-				}
-		// }
+		$sql = "SELECT * FROM system_info";
+		$qry = $this->conn->query($sql);
+			while($row = $qry->fetch_assoc()){
+				$_SESSION['system_info'][$row['meta_field']] = $row['meta_value'];
+			}
 	}
 	function update_system_info(){
 		$sql = "SELECT * FROM system_info";
@@ -145,4 +143,3 @@ switch ($action) {
 		// echo $sysset->index();
 		break;
 }
-?>

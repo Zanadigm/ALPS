@@ -35,36 +35,51 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
+            <?php if ($status == 0) : ?>
+                <a class="btn btn-flat btn-primary approve_requisition" href="javascript:void(0)" data-id="<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;">Approve this order</a>
+            <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
-            <a class="btn btn-sm btn-flat btn-primary" href="?page=store_requisitions/manage_rq&id=<?php echo $id ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
     <div class="card-body" id="out_print">
+
+
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
+
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
                     <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>STORE REQUISITION ORDER</b></h2>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>STORE REQUISITION ORDER</H2>
+                    <p class="m-0">RQ No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                </div>
             </div>
+
         </div>
 
         <div class="row">
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">RQ #:</label>
-                <p><?php echo isset($rq_no) ? $rq_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="date_created" class="contorol-label">Date Ordered:</label>
-                <p><?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                <label for="ordered_by" class="contorol-label">Ordered By:</label>
+                <?php
+                if (isset($ordered_by) && ($ordered_by == 2)) {
+                    $users_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 2");
+                    $rows = $users_qry->fetch_assoc(); ?>
+                    <p><?php echo $rows['name'] ?></p>
+                <?php }
+                ?>
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
@@ -82,14 +97,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="ordered_by" class="contorol-label">Ordered By:</label>
-                <?php
-                if (isset($ordered_by) && ($ordered_by == 2)) {
-                    $users_qry = $conn->query("SELECT concat(firstname,' ',lastname) as name FROM `users` WHERE type = 2");
-                    $rows = $users_qry->fetch_assoc(); ?>
-                    <p><?php echo $rows['name'] ?></p>
-                <?php }
-                ?>
+                <label for="p_id" class="control-label">Account to Charge/Cost Center:</label>
+                <p><?php echo isset($cost_center) ? $cost_center : '' ?></p>
+            </div>
+
+            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
+                <label for="deliver_to" class="contorol-label">Deliver To:</label>
+                <p><?php echo isset($deliver_to) ? $deliver_to : '' ?></p>
             </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
@@ -102,18 +116,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <p><?php echo isset($building_name) ? $building_name : '' ?></p>
             </div>
 
-            <div class="col-md-6 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Deliver To:</label>
-                <p><?php echo isset($deliver_to) ? $deliver_to : '' ?></p>
-            </div>
-
-            <div class="col-md-6 form-group" style="border: 1px solid #dee2e6;">
-                <label for="p_id" class="control-label">Account to Charge/Cost Center:</label>
-                <p><?php echo isset($cost_center) ? $cost_center : '' ?></p>
-            </div>
-
         </div>
-
         <div class="row">
             <div class="col-md-12">
                 <table class="table table-striped table-bordered" id="item-list">
@@ -258,6 +261,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </table>
 <script>
     $(function() {
+        $(document).ready(function() {
+            $('.approve_requisition').click(function() {
+                _conf("Are you sure to approve this Requisition Order? Action cannot be undone!", "approve_requisition", [$(this).attr('data-id')])
+            })
+        })
+
         $('#print').click(function(e) {
             e.preventDefault();
             start_loader();
@@ -280,4 +289,29 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             }, 200);
         })
     })
+
+    function approve_requisition($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=approve_requisition",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
 </script>

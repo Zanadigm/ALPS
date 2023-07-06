@@ -15,16 +15,12 @@
 		height: 50vh;
 		width: 100%;
 		object-fit: contain;
-		/* border-radius: 100% 100%; */
 	}
 </style>
 <div class="col-lg-12">
 	<div class="card card-outline card-primary">
 		<div class="card-header">
 			<h5 class="card-title">System Information</h5>
-			<!-- <div class="card-tools">
-				<a class="btn btn-block btn-sm btn-default btn-flat border-primary new_department" href="javascript:void(0)"><i class="fa fa-plus"></i> Add New</a>
-			</div> -->
 		</div>
 		<div class="card-body">
 			<form action="" id="system-frm">
@@ -42,13 +38,22 @@
 					<input type="text" class="form-control form-control-sm" name="company_name" id="company_name" value="<?php echo  $_settings->info('company_name') ?>">
 				</div>
 				<div class="form-group">
-					<label for="company_email" class="control-label">Company Email</label>
-					<input type="text" class="form-control form-control-sm" name="company_email" id="company_email" value="<?php echo  $_settings->info('company_email') ?>">
+					<label for="company_location" class="control-label">Company Location</label>
+					<input type="text" class="form-control form-control-sm" name="company_location" id="company_location" value="<?php echo  $_settings->info('company_location') ?>">
 				</div>
 				<div class="form-group">
 					<label for="company_address" class="control-label">Company Address</label>
-					<textarea rows="3" class="form-control form-control-sm" name="company_address" id="company_address"><?php echo  $_settings->info('company_address') ?></textarea>
+					<input type="text" class="form-control form-control-sm" name="company_address" id="company_address" value="<?php echo  $_settings->info('company_address') ?>">
 				</div>
+				<div class="form-group">
+					<label for="company_mobile" class="control-label">Company Mobile</label>
+					<input type="text"  class="form-control form-control-sm" name="company_mobile" id="company_mobile" value="<?php echo  $_settings->info('company_mobile') ?>">
+				</div>
+				<div class="form-group">
+					<label for="company_email" class="control-label">Company Email</label>
+					<input type="text" class="form-control form-control-sm" name="company_email" id="company_email" value="<?php echo  $_settings->info('company_email') ?>">
+				</div>
+				
 			
 			<div class="form-group">
 				<label for="" class="control-label">System Logo</label>

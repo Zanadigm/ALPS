@@ -73,10 +73,6 @@
 				                  </button>
 				                  <div class="dropdown-menu" role="menu">
 								  	<a class="dropdown-item" href="?page=store_requisitions/view_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-									<?php if($row['status'] == 0): ?>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item" href="?page=store_requisitions/manage_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Edit</a>
-									<?php endif; ?>
 				                  </div>
 							</td>
 						</tr>
