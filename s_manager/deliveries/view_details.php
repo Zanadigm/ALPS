@@ -33,7 +33,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo  "Delivery Note "?> </h3>
+        <h3 class="card-title"><?php echo  "Delivery Note " ?> </h3>
         <div class="card-tools">
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=deliveries">Back</a>
@@ -41,17 +41,28 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
+
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
                     <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>DELIVERY NOTE</b></h2>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>DELIVERY NOTE</H2>
+                    <p class="m-0">Ref No : <?php echo ($dn_no) ?></p>
+                    <p class="m-0">Requisition No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                </div>
             </div>
+
         </div>
 
         <div class="row">
@@ -107,20 +118,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </thead>
                     <tbody>
                         <?php
-                            if (isset($id)) :
+                        if (isset($id)) :
                             $requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
-                            while ($row = $requested_items_qry->fetch_assoc()) :?>
-                            <tr class="po-item" data-id="">
-                                <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
-                                <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
-                                <td class="align-middle p-1"><?php echo $row['name'] ?></td>
-                                <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                            </tr>
-                            <?php endwhile;
-                            endif; 
+                            while ($row = $requested_items_qry->fetch_assoc()) : ?>
+                                <tr class="po-item" data-id="">
+                                    <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
+                                    <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
+                                    <td class="align-middle p-1"><?php echo $row['name'] ?></td>
+                                    <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
+                                </tr>
+                        <?php endwhile;
+                        endif;
                         ?>
                     </tbody>
-                    
+
                 </table>
 
                 <div class="row">

@@ -40,6 +40,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo isset($id) ? "Update Purchase Order Details" : "New Purchase Order" ?> </h3>
         <div class="card-tools">
+            <?php if ($status == 0) : ?>
+                <a class="btn btn-flat btn-primary approve_po" href="javascript:void(0)" data-id="<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;">Approve this order</a>
+            <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-primary" href="?page=purchase_orders/manage_po&id=<?php echo $id ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=purchase_orders">Back</a>
@@ -65,12 +68,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <H2>PURCHASE ORDER</H2>
                     <p class="m-0">Order No : <?php echo ($po_no) ?></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                    <?php if ($status == 0){?>
+                    <p class="m-0">Status : Pending</p>
+                    <?php }else{?>
+                        <p class="m-0">Status : Approved</p>
+                        <p class="m-0">Approved By : Remmy Amya</p>
+                    <?php } ?>
                 </div>
             </div>
 
         </div>
         <div class="row mb-2" style="margin-bottom: 1.5rem !important">
-            <div class="div col-8"></div>
+            <div class="div col-8" style="align-self: flex-end">
+                <p style="margin-bottom: 0;">Please supply the following items in good order and condition as per your quote.</p>
+            </div>
             <div class="col-4">
                 <p class="m-0"><b>Vendor</b></p>
                 <?php
@@ -108,7 +119,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $order_items_qry = $conn->query("SELECT o.*,i.name, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
+                            $order_items_qry = $conn->query("SELECT o.*,i.name,i.unit_price, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
                             $sub_total = 0;
                             while ($row = $order_items_qry->fetch_assoc()) :
                                 $sub_total += ($row['quantity'] * $row['unit_price']);
@@ -147,26 +158,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </tfoot>
                 </table>
                 <div class="row">
-                    <div class="col-6">
+                    <div class="col-12">
                         <label for="notes" class="control-label">Notes</label>
                         <p><?php echo isset($notes) ? $notes : '' ?></p>
-                    </div>
-                    <div class="col-6">
-                        <label for="status" class="control-label">Status</label>
-                        <br>
-                        <?php
-                        switch ($status) {
-                            case 1:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Approved</span>";
-                                break;
-                            case 2:
-                                echo "<span class='py-2 px-4 btn-flat btn-danger'>Denied</span>";
-                                break;
-                            default:
-                                echo "<span class='py-2 px-4 btn-flat btn-secondary'>Pending</span>";
-                                break;
-                        }
-                        ?>
                     </div>
                 </div>
             </div>
@@ -197,6 +191,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </table>
 <script>
     $(function() {
+        $(document).ready(function() {
+            $('.approve_po').click(function() {
+                _conf("Are you sure to approve this Local Purchase Order? Action cannot be undone!", "approve_po", [$(this).attr('data-id')])
+            })
+        })
+
         $('#print').click(function(e) {
             e.preventDefault();
             start_loader();
@@ -219,4 +219,29 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             }, 200);
         })
     })
+
+    function approve_po($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=approve_po",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
 </script>

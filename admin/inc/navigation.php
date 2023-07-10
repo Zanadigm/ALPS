@@ -36,7 +36,7 @@
                 <a href="<?php echo base_url ?>admin/?page=projects" class="nav-link nav-projects">
                   <i class="nav-icon fas fa-truck-loading"></i>
                   <p>
-                    Cost Centre List
+                    Cost Centers
                   </p>
                 </a>
               </li>

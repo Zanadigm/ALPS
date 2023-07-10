@@ -33,10 +33,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo isset($id) ? "Update Requisition Order Details" : "New Requisition Order" ?> </h3>
+        <h3 class="card-title"><?php echo isset($id) ? "Requisition Order Details" : "New Requisition Order" ?> </h3>
         <div class="card-tools">
             <?php if ($status == 1) : ?>
-                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
+                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Process This Order</a>
             <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
@@ -62,6 +62,22 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <H2>STORE REQUISITION ORDER</H2>
                     <p class="m-0">RQ No : <?php echo ($rq_no) ?></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                    <?php 
+                    switch ($status) {
+                        case 1:
+                            echo "<p class='m-0'>Status: Approved</p>";
+                            break;
+                        case 2:
+                            echo "<p class='m-0'>Status: Processing</p>";
+                            break;
+                        case 3:
+                            echo "<p class='m-0'>Status: Fulfilled</p>";
+                            break;
+                        default:
+                            echo "<p class='m-0'>Status: Pending</p>";
+                            break;
+                    }
+                    ?>
                 </div>
             </div>
 
@@ -140,7 +156,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit_price, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
                             $sub_total = 0;
                             while ($row = $requested_items_qry->fetch_assoc()) :
                                 $sub_total += ($row['quantity'] * $row['unit_price']);
@@ -168,6 +184,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
                 <div class="row">
 
+                    <div class="col-12">
+                        <label for="notes" class="control-label">Notes</label>
+                        <p><?php echo isset($notes) ? $notes : '' ?></p>
+                    </div>
+
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="date_fulfilled" class="contorol-label">Date Fulfilled:</label>
                         <?php
@@ -189,7 +210,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 <p><?php echo $row['name'] ?></p>
                             <?php }
                         } else { ?>
-                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
                         <?php } ?>
                     </div>
 
@@ -203,36 +224,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 <p><?php echo $row['name'] ?></p>
                             <?php }
                         } else { ?>
-                            <p style="color:red"><?php echo ("Pending Flfillment") ?></p>
+                            <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
                         <?php } ?>
                     </div>
-
-                    <div class="col-4">
-                        <label for="notes" class="control-label">Notes</label>
-                        <p><?php echo isset($notes) ? $notes : '' ?></p>
-                    </div>
-
-                    <div class="col-4">
-                        <label for="status" class="control-label">Status</label>
-                        <br>
-                        <?php
-                        switch ($status) {
-                            case 1:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Approved</span>";
-                                break;
-                            case 2:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Processing/span>";
-                                break;
-                            case 3:
-                                echo "<span class='py-2 px-4 btn-flat btn-success'>Fulfiled</span>";
-                                break;
-                            default:
-                                echo "<span class='py-2 px-4 btn-flat btn-secondary'>Pending</span>";
-                                break;
-                        }
-                        ?>
-                    </div>
-
                 </div>
             </div>
         </div>

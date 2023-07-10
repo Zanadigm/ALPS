@@ -34,8 +34,6 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
              <?php
-			//   $users_query = $conn->query("SELECT type, type FROM users");
-			//   while($row = $users_query->fetch_assoc());
               $ordered_by = 2;
 			  $approved_by = 3;
 			  $fulfilled_by = 4;
@@ -86,9 +84,9 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 					<table class="table table-striped table-bordered" id="item-list">
 						<colgroup>
 							<col width="5%">
+							<col width="20%">
 							<col width="5%">
 							<col width="10%">
-							<col width="20%">
 							<col width="30%">
 							<col width="15%">
 							<col width="15%">
@@ -96,9 +94,9 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						<thead>
 							<tr class="bg-navy disabled">
 								<th class="px-1 py-1 text-center"></th>
+								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Qty</th>
 								<th class="px-1 py-1 text-center">Unit</th>
-								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Description</th>
 								<th class="px-1 py-1 text-center">Price</th>
 								<th class="px-1 py-1 text-center">Total</th>
@@ -107,7 +105,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 						<tbody>
 							<?php 
 							if(isset($id)):
-							$requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+							$requested_items_qry = $conn->query("SELECT r.*,i.name,i.unit_price, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where rq_id = '$id' ");
 							echo $conn->error;
 							while($row = $requested_items_qry->fetch_assoc()):
 							?>
@@ -115,19 +113,19 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 								<td class="align-middle p-1 text-center">
 									<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
 								</td>
+								<td class="align-middle p-1">
+									<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
+									<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required/>
+								</td>
 								<td class="align-middle p-0 text-center">
 									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>"/>
 								</td>
 								<td class="align-middle p-1">
 									<input type="text" class="text-center w-100 border-0" name="unit[]" value="<?php echo $row['unit'] ?>"/>
 								</td>
-								<td class="align-middle p-1">
-									<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
-									<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required/>
-								</td>
 								<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
 								<td class="align-middle p-1">
-									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>"/>
+									<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]"  readonly value="<?php echo ($row['unit_price']) ?>"/>
 								</td>
 								<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 							</tr>
@@ -175,19 +173,19 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 		<td class="align-middle p-1 text-center">
 			<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
 		</td>
+		<td class="align-middle p-1">
+			<input type="hidden" name="item_id[]">
+			<input type="text" class="text-center w-100 border-0 item_id" required/>
+		</td>
 		<td class="align-middle p-0 text-center">
 			<input type="number" class="text-center w-100 border-0" step="any" name="qty[]"/>
 		</td>
 		<td class="align-middle p-1">
 			<input type="text" class="text-center w-100 border-0" name="unit[]"/>
 		</td>
-		<td class="align-middle p-1">
-			<input type="hidden" name="item_id[]">
-			<input type="text" class="text-center w-100 border-0 item_id" required/>
-		</td>
 		<td class="align-middle p-1 item-description"></td>
 		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="0"/>
+			<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]" readonly value="0"/>
 		</td>
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
@@ -236,6 +234,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 				console.log(ui)
 				_item.find('input[name="item_id[]"]').val(ui.item.id)
 				_item.find('.item-description').text(ui.item.description)
+				_item.find('.unit-price').val(ui.item.unit_price)
 			}
 		})
 	}
@@ -245,7 +244,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			var tr = $('#item-clone tr').clone()
 			$('#item-list tbody').append(tr)
 			_autocomplete(tr)
-			tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
+			tr.find('[name="qty[]"]').on('input keypress',function(e){
 				calculate()
 			})
 		})
@@ -253,13 +252,13 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			$('#item-list .po-item').each(function(){
 				var tr = $(this)
 				_autocomplete(tr)
-				tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
+				tr.find('[name="qty[]"]').on('input keypress',function(e){
 					calculate()
 				})
 				$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress',function(e){
 					calculate()
 				})
-				tr.find('[name="qty[]"],[name="unit_price[]"]').trigger('keypress')
+				tr.find('[name="qty[]"]').trigger('keypress')
 			})
 		}else{
 		$('#add_row').trigger('click')

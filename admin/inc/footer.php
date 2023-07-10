@@ -59,7 +59,7 @@
   <strong>Copyright © <?php echo date('Y') ?>.</strong>
   All rights reserved.
   <div class="float-right d-none d-sm-inline-block">
-    <b><?php echo $_settings->info('short_name') ?> (by: <a href="mailto:geofreyongeta501@gmail.com" target="blank">Arbo Tech</a> )</b> v1.0
+    <b><?php echo $_settings->info('short_name') ?> (by: <a href="mailto:geofreyongeta501@gmail.com" target="blank">ZanaDynamics</a> )</b> v1.0
   </div>
 </footer>
 </div>

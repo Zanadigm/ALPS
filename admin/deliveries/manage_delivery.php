@@ -25,8 +25,7 @@
 		<form action="" id="po-form">
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 
-             <?php
-			   
+               <?php
 			    $order_id = $_GET['rqid'];
 				$qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
 				if($qry->num_rows > 0){
@@ -34,10 +33,10 @@
 						$$k=$v;
 					}
 				}
-			?>
+			   ?>
 
 			<div class="row">
-			    <div class="col-md-6 form-group">
+			    <div class="col-md-6 form-group" hidden="true">
 					<label for="rq_no">RQ # <span class="po_err_msg text-danger"></span></label>
 					<input type="text" class="form-control form-control-sm rounded-0" id="rq_no" name="rq_no" value="<?php echo isset($id) ? $id : '' ?>">
 					
@@ -61,20 +60,17 @@
 						<?php endwhile; ?>
 					</select>
 				</div>
-
-				
 			</div>
+			
 			<div class="row">
 				<div class="col-md-12">
 					<table class="table table-striped table-bordered" id="item-list">
 						<colgroup>
 							<col width="5%">
 							<col width="5%">
-							<col width="10%">
 							<col width="20%">
 							<col width="30%">
-							<col width="15%">
-							<col width="15%">
+							<col width="40%">
 						</colgroup>
 						<thead>
 							<tr class="bg-navy disabled">
@@ -83,8 +79,6 @@
 								<th class="px-1 py-1 text-center">Unit</th>
 								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Description</th>
-								<th class="px-1 py-1 text-center">Price</th>
-								<th class="px-1 py-1 text-center">Total</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -109,32 +103,16 @@
 									<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>" required style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
 								</td>
 								<td class="align-middle p-1 item-description" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo $row['description'] ?></td>
-								<td class="align-middle p-1">
-									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
-								</td>
-								<td class="align-middle p-1 text-right total-price" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 							</tr>
 							<?php endwhile;endif; ?>
 						</tbody>
-						<tfoot>
-							<tr class="bg-lightblue">
-								<tr>
-									<th class="p-1 text-right" colspan="6">Sub Total</th>
-									<th class="p-1 text-right" id="sub_total">0</th>
-								</tr>
-								<tr>
-									<th class="p-1 text-right" colspan="6">Total</th>
-									<th class="p-1 text-right" id="total">0</th>
-								</tr>
-							</tr>
-						</tfoot>
 					</table>
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" hidden="true">
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>
@@ -148,7 +126,7 @@
 	</div>
 	<div class="card-footer">
 		<button class="btn btn-flat btn-primary" form="po-form">Save</button>
-		<a class="btn btn-flat btn-default" href="?page=deliveries">Cancel</a>
+		<a class="btn btn-flat btn-default" href="?page=store_requisitions">Cancel</a>
 	</div>
 </div>
 <table class="d-none" id="item-clone">
@@ -167,13 +145,8 @@
 			<input type="text" class="text-center w-100 border-0 item_id" required/>
 		</td>
 		<td class="align-middle p-1 item-description"></td>
-		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="0"/>
-		</td>
-		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
 </table>
-
 <script>
 	function rem_item(_this){
 		_this.closest('tr').remove()
@@ -196,6 +169,30 @@
 		})
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
 		$('#total').text(parseFloat(_total).toLocaleString("en-US"))
+	}
+
+	function _autocomplete(_item){
+		_item.find('.item_id').autocomplete({
+			source:function(request, response){
+				$.ajax({
+					url:_base_url_+"classes/Master.php?f=search_items",
+					method:'POST',
+					data:{q:request.term},
+					dataType:'json',
+					error:err=>{
+						console.log(err)
+					},
+					success:function(resp){
+						response(resp)
+					}
+				})
+			},
+			select:function(event,ui){
+				console.log(ui)
+				_item.find('input[name="item_id[]"]').val(ui.item.id)
+				_item.find('.item-description').text(ui.item.description)
+			}
+		})
 	}
 
 	$(document).ready(function(){
@@ -268,5 +265,6 @@
 				}
 			})
 		})
+        
 	})
 </script>

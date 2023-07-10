@@ -37,7 +37,7 @@
 					$qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl inner join `users` u on dl.driver_id = u.id order by unix_timestamp(dl.date_updated)");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(quantity * unit_price) as total FROM delivery_items where dn_id = '{$row['id']}'")->fetch_array()['total'];
+							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.unit_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];
 					?>  
 					    
 						<tr>
