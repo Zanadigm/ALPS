@@ -63,9 +63,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 					<table class="table table-striped table-bordered" id="item-list">
 						<colgroup>
 							<col width="5%">
+							<col width="20%">
 							<col width="5%">
 							<col width="10%">
-							<col width="20%">
 							<col width="30%">
 							<col width="15%">
 							<col width="15%">
@@ -73,9 +73,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						<thead>
 							<tr class="bg-navy disabled">
 								<th class="px-1 py-1 text-center"></th>
+								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Qty</th>
 								<th class="px-1 py-1 text-center">Unit</th>
-								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Description</th>
 								<th class="px-1 py-1 text-center">Price</th>
 								<th class="px-1 py-1 text-center">Total</th>
@@ -84,7 +84,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						<tbody>
 							<?php
 							if (isset($id)) :
-								$order_items_qry = $conn->query("SELECT o.*,i.name, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
+								$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit_price, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
 								echo $conn->error;
 								while ($row = $order_items_qry->fetch_assoc()) :
 							?>
@@ -92,19 +92,20 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 										<td class="align-middle p-1 text-center">
 											<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
 										</td>
+										<td class="align-middle p-1">
+											<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
+											<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required />
+										</td>
+
 										<td class="align-middle p-0 text-center">
 											<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" />
 										</td>
 										<td class="align-middle p-1">
 											<input type="text" class="text-center w-100 border-0" name="unit[]" value="<?php echo $row['unit'] ?>" />
 										</td>
-										<td class="align-middle p-1">
-											<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
-											<input type="text" class="text-center w-100 border-0 item_id" value="<?php echo $row['name'] ?>" required />
-										</td>
 										<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
 										<td class="align-middle p-1">
-											<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="<?php echo ($row['unit_price']) ?>" />
+											<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]" value="<?php echo ($row['unit_price']) ?>" />
 										</td>
 										<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 									</tr>
@@ -137,14 +138,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						</tfoot>
 					</table>
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" hidden="true">
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected' : '' ?>>Pending</option>
+								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected' : '' ?>>Approved</option>
+								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected' : '' ?>>Denied</option>
 							</select>
 						</div>
 					</div>
@@ -162,19 +165,19 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		<td class="align-middle p-1 text-center">
 			<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
 		</td>
+		<td class="align-middle p-1">
+			<input type="hidden" name="item_id[]">
+			<input type="text" class="text-center w-100 border-0 item_id" required />
+		</td>
 		<td class="align-middle p-0 text-center">
 			<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" />
 		</td>
 		<td class="align-middle p-1">
 			<input type="text" class="text-center w-100 border-0" name="unit[]" />
 		</td>
-		<td class="align-middle p-1">
-			<input type="hidden" name="item_id[]">
-			<input type="text" class="text-center w-100 border-0 item_id" required />
-		</td>
 		<td class="align-middle p-1 item-description"></td>
 		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="0" />
+			<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]" value="0" />
 		</td>
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
@@ -238,6 +241,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				console.log(ui)
 				_item.find('input[name="item_id[]"]').val(ui.item.id)
 				_item.find('.item-description').text(ui.item.description)
+				_item.find('.unit-price').val(ui.item.unit_price)
 			}
 		})
 	}
@@ -246,7 +250,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			var tr = $('#item-clone tr').clone()
 			$('#item-list tbody').append(tr)
 			_autocomplete(tr)
-			tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress', function(e) {
+			tr.find('[name="qty[]"]').on('input keypress', function(e) {
 				calculate()
 			})
 			$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress', function(e) {
@@ -257,13 +261,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			$('#item-list .po-item').each(function() {
 				var tr = $(this)
 				_autocomplete(tr)
-				tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress', function(e) {
+				tr.find('[name="qty[]"]').on('input keypress', function(e) {
 					calculate()
 				})
 				$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress', function(e) {
 					calculate()
 				})
-				tr.find('[name="qty[]"],[name="unit_price[]"]').trigger('keypress')
+				tr.find('[name="qty[]"]').trigger('keypress')
 			})
 		} else {
 			$('#add_row').trigger('click')
@@ -319,6 +323,5 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				}
 			})
 		})
-
 	})
 </script>

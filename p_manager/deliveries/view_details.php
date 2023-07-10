@@ -36,7 +36,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <h3 class="card-title"><?php echo  "Delivery Note " ?> </h3>
         <div class="card-tools">
             <?php if ($status == 0) : ?>
-                <a class="btn btn-flat btn-primary confirm_delivery" href="javascript:void(0)" data-id="<?php echo $_GET['id']?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm this Delivery</a>
+                <a class="btn btn-flat btn-primary confirm_delivery" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm this Delivery</a>
             <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=deliveries">Back</a>
@@ -44,17 +44,28 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
+            <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
+
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
                     <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>DELIVERY NOTE</b></h2>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>DELIVERY NOTE</H2>
+                    <p class="m-0">Ref No : <?php echo ($dn_no) ?></p>
+                    <p class="m-0">Requisition No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                </div>
             </div>
+
         </div>
 
         <div class="row">
@@ -161,28 +172,30 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         })
     })
 
-    function confirm_delivery($id){
-		start_loader();
-		$.ajax({
-			url:_base_url_+"classes/Master.php?f=confirm_delivery",
-			method:"POST",
-			data:{id: $id},
-			dataType:"json",
-			error:err=>{
-				console.log(err)
-				alert_toast("An error occured.",'error');
-				end_loader();
-			},
-			success:function(resp){
-				if(typeof resp== 'object' && resp.status == 'success'){
-					location.reload();
-				}else{
-					alert_toast("An error occured.",'error');
-					end_loader();
-				}
-			}
-		})
-	}
+    function confirm_delivery($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=confirm_delivery",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
 
     $(function() {
         $('#print').click(function(e) {

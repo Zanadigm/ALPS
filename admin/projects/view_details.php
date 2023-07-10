@@ -1,9 +1,9 @@
 <?php
-if(isset($_GET['id']) && $_GET['id'] > 0){
+if (isset($_GET['id']) && $_GET['id'] > 0) {
     $qry = $conn->query("SELECT * from `project_list` where id = '{$_GET['id']}'");
-    if($qry->num_rows > 0){
-        foreach($qry->fetch_assoc() as $k => $v){
-            $$k=stripslashes($v);
+    if ($qry->num_rows > 0) {
+        foreach ($qry->fetch_assoc() as $k => $v) {
+            $$k = stripslashes($v);
         }
     }
 }
@@ -29,36 +29,36 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo "Cost Center Summary"?> </h3>
+        <h3 class="card-title"><?php echo "Cost Center Summary" ?> </h3>
         <div class="card-tools">
+            <a href="" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Generate Invoice</a>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-6 d-flex align-items-center">
-                <div>
-                    <p class="m-0"><?php echo $_settings->info('company_name') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
-                    <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
-                </div>
-            </div>
-            
-            <div class="col-6">
-                <center><img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px"></center>
-                <h2 class="text-center"><b>COST CENTER SUMMARY</b></h2>
-            </div>
-        </div>
+            <div class="col-4">
+                <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
 
-        <div class="row mb 2">
-        <div class="col-6 ">
+            </div>
+            <div class="col-4 d-flex align-items-center">
                 <div>
-                    <p class="m-0"><?php echo $name?></p>
-                    <p class="m-0"><?php echo $description?></p>
-                    <p class="m-0"><?php echo $created_on?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_address') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_mobile') ?></p>
+                    <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
+            <div class="col-4 d-flex align-items-center">
+                <div>
+                    <H2>COST CENTER MATERIAL SUMMARY</H2>
+                    <p class="m-0">Cost Center : <?php echo ($name) ?></p>
+                    <p class="m-0">Description : <?php echo ($description) ?></p>
+                </div>
+            </div>
+
         </div>
 
         <div class="row">
@@ -73,7 +73,7 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                         <col width="15%">
                     </colgroup>
                     <thead>
-                        
+
                         <tr class="bg-navy disabled">
                             <th class="bg-navy disabled text-light px-1 py-1 text-center">Qty</th>
                             <th class="bg-navy disabled text-light px-1 py-1 text-center">Unit</th>
@@ -82,11 +82,11 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                             <th class="bg-navy disabled text-light px-1 py-1 text-center">Price</th>
                             <th class="bg-navy disabled text-light px-1 py-1 text-center">Sub Total</th>
                         </tr>
-                        
+
                     </thead>
                     <tbody>
                         <?php
-                        $summary = $conn->query("SELECT p.*, sum(di.quantity) as quantity, di.unit, i.name, i.description, di.unit_price from `project_list` p
+                        $summary = $conn->query("SELECT p.*, sum(di.quantity) as quantity, di.unit, i.name, i.description, i.unit_price from `project_list` p
                         inner join `rq_list`r on r.p_id = p.id
                         inner join `delivery_list` d on d.rq_no = r.id and d.status = 1
                         inner join `delivery_items` di on di.dn_id = d.id
@@ -96,15 +96,14 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
                         while ($row = $summary->fetch_assoc()) :
                             $sub_total += ($row['quantity'] * $row['unit_price']);
                         ?>
-                        
-                        <tr class="po-item" data-id="">
-                            <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
-                            <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
-                            <td class="align-middle p-1"><?php echo $row['name'] ?></td>
-                            <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                            <td class="align-middle p-1"><?php echo number_format($row['unit_price']) ?></td>
-                            <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
-                        </tr>
+                            <tr class="po-item" data-id="">
+                                <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
+                                <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
+                                <td class="align-middle p-1"><?php echo $row['name'] ?></td>
+                                <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
+                                <td class="align-middle p-1"><?php echo number_format($row['unit_price']) ?></td>
+                                <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+                            </tr>
                         <?php endwhile; ?>
                     <tfoot>
                         <tr class="bg-lightblue">

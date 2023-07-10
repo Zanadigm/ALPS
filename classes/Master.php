@@ -233,7 +233,7 @@ class Master extends DBConnection
 
 		$data = array();
 		while ($row = $qry->fetch_assoc()) {
-			$data[] = array("label" => $row['name'], "id" => $row['id'], "description" => $row['description']);
+			$data[] = array("label" => $row['name'], "id" => $row['id'], "description" => $row['description'], "unit_price" => $row['unit_price']);
 		}
 		return json_encode($data);
 	}
@@ -295,11 +295,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$po_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
+				$data .= "('{$po_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `order_items` where po_id = '{$po_id}'");
-				$save = $this->conn->query("INSERT INTO `order_items` (`po_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `order_items` (`po_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Purchase Order successfully saved.");
@@ -395,11 +395,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$rq_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
+				$data .= "('{$rq_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `requisition_items` where rq_id = '{$rq_id}'");
-				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Requisition Order successfully saved.");
@@ -492,11 +492,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$dn_id}','{$v}','{$unit[$k]}','{$unit_price[$k]}','{$qty[$k]}')";
+				$data .= "('{$dn_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
-				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`unit`,`unit_price`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Delivery Note successfully saved.");

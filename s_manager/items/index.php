@@ -17,10 +17,11 @@
 				<colgroup>
 					<col width="5%">
 					<col width="15%">
-					<col width="25%">
-					<col width="25%">
-					<col width="15%">
-					<col width="15%">
+					<col width="20%">
+					<col width="30%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
 				</colgroup>
 				<thead>
 					<tr class="bg-navy disabled">
@@ -28,6 +29,7 @@
 						<th>Date Created</th>
 						<th>Item Name</th>
 						<th>Description</th>
+						<th>Unit Price</th>
 						<th>Status</th>
 						<th>Action</th>
 					</tr>
@@ -44,6 +46,7 @@
 							<td><?php echo date("Y-m-d H:i",strtotime($row['date_created'])) ?></td>
 							<td><?php echo $row['name'] ?></td>
 							<td class='truncate-3' title="<?php echo $row['description'] ?>"><?php echo $row['description'] ?></td>
+							<td><?php echo $row['unit_price'] ?></td>
 							<td class="text-center">
 								<?php if($row['status'] == 1): ?>
 									<span class="badge badge-success">Active</span>

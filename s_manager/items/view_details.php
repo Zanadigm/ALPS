@@ -21,6 +21,8 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <dd class="col-md-8">: <?php echo $name ?></dd>
             <dt class="col-md-4">Description</dt>
             <dd class="col-md-8">: <?php echo $description ?></dd>
+            <dt class="col-md-4">Unit Price</dt>
+            <dd class="col-md-8">: <?php echo $unit_price ?></dd>
             <dt class="col-md-4">Status</dt>
             <dd class="col-md-8">:&nbsp;
                 <?php if($status == 1): ?>

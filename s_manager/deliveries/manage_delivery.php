@@ -36,7 +36,7 @@
 			   ?>
 
 			<div class="row">
-			    <div class="col-md-6 form-group">
+			    <div class="col-md-6 form-group" hidden="true">
 					<label for="rq_no">RQ # <span class="po_err_msg text-danger"></span></label>
 					<input type="text" class="form-control form-control-sm rounded-0" id="rq_no" name="rq_no" value="<?php echo isset($id) ? $id : '' ?>">
 					
@@ -68,11 +68,9 @@
 						<colgroup>
 							<col width="5%">
 							<col width="5%">
-							<col width="10%">
 							<col width="20%">
 							<col width="30%">
-							<col width="15%">
-							<col width="15%">
+							<col width="40%">
 						</colgroup>
 						<thead>
 							<tr class="bg-navy disabled">
@@ -81,8 +79,6 @@
 								<th class="px-1 py-1 text-center">Unit</th>
 								<th class="px-1 py-1 text-center">Item</th>
 								<th class="px-1 py-1 text-center">Description</th>
-								<th class="px-1 py-1 text-center">Price</th>
-								<th class="px-1 py-1 text-center">Total</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -107,25 +103,9 @@
 									<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>" required style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
 								</td>
 								<td class="align-middle p-1 item-description" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo $row['description'] ?></td>
-								<td class="align-middle p-1">
-									<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]"  value="<?php echo ($row['unit_price']) ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
-								</td>
-								<td class="align-middle p-1 text-right total-price" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
 							</tr>
 							<?php endwhile;endif; ?>
 						</tbody>
-						<tfoot>
-							<tr class="bg-lightblue">
-								<tr>
-									<th class="p-1 text-right" colspan="6">Sub Total</th>
-									<th class="p-1 text-right" id="sub_total">0</th>
-								</tr>
-								<tr>
-									<th class="p-1 text-right" colspan="6">Total</th>
-									<th class="p-1 text-right" id="total">0</th>
-								</tr>
-							</tr>
-						</tfoot>
 					</table>
 					<div class="row">
 						<div class="col-md-12">
@@ -165,10 +145,6 @@
 			<input type="text" class="text-center w-100 border-0 item_id" required/>
 		</td>
 		<td class="align-middle p-1 item-description"></td>
-		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="0"/>
-		</td>
-		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
 </table>
 <script>

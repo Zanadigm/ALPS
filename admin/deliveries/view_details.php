@@ -35,6 +35,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo  "Delivery Note "?> </h3>
         <div class="card-tools">
+            <?php if ($status == 0) : ?>
+                <a class="btn btn-flat btn-primary confirm_delivery" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm this Delivery</a>
+            <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=deliveries">Back</a>
         </div>
