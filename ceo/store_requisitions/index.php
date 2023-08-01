@@ -11,7 +11,7 @@
 		<div class="container-fluid">
         <div class="container-fluid">
 			<table class="table table-hover table-striped">
-				<colgroup>
+				    <colgroup>
 					<col width="5%">
 					<col width="15%">
 					<col width="20%">
@@ -39,7 +39,7 @@
 					$qry = $conn->query("SELECT rq.*, p.name as pname FROM `rq_list` rq inner join `project_list` p on rq.p_id = p.id order by unix_timestamp(rq.date_updated)");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM requisition_items where rq_id = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.unit_price) as total FROM requisition_items r inner join item_list i on i.id = r.item_id where rq_id = '{$row['id']}'")->fetch_array()['total'];
+							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.selling_price) as total FROM requisition_items r inner join item_list i on i.id = r.item_id where rq_id = '{$row['id']}'")->fetch_array()['total'];
 					?>
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>

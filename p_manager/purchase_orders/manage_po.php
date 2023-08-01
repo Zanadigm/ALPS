@@ -18,7 +18,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		padding-left: 0.5rem;
 		height: auto;
 	}
-
 	/* Chrome, Safari, Edge, Opera */
 	input::-webkit-outer-spin-button,
 	input::-webkit-inner-spin-button {
@@ -26,8 +25,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		margin: 0;
 	}
 
-	[name="tax_percentage"],
-	[name="discount_percentage"] {
+	[name="tax_percentage"],[name="discount_percentage"] {
 		width: 5vw;
 	}
 </style>
@@ -54,7 +52,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
 				<div class="col-md-6 form-group">
 					<label for="po_no">PO # <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" value="<?php echo isset($po_no) ? $po_no : '' ?>">
+					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" readonly value="<?php echo isset($po_no) ? $po_no : '' ?>">
 					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
 				</div>
 			</div>
@@ -84,7 +82,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						<tbody>
 							<?php
 							if (isset($id)) :
-								$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit_price, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
+								$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.selling_price, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
 								echo $conn->error;
 								while ($row = $order_items_qry->fetch_assoc()) :
 							?>
@@ -100,14 +98,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 										<td class="align-middle p-0 text-center">
 											<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" />
 										</td>
-										<td class="align-middle p-1">
-											<input type="text" class="text-center w-100 border-0" name="unit[]" value="<?php echo $row['unit'] ?>" />
-										</td>
+										<td class="align-middle p-1 item-unit"><?php echo $row['unit'] ?></td>
 										<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
 										<td class="align-middle p-1">
-											<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]" readonly value="<?php echo ($row['unit_price']) ?>" />
+											<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="selling_price[]" readonly value="<?php echo ($row['selling_price']) ?>" />
 										</td>
-										<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+										<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
 									</tr>
 							<?php endwhile;
 							endif; ?>
@@ -138,11 +134,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						</tfoot>
 					</table>
 					<div class="row">
-						<div class="col-md-6">
+						<div class="col-md-12">
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6">
+						<div class="col-md-6" hidden="true">
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected' : '' ?>>Pending</option>
@@ -172,12 +168,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		<td class="align-middle p-0 text-center">
 			<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" />
 		</td>
-		<td class="align-middle p-1">
-			<input type="text" class="text-center w-100 border-0" name="unit[]" />
-		</td>
+		<td class="align-middle p-1 item-unit"></td>
 		<td class="align-middle p-1 item-description"></td>
 		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0 unit-price" name="unit_price[]" value="0" />
+			<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="selling_price[]" readonly value="0" />
 		</td>
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
@@ -191,10 +185,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		var _total = 0
 		$('.po-item').each(function() {
 			var qty = $(this).find("[name='qty[]']").val()
-			var unit_price = $(this).find("[name='unit_price[]']").val()
+			var selling_price = $(this).find("[name='selling_price[]']").val()
 			var row_total = 0;
-			if (qty > 0 && unit_price > 0) {
-				row_total = parseFloat(qty) * parseFloat(unit_price)
+			if (qty > 0 && selling_price > 0) {
+				row_total = parseFloat(qty) * parseFloat(selling_price)
 			}
 			$(this).find('.total-price').text(parseFloat(row_total).toLocaleString('en-US'))
 		})
@@ -241,7 +235,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				console.log(ui)
 				_item.find('input[name="item_id[]"]').val(ui.item.id)
 				_item.find('.item-description').text(ui.item.description)
-				_item.find('.unit-price').val(ui.item.unit_price)
+				_item.find('.item-unit').text(ui.item.unit)
+				_item.find('.selling-price').val(ui.item.selling_price)
 			}
 		})
 	}

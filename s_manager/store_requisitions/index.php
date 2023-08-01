@@ -5,52 +5,51 @@
 <?php endif; ?>
 <div class="card card-outline card-primary">
 	<div class="card-header">
-		<h3 class="card-title">List of Approved Store Requisitions</h3>
+		<h3 class="card-title">List of Store Requisitions</h3>
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
-			<div class="container-fluid">
-				<table class="table table-hover table-striped">
-					<colgroup>
-						<col width="5%">
-						<col width="15%">
-						<col width="20%">
-						<col width="20%">
-						<col width="10%">
-						<col width="10%">
-						<col width="10%">
-						<col width="10%">
-					</colgroup>
-					<thead>
-						<tr class="bg-navy disabled">
-							<th>#</th>
-							<th>Date Created</th>
-							<th>RQ #</th>
-							<th>Cost Center</th>
-							<th>Items</th>
-							<th>Total Amount</th>
-							<th>Status</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php
-						$i = 1;
-						$qry = $conn->query("SELECT rq.*, p.name as pname FROM `rq_list` rq inner join `project_list` p on rq.p_id = p.id where rq.status !=0 order by unix_timestamp(rq.date_updated)");
-						while ($row = $qry->fetch_assoc()) :
+        <div class="container-fluid">
+			<table class="table table-hover table-striped">
+				<colgroup>
+					<col width="5%">
+					<col width="15%">
+					<col width="20%">
+					<col width="20%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+					<col width="10%">
+				</colgroup>
+				<thead>
+					<tr class="bg-navy disabled">
+						<th>#</th>
+						<th>Date Created</th>
+						<th>RQ #</th>
+						<th>Cost Center</th>
+						<th>Items</th>
+						<th>Total Amount</th>
+						<th>Status</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php 
+					$i = 1;
+					$qry = $conn->query("SELECT rq.*, p.name as pname FROM `rq_list` rq inner join `project_list` p on rq.p_id = p.id order by unix_timestamp(rq.date_updated)");
+						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM requisition_items where rq_id = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.unit_price) as total FROM requisition_items r inner join item_list i on i.id = r.item_id where rq_id = '{$row['id']}'")->fetch_array()['total'];
-						?>
-
-							<tr>
-								<td class="text-center"><?php echo $i++; ?></td>
-								<td class=""><?php echo date("M d,Y H:i", strtotime($row['date_created'])); ?></td>
-								<td class=""><?php echo $row['rq_no'] ?></td>
-								<td class=""><?php echo $row['pname'] ?></td>
-								<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
-								<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
-								<td>
-									<?php
+							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.selling_price) as total FROM requisition_items r inner join item_list i on i.id = r.item_id where rq_id = '{$row['id']}'")->fetch_array()['total'];
+					?>
+						<tr>
+							<td class="text-center"><?php echo $i++; ?></td>
+							<td class=""><?php echo date("M d,Y H:i",strtotime($row['date_created'])) ; ?></td>
+							<td class=""><?php echo $row['rq_no'] ?></td>
+							<td class=""><?php echo $row['pname'] ?></td>
+							<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
+							<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
+							<td>
+								<?php 
 									switch ($row['status']) {
 										case '1':
 											echo '<span class="badge badge-secondary">Approved</span>';
@@ -74,13 +73,13 @@
 									</button>
 									<div class="dropdown-menu" role="menu">
 										<a class="dropdown-item" href="?page=store_requisitions/view_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-									</div>
-								</td>
-							</tr>
-						<?php endwhile; ?>
-					</tbody>
-				</table>
-			</div>
+				                  </div>
+							</td>
+						</tr>
+					<?php endwhile; ?>
+				</tbody>
+			</table>
+		</div>
 		</div>
 	</div>
 </div>

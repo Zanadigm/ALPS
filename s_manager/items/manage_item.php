@@ -28,12 +28,20 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <input type="text" name="name" id="name" class="form-control rounded-0" value="<?php echo isset($name) ? $name :"" ?>" required>
         </div>
         <div class="form-group">
+            <label for="unit" class="control-label">Unit</label>
+            <input type="text" name="unit" id="unit" class="form-control rounded-0" value="<?php echo isset($unit) ? $unit :"" ?>" required>
+        </div>
+        <div class="form-group">
             <label for="description" class="control-label">Description</label>
             <textarea rows="3" name="description" id="description" class="form-control rounded-0" required><?php echo isset($description) ? $description :"" ?></textarea>
         </div>
         <div class="form-group">
-            <label for="unit_price" class="control-label">Unit Price</label>
-            <input type="text" name="unit_price" id="unit_price" class="form-control rounded-0" value="<?php echo isset($unit_price) ? $unit_price :"" ?>" required>
+            <label for="buying_price" class="control-label">Buying Price</label>
+            <input type="text" name="buying_price" id="buying_price" class="form-control rounded-0" value="<?php echo isset($buying_price) ? $buying_price :"" ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="selling_price" class="control-label">Selling Price</label>
+            <input type="text" name="selling_price" id="selling_price" class="form-control rounded-0" value="<?php echo isset($selling_price) ? $selling_price :"" ?>" required>
         </div>
         <div class="form-group">
             <label for="status" class="control-label">Status</label>
