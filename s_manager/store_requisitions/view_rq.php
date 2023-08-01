@@ -33,7 +33,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo isset($id) ? "Requisition Order Details" : "New Requisition Order" ?> </h3>
+    <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
         <div class="card-tools">
             <?php if ($status == 1) : ?>
                 <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Process This Order</a>
@@ -156,18 +156,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit_price, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description, i.selling_price FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
                             $sub_total = 0;
                             while ($row = $requested_items_qry->fetch_assoc()) :
-                                $sub_total += ($row['quantity'] * $row['unit_price']);
+                                $sub_total += ($row['quantity'] * $row['selling_price']);
                         ?>
                                 <tr class="po-item" data-id="">
                                     <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
                                     <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
                                     <td class="align-middle p-1"><?php echo $row['name'] ?></td>
                                     <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                                    <td class="align-middle p-1"><?php echo number_format($row['unit_price']) ?></td>
-                                    <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+                                    <td class="align-middle p-1"><?php echo number_format($row['selling_price']) ?></td>
+                                    <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
                                 </tr>
                         <?php endwhile;
                         endif; ?>
@@ -250,7 +250,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         </td>
         <td class="align-middle p-1 item-description"></td>
         <td class="align-middle p-1">
-            <input type="number" step="any" class="text-right w-100 border-0" name="unit_price[]" value="0" />
+            <input type="number" step="any" class="text-right w-100 border-0" name="selling_price[]" value="0" />
         </td>
         <td class="align-middle p-1 text-right total-price">0</td>
     </tr>

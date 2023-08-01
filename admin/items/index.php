@@ -15,10 +15,12 @@
         <div class="container-fluid">
 			<table class="table table-hover table-striped">
 				<colgroup>
-				<col width="5%">
+				    <col width="5%">
 					<col width="15%">
+					<col width="10%">
+					<col width="10%">
 					<col width="20%">
-					<col width="30%">
+					<col width="10%">
 					<col width="10%">
 					<col width="10%">
 					<col width="10%">
@@ -28,8 +30,10 @@
 						<th>#</th>
 						<th>Date Created</th>
 						<th>Item Name</th>
+						<th>Unit</th>
 						<th>Description</th>
-						<th>Unit Price</th>
+						<th>Buying Price</th>
+						<th>Selling Price</th>
 						<th>Status</th>
 						<th>Action</th>
 					</tr>
@@ -45,8 +49,10 @@
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td><?php echo date("Y-m-d H:i",strtotime($row['date_created'])) ?></td>
 							<td><?php echo $row['name'] ?></td>
+							<td><?php echo $row['unit'] ?></td>
 							<td class='truncate-3' title="<?php echo $row['description'] ?>"><?php echo $row['description'] ?></td>
-							<td><?php echo $row['unit_price'] ?></td>
+							<td><?php echo $row['buying_price'] ?></td>
+							<td><?php echo $row['selling_price'] ?></td>
 							<td class="text-center">
 								<?php if($row['status'] == 1): ?>
 									<span class="badge badge-success">Active</span>

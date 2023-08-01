@@ -26,11 +26,12 @@ class Master extends DBConnection
 	}
 
 	/**
-    * Suppliers
-    * ====================================================
-    */
+	 * Suppliers
+	 * ====================================================
+	 */
 
-	function save_supplier(){
+	function save_supplier()
+	{
 
 		extract($_POST);
 
@@ -73,7 +74,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_supplier(){
+	function delete_supplier()
+	{
 
 		extract($_POST);
 
@@ -89,11 +91,12 @@ class Master extends DBConnection
 	}
 
 	/**
-    * Projects/Cost Centers
-    * ====================================================
-    */
+	 * Projects/Cost Centers
+	 * ====================================================
+	 */
 
-	function save_project(){
+	function save_project()
+	{
 
 		extract($_POST);
 
@@ -138,7 +141,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_project(){
+	function delete_project()
+	{
 
 		$id = $_POST['id'];
 
@@ -156,11 +160,12 @@ class Master extends DBConnection
 	}
 
 	/**
-    * Items
-    * ====================================================
-    */
+	 * Items
+	 * ====================================================
+	 */
 
-	function save_item(){
+	function save_item()
+	{
 
 		extract($_POST);
 
@@ -209,7 +214,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_item(){
+	function delete_item()
+	{
 
 		extract($_POST);
 
@@ -225,7 +231,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function search_items(){
+	function search_items()
+	{
 
 		extract($_POST);
 
@@ -233,17 +240,18 @@ class Master extends DBConnection
 
 		$data = array();
 		while ($row = $qry->fetch_assoc()) {
-			$data[] = array("label" => $row['name'], "id" => $row['id'], "description" => $row['description'], "unit_price" => $row['unit_price']);
+			$data[] = array("label" => $row['name'], "unit" => $row['unit'], "id" => $row['id'], "description" => $row['description'], "selling_price" => $row['selling_price']);
 		}
 		return json_encode($data);
 	}
 
-    /**
-    * Purchase Orders
-    * ====================================================
-    */
+	/**
+	 * Purchase Orders
+	 * ====================================================
+	 */
 
-	function save_po(){
+	function save_po()
+	{
 
 		extract($_POST);
 		$data = "";
@@ -295,11 +303,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$po_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
+				$data .= "('{$po_id}','{$v}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `order_items` where po_id = '{$po_id}'");
-				$save = $this->conn->query("INSERT INTO `order_items` (`po_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `order_items` (`po_id`,`item_id`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Purchase Order successfully saved.");
@@ -312,7 +320,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_po(){
+	function delete_po()
+	{
 
 		extract($_POST);
 
@@ -327,7 +336,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function approve_po(){
+	function approve_po()
+	{
 		extract($_POST);
 		$confirm = $this->conn->query("UPDATE po_list SET status = 1 WHERE id = '{$id}'");
 		if ($confirm) {
@@ -341,9 +351,9 @@ class Master extends DBConnection
 	}
 
 	/**
-    * Requisition Orders
-    * ====================================================
-    */
+	 * Requisition Orders
+	 * ====================================================
+	 */
 
 	function save_rq()
 	{
@@ -357,7 +367,7 @@ class Master extends DBConnection
 				$data .= " `{$k}`='{$v}' ";
 			}
 		}
-		
+
 		if (!empty($rq_no)) {
 			$check = $this->conn->query("SELECT * FROM `rq_list` where `rq_no` = '{$rq_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
 			if ($this->capture_err())
@@ -395,11 +405,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$rq_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
+				$data .= "('{$rq_id}','{$v}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `requisition_items` where rq_id = '{$rq_id}'");
-				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `requisition_items` (`rq_id`,`item_id`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Requisition Order successfully saved.");
@@ -412,7 +422,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function delete_rq(){
+	function delete_rq()
+	{
 		extract($_POST);
 		$del = $this->conn->query("DELETE FROM `rq_list` where id = '{$id}'");
 		if ($del) {
@@ -425,7 +436,8 @@ class Master extends DBConnection
 		return json_encode($resp);
 	}
 
-	function approve_requisition(){
+	function approve_requisition()
+	{
 		extract($_POST);
 		$confirm = $this->conn->query("UPDATE rq_list SET status = 1 WHERE id = '{$id}'");
 		if ($confirm) {
@@ -439,11 +451,12 @@ class Master extends DBConnection
 	}
 
 	/**
-    * Deliveries
-    * ====================================================
-    */
+	 * Deliveries
+	 * ====================================================
+	 */
 
-	function save_dn(){
+	function save_dn()
+	{
 
 		extract($_POST);
 
@@ -492,11 +505,11 @@ class Master extends DBConnection
 			$data = "";
 			foreach ($item_id as $k => $v) {
 				if (!empty($data)) $data .= ",";
-				$data .= "('{$dn_id}','{$v}','{$unit[$k]}','{$qty[$k]}')";
+				$data .= "('{$dn_id}','{$v}','{$qty[$k]}')";
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
-				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`unit`,`quantity`) VALUES {$data} ");
+				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`quantity`) VALUES {$data} ");
 			}
 			if (empty($id))
 				$this->settings->set_flashdata('success', "Delivery Note successfully saved.");
@@ -525,21 +538,26 @@ class Master extends DBConnection
 	}
 
 	function confirm_delivery(){
+		
 		extract($_POST);
-		$confirm = $this->conn->query("UPDATE delivery_list SET status = 1 WHERE id = '{$id}'");
+		
+		$confirm = $this->conn->query("UPDATE `delivery_list` SET `status` = '1', `date_received` = current_timestamp(), `received_by` = 2 where id = '{$id}'");
 		if ($confirm) {
+
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Delivery Succesfully Confirmed.");
 		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
+
 		return json_encode($resp);
 	}
 
 	//.............................................................................................//
 
-	function delete_img(){
+	function delete_img()
+	{
 
 		extract($_POST);
 
@@ -553,6 +571,73 @@ class Master extends DBConnection
 		} else {
 			$resp['status'] = 'failed';
 			$resp['error'] = 'Unkown ' . $path . ' path';
+		}
+		return json_encode($resp);
+	}
+
+	/**
+	 * Invoice
+	 * ====================================================
+	 */
+
+	 function generate_invoice(){
+		
+		extract($_POST);
+
+		$dn_id = $id;
+
+		if (!empty($in_no)) {
+			$check = $this->conn->query("SELECT * FROM `invoice_list` where `in_no` = '{$in_no}' ")->num_rows;
+			if ($this->capture_err())
+				return $this->capture_err();
+			if ($check > 0) {
+				$resp['status'] = 'in_failed';
+				$resp['msg'] = "Invoice already exist.";
+				return json_encode($resp);
+				exit;
+			}
+		} else {
+			$in_no = "";
+			while (true) {
+				$in_no = "IN-" . (sprintf("%'.06d", mt_rand(1, 999999)));
+				$check = $this->conn->query("SELECT * FROM `invoice_list` where `in_no` = '{$in_no}'")->num_rows;
+				if ($check <= 0)
+					break;
+			}
+		}
+
+		$sql = "INSERT INTO invoice_list (dn_id, in_no) VALUES ('$dn_id', '$in_no')";
+		
+
+		$save = $this->conn->query($sql);
+
+		if ($save) {
+			$resp['status'] = 'success';
+			$resp['id'] = $this->conn->insert_id;
+
+			if (empty($id))
+				$this->settings->set_flashdata('success', "Invoice successfully saved.");
+			else
+				$this->settings->set_flashdata('success', "Invoice successfully updated.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error . "[{$sql}]";
+		}
+
+		return json_encode($resp);
+	}
+	
+	function delete_in(){
+
+		extract($_POST);
+
+		$del = $this->conn->query("DELETE FROM `invoice_list` where id = '{$id}'");
+		if ($del) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Invoice successfully deleted.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
 		}
 		return json_encode($resp);
 	}
@@ -610,6 +695,9 @@ switch ($action) {
 		break;
 	case 'delete_dn':
 		echo $Master->delete_dn();
+		break;
+	case 'delete_in':
+		echo $Master->delete_in();
 		break;
 
 	default:

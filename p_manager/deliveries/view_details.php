@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT d.*, u.username, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d inner join users u on d.driver_id = u.id inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT d.*, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d  inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -37,7 +37,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <div class="card-tools">
             <?php if ($status == 0) : ?>
                 <a class="btn btn-flat btn-primary confirm_delivery" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm this Delivery</a>
-            <?php endif; ?>
+            <?php endif?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=deliveries">Back</a>
         </div>
@@ -122,7 +122,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
                             while ($row = $requested_items_qry->fetch_assoc()) : ?>
                                 <tr class="po-item">
                                     <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
@@ -145,19 +145,27 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 </div>
 
                 <div class="row">
+                    <?php
+                        $users_qry = $conn->query("SELECT concat(firstname,' ',lastname) as username FROM `users` WHERE type = '{$driver_id}'");
+                        $driver = $users_qry->fetch_assoc(); 
+                    ?>
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="delivered_by" class="control-label">Delivered By:</label>
-                        <p><?php echo isset($username) ? $username : '' ?></p>
+                        <p><?php echo isset($driver['username']) ? $driver['username'] : '' ?></p>
                     </div>
 
+                    <?php
+                        $users_qry = $conn->query("SELECT concat(firstname,' ',lastname) as username FROM `users` WHERE type = '{$received_by}'");
+                        $receiver = $users_qry->fetch_assoc(); 
+                    ?>
+                    <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
+                        <label for="received_by" class="control-label">Received By:</label>
+                        <p><?php echo isset($receiver['username']) ? $receiver['username'] : '' ?></p>
+                    </div>
+                    
                     <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                         <label for="date_received" class="control-label">Date Received:</label>
                         <p><?php echo isset($date_received) ? $date_received : '' ?></p>
-                    </div>
-
-                    <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                        <label for="received_by" class="control-label">Received By:</label>
-                        <p><?php echo isset($received_by) ? $received_by : '' ?></p>
                     </div>
                 </div>
             </div>
@@ -168,7 +176,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 <script>
     $(document).ready(function() {
         $('.confirm_delivery').click(function() {
-            _conf("Are you sure to confirm this delivery? Action cannot be undone.", "confirm_delivery", [$(this).attr('data-id')])
+            _conf("Are you sure to confirm this delivery? This action cannot be undone.", "confirm_delivery", [$(this).attr('data-id')])
         })
     })
 

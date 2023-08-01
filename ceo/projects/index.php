@@ -8,7 +8,6 @@
 		<h3 class="card-title">List of Projects</h3>
 	</div>
 	<div class="card-body">
-		<div class="container-fluid">
         <div class="container-fluid">
 			<table class="table table-hover table-striped">
 				<colgroup>
@@ -60,7 +59,6 @@
 					<?php endwhile; ?>
 				</tbody>
 			</table>
-		</div>
 		</div>
 	</div>
 </div>

@@ -1,6 +1,11 @@
+<?php if ($_settings->chk_flashdata('success')) : ?>
+    <script>
+        alert_toast("<?php echo $_settings->flashdata('success') ?>", 'success')
+    </script>
+<?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT * from `project_list` where id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT v.*,r.* from `invoice_list` v inner join project_list p on p.id = v.dn_id inner join rq_list r on p.id = r.p_id where v.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -29,7 +34,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo "Cost Center Summary" ?> </h3>
+        <h3 class="card-title"><?php echo "Invoice" ?> </h3>
         <div class="card-tools">
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
@@ -37,11 +42,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </div>
     <div class="card-body" id="out_print">
         <div class="row">
-            <div class="col-4">
+            <div class="col-3">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
 
             </div>
-            <div class="col-4 d-flex align-items-center">
+            <div class="col-3 d-flex align-items-center">
                 <div>
                     <p class="m-0" style="font-weight: bold; text-transform: uppercase"><?php echo $_settings->info('company_name') ?></p>
                     <p class="m-0"><?php echo $_settings->info('company_location') ?></p>
@@ -50,11 +55,25 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <p class="m-0"><?php echo $_settings->info('company_email') ?></p>
                 </div>
             </div>
-            <div class="col-4 d-flex align-items-center">
+
+            <div class="col-3 d-flex align-items-center">
                 <div>
-                    <H2>COST CENTER MATERIAL SUMMARY</H2>
-                    <p class="m-0">Cost Center : <?php echo ($name) ?></p>
-                    <p class="m-0">Description : <?php echo ($description) ?></p>
+                    <p class="m-0" style="font-weight: bold; text-transform: uppercase">BILL TO</p>
+                    <p class="m-0">Client : <?php echo ($deliver_to) ?></p>
+                    <p class="m-0">Department : <?php echo ($department_name) ?></p>
+                    <p class="m-0">Building: <?php echo ($building_name) ?></p>
+                    <p class="m-0">Client : <?php echo ($deliver_to) ?></p>
+
+                </div>
+            </div>
+
+            <div class="col-3 d-flex align-items-center">
+                <div>
+                    <H2>INVOICE</H2>
+                    <p class="m-0">Invoice Number : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+                    <p class="m-0">Due Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
+
                 </div>
             </div>
 
@@ -85,17 +104,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </thead>
                     <tbody>
                         <?php
-                        $summary = $conn->query("SELECT p.*, sum(di.quantity) as quantity, di.unit, i.name, i.description, i.unit_price from `project_list` p
-                        inner join `rq_list`r on r.p_id = p.id
-                        inner join `delivery_list` d on d.rq_no = r.id and d.status = 1
+                        $summary = $conn->query("SELECT v.*, di.quantity, di.unit, i.name,i.description, i.unit_price from `invoice_list` v
+                        inner join `delivery_list` d on d.id = v.dn_id
                         inner join `delivery_items` di on di.dn_id = d.id
-                        inner join `item_list` i on di.item_id = i.id
-                        where p.id = '{$_GET['id']}' group by i.name");
+                        inner join `item_list` i on i.id = di.item_id
+                        where v.id = '{$_GET['id']}'");
                         $sub_total = 0;
                         while ($row = $summary->fetch_assoc()) :
                             $sub_total += ($row['quantity'] * $row['unit_price']);
                         ?>
-
                             <tr class="po-item" data-id="">
                                 <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
                                 <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
@@ -117,91 +134,13 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 
             </div>
         </div>
-    </div>
-</div>
-<div class="card card-outline card-info">
-    <div class="card-header">
-        <h3 class="card-title"><?php echo "Associated Deliveries" ?> </h3>
-    </div>
-    <div class="card-body">
-        <div class="container-fluid">
-            <div class="container-fluid">
-                <table class="table table-hover table-striped">
-                    <colgroup>
-                        <col width="5%">
-                        <col width="20%">
-                        <col width="20%">
-                        <col width="25%">
-                        <col width="10%">
-                        <col width="10%">
-                        <col width="10%">
-                    </colgroup>
-                    <thead>
-                        <tr class="bg-navy disabled">
-                            <th>#</th>
-                            <th>Date Created</th>
-                            <th>DN #</th>
-                            <th>Driver</th>
-                            <th>Items</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $i = 1;
-                        $qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl 
-                                inner join `users` u on dl.driver_id = u.id 
-                                inner join `rq_list` r on r.id = dl.rq_no 
-                                inner join `project_list`p on p.id = r.p_id
-                                where  p.id = '{$_GET['id']}'order by unix_timestamp(dl.date_updated)");
-                        while ($row = $qry->fetch_assoc()) :
-                            $row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['id']}'")->num_rows;
-                            $row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.unit_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];
-                        ?>
 
-                            <tr>
-                                <td class="text-center"><?php echo $i++; ?></td>
-                                <td class=""><?php echo date("M d,Y H:i", strtotime($row['date_created'])); ?></td>
-                                <td class=""><?php echo $row['dn_no'] ?></td>
-                                <td class=""><?php echo $row['username'] ?></td>
-                                <td class="text-right"><?php echo number_format($row['item_count']) ?></td>
-                                <td>
-                                    <?php
-                                    switch ($row['status']) {
-                                        case '1':
-                                            echo '<span class="badge badge-success">Confirmed</span>';
-                                            break;
-                                        case '2':
-                                            echo '<span class="badge badge-success">Cancelled</span>';
-                                            break;
-                                        default:
-                                            echo '<span class="badge badge-secondary">Pending</span>';
-                                            break;
-                                    }
-                                    ?>
-                                </td>
-                                <td align="center">
-                                    <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-                                        Action
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                    </button>
-
-                                    <div class="dropdown-menu" role="menu">
-                                        <a class="dropdown-item" href="?page=deliveries/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
 
 <script>
     $(function() {
+        
         $('#print').click(function(e) {
             e.preventDefault();
             start_loader();
@@ -224,4 +163,5 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             }, 200);
         })
     })
+
 </script>
