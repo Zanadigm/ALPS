@@ -85,7 +85,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </thead>
                     <tbody>
                         <?php
-                        $summary = $conn->query("SELECT p.*, sum(di.quantity) as quantity, di.unit, i.name, i.description, i.unit_price from `project_list` p
+                        $summary = $conn->query("SELECT p.*, sum(di.quantity) as quantity, i.unit, i.name, i.description, i.selling_price from `project_list` p
                         inner join `rq_list`r on r.p_id = p.id
                         inner join `delivery_list` d on d.rq_no = r.id and d.status = 1
                         inner join `delivery_items` di on di.dn_id = d.id
@@ -93,7 +93,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         where p.id = '{$_GET['id']}' group by i.name");
                         $sub_total = 0;
                         while ($row = $summary->fetch_assoc()) :
-                            $sub_total += ($row['quantity'] * $row['unit_price']);
+                            $sub_total += ($row['quantity'] * $row['selling_price']);
                         ?>
 
                             <tr class="po-item" data-id="">
@@ -101,8 +101,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
                                 <td class="align-middle p-1"><?php echo $row['name'] ?></td>
                                 <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                                <td class="align-middle p-1"><?php echo number_format($row['unit_price']) ?></td>
-                                <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+                                <td class="align-middle p-1"><?php echo number_format($row['selling_price']) ?></td>
+                                <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
                             </tr>
                         <?php endwhile; ?>
                     <tfoot>
@@ -157,7 +157,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 where  p.id = '{$_GET['id']}'order by unix_timestamp(dl.date_updated)");
                         while ($row = $qry->fetch_assoc()) :
                             $row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['id']}'")->num_rows;
-                            $row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.unit_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];
+                            $row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];
                         ?>
 
                             <tr>
