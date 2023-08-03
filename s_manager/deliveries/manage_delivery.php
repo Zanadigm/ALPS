@@ -84,7 +84,7 @@
 						<tbody>
 							<?php 
 							if(isset($id)):
-							$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+							$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
 							echo $conn->error;
 							while($row = $delivery_items_qry->fetch_assoc()):
 							?>
@@ -116,7 +116,6 @@
 							<label for="status" class="control-label">Status</label>
 							<select name="status" id="status" class="form-control form-control-sm rounded-0">
 								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected': '' ?>>Pending</option>
-								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected': '' ?>>Confirmed</option>
 							</select>
 						</div>
 					</div>
@@ -155,10 +154,10 @@
 		var _total = 0
 		$('.po-item').each(function(){
 			var qty = $(this).find("[name='qty[]']").val()
-			var unit_price = $(this).find("[name='unit_price[]']").val()
+			var selling_price = $(this).find("[name='selling_price[]']").val()
 			var row_total = 0;
-			if(qty > 0 && unit_price > 0){
-				row_total = parseFloat(qty) * parseFloat(unit_price)
+			if(qty > 0 && selling_price > 0){
+				row_total = parseFloat(qty) * parseFloat(selling_price)
 			}
 			$(this).find('.total-price').text(parseFloat(row_total).toLocaleString('en-US'))
 		})
@@ -200,7 +199,7 @@
 			var tr = $('#item-clone tr').clone()
 			$('#item-list tbody').append(tr)
 			_autocomplete(tr)
-			tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
+			tr.find('[name="qty[]"],[name="selling_price[]"]').on('input keypress',function(e){
 				calculate()
 			})
 		})
@@ -208,13 +207,13 @@
 			$('#item-list .po-item').each(function(){
 				var tr = $(this)
 				_autocomplete(tr)
-				tr.find('[name="qty[]"],[name="unit_price[]"]').on('input keypress',function(e){
+				tr.find('[name="qty[]"],[name="selling_price[]"]').on('input keypress',function(e){
 					calculate()
 				})
 				$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress',function(e){
 					calculate()
 				})
-				tr.find('[name="qty[]"],[name="unit_price[]"]').trigger('keypress')
+				tr.find('[name="qty[]"],[name="selling_price[]"]').trigger('keypress')
 			})
 		}else{
 		$('#add_row').trigger('click')

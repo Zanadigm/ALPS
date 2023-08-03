@@ -34,7 +34,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=store_requisitions" class="nav-link nav-store_requisitions">
-                  <i class="nav-icon fas fa-file-invoice"></i>
+                  <i class="nav-icon fas fa-warehouse"></i>
                   <p>
                     Store Requisitions
                   </p>
@@ -52,7 +52,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=deliveries" class="nav-link nav-deliveries">
-                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <i class="nav-icon fas fa-truck"></i>
                   <p>
                     Deliveries
                   </p>
@@ -61,7 +61,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=projects" class="nav-link nav-projects">
-                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <i class="nav-icon fas fa-funnel-dollar"></i>
                   <p>
                     Cost Centers
                   </p>

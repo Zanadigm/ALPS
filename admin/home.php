@@ -6,7 +6,7 @@
   <div class="col-12 col-sm-6 col-md-3">
     <a href="?page=projects" style="color:#343a40">
       <div class="info-box mb-3">
-        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-boxes"></i></span>
+        <span class="info-box-icon bg-success elevation-1"><i class="fas fa-funnel-dollar"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Cost Centers</span>
           <span class="info-box-number">
@@ -23,7 +23,7 @@
   <div class="col-12 col-sm-6 col-md-3">
     <a href="?page=store_requisitions" style="color:#343a40">
       <div class="info-box mb-3">
-        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-file-invoice"></i></span>
+        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-warehouse"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Store Requisitions</span>
           <span class="info-box-number">
@@ -57,7 +57,7 @@
   <div class="col-12 col-sm-6 col-md-3">
     <a href="?page=deliveries" style="color:#343a40">
       <div class="info-box">
-        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-truck-loading"></i></span>
+        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-truck"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Deliveries</span>
           <span class="info-box-number">
@@ -91,7 +91,7 @@
   <div class="col-12 col-sm-6 col-md-3">
     <a href="?page=user/list" style="color:#343a40">
       <div class="info-box">
-        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-truck-loading"></i></span>
+        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-users"></i></span>
         <div class="info-box-content">
           <span class="info-box-text">Users</span>
           <span class="info-box-number">
