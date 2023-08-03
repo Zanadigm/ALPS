@@ -119,18 +119,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.description, i.selling_price FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
+                            $order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.description, i.buying_price FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
                             $sub_total = 0;
                             while ($row = $order_items_qry->fetch_assoc()) :
-                                $sub_total += ($row['quantity'] * $row['selling_price']);
+                                $sub_total += ($row['quantity'] * $row['buying_price']);
                         ?>
                                 <tr class="po-item" data-id="">
                                     <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
                                     <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
                                     <td class="align-middle p-1"><?php echo $row['name'] ?></td>
                                     <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                                    <td class="align-middle p-1"><?php echo number_format($row['selling_price']) ?></td>
-                                    <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
+                                    <td class="align-middle p-1"><?php echo number_format($row['buying_price']) ?></td>
+                                    <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['buying_price']) ?></td>
                                 </tr>
                         <?php endwhile;
                         endif; ?>
@@ -184,7 +184,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         </td>
         <td class="align-middle p-1 item-description"></td>
         <td class="align-middle p-1">
-            <input type="number" step="any" class="text-right w-100 border-0" name="selling_price[]" value="0" />
+            <input type="number" step="any" class="text-right w-100 border-0" name="buying_price[]" value="0" />
         </td>
         <td class="align-middle p-1 text-right total-price">0</td>
     </tr>

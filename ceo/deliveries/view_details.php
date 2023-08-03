@@ -119,7 +119,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `delivery_items` r inner join item_list i on r.item_id = i.id where r.`dn_id` = '$id' ");
                             while ($row = $requested_items_qry->fetch_assoc()) : ?>
                                 <tr class="po-item">
                                     <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>

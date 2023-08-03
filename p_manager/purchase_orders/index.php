@@ -42,7 +42,7 @@
 						$qry = $conn->query("SELECT po.*, s.name as sname FROM `po_list` po inner join `supplier_list` s on po.supplier_id = s.id order by unix_timestamp(po.date_updated)");
 						while ($row = $qry->fetch_assoc()) :
 							$row['item_count'] = $conn->query("SELECT * FROM order_items where po_id = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(o.quantity * i.selling_price) as total FROM order_items o inner join item_list i on i.id=o.item_id where po_id = '{$row['id']}'")->fetch_array()['total'];
+							$row['total_amount'] = $conn->query("SELECT sum(o.quantity * i.buying_price) as total FROM order_items o inner join item_list i on i.id=o.item_id where po_id = '{$row['id']}'")->fetch_array()['total'];
 						?>
 							<tr>
 								<td class="text-center"><?php echo $i++; ?></td>
