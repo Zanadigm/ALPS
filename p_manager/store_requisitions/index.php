@@ -55,10 +55,10 @@
 								<?php 
 									switch ($row['status']) {
 										case '1':
-											echo '<span class="badge badge-secondary">Approved</span>';
+											echo '<span class="badge badge-primary">Approved</span>';
 											break;
 										case '2':
-											echo '<span class="badge badge-success">Processing</span>';
+											echo '<span class="badge badge-warning">Partially Fulfilled</span>';
 											break;
 										case '3':
 											echo '<span class="badge badge-success">Fulfilled</span>';
