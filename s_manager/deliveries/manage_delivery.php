@@ -87,13 +87,15 @@
 							$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
 							echo $conn->error;
 							while($row = $delivery_items_qry->fetch_assoc()):
+								$row['qty'] = $row['quantity'];
 							?>
 							<tr class="po-item" data-id="">
 								<td class="align-middle p-1 text-center">
 									<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
 								</td>
-								<td class="align-middle p-0 text-center">
-									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>"/>
+								<td class="py-1 px-2 text-center qty">
+									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" max = "<?php echo $row['quantity']; ?>" min="0"/>
+									<input type="hidden" name="oqty[]" value="<?php echo $row['quantity']; ?>">
 								</td>
 								<td class="align-middle p-1">
 									<input type="text" class="text-center w-100 border-0" name="unit[]" readonly value="<?php echo $row['unit'] ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
