@@ -69,6 +69,15 @@
                     </li>
 
                     <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>ceo/?page=invoices" class="nav-link nav-invoices">
+                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                        <p>
+                          Invoices
+                        </p>
+                      </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>ceo/?page=suppliers" class="nav-link nav-suppliers">
                         <i class="nav-icon fas fa-truck-loading"></i>
                         <p>

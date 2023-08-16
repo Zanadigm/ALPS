@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT r.*, p.name as cost_center  from `rq_list` r join `project_list` p on p.id = r.p_id where r.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT r.bo_code, r.id, rq.*, p.name as cost_center  from `backorder_list` r join rq_list rq on rq.id = r.rq_id join `project_list` p on p.id = rq.p_id where r.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -33,20 +33,16 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-        <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
+    <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
         <div class="card-tools">
-            <?php if ($status == 3) : ?>
-                <a class="btn btn-flat btn-primary generate_invoice" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Generate Invoice</a>
-            <?php endif?>
-            <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
-            <?php if ($status == 0) : ?>
-                <a class="btn btn-sm btn-flat btn-primary" href="?page=store_requisitions/manage_rq&id=<?php echo $id ?>">Edit</a>
+            <?php if ($status == 1) : ?>
+                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Process This Order</a>
             <?php endif; ?>
+            <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
     <div class="card-body" id="out_print">
-
         <div class="row">
             <div class="col-4">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
@@ -63,10 +59,11 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             </div>
             <div class="col-4 d-flex align-items-center">
                 <div>
-                    <H2>STORE REQUISITION ORDER</H2>
-                    <p class="m-0">RQ No : <?php echo ($rq_no) ?></p>
+                    <H2>BACK REQUISITION ORDER</H2>
+                    <p class="m-0">BO No : <?php echo ($bo_code) ?></p>
+                    <p class="m-0">From : <?php echo ($rq_no) ?></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-                    <?php 
+                    <!-- <?php 
                     switch ($status) {
                         case 1:
                             echo "<p class='m-0'>Status: Approved</p>";
@@ -81,7 +78,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             echo "<p class='m-0'>Status: Pending</p>";
                             break;
                     }
-                    ?>
+                    ?> -->
                 </div>
             </div>
 
@@ -160,7 +157,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description, i.selling_price FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.quantity, i.name, i.unit, i.description, i.selling_price FROM `backorder_items` r inner join item_list i on r.item_id = i.id where r.bo_id = '{$_GET['id']}' ");
                             $sub_total = 0;
                             while ($row = $requested_items_qry->fetch_assoc()) :
                                 $sub_total += ($row['quantity'] * $row['selling_price']);
@@ -236,6 +233,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         </div>
     </div>
 </div>
+
 <table class="d-none" id="item-clone">
     <tr class="po-item" data-id="">
         <td class="align-middle p-1 text-center">
@@ -259,36 +257,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </tr>
 </table>
 <script>
-    $(document).ready(function() {
-        $('.generate_invoice').click(function() {
-            _conf("Are you sure to generate an invoice for this order?", "generate_invoice", [$(this).attr('data-id')])
-        })
-    })
-
-    function generate_invoice($id) {
-        start_loader();
-        $.ajax({
-            url: _base_url_ + "classes/Master.php?f=generate_invoice",
-            method: "POST",
-            data: {
-                id: $id
-            },
-            dataType: "json",
-            error: err => {
-                console.log(err)
-                alert_toast("An error occured.", 'error');
-                end_loader();
-            },
-            success: function(resp) {
-                if (typeof resp == 'object' && resp.status == 'success') {
-                    location.reload();
-                } else {
-                    alert_toast("An error occured.", 'error');
-                    end_loader();
-                }
-            }
-        })
-    }
     $(function() {
         $('#print').click(function(e) {
             e.preventDefault();

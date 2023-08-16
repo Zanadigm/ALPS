@@ -2,7 +2,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary bg-navy elevation-4 sidebar-no-expand">
   <!-- Brand Logo -->
-  <a href="<?php echo base_url ?>s_manager" class="brand-link bg-primary text-sm">
+  <a href="<?php echo base_url ?>driver" class="brand-link bg-primary text-sm">
     <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="Store Logo" class="brand-image img-circle elevation-3" style="width: 1.7rem;height: 1.7rem;max-height: unset">
     <span class="brand-text font-weight-light"><?php echo $_settings->info('short_name') ?></span>
   </a>
@@ -33,7 +33,7 @@
               </li>
 
               <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=store_requisitions" class="nav-link nav-store_requisitions">
+                <a href="<?php echo base_url ?>driver/?page=store_requisitions" class="nav-link nav-store_requisitions">
                   <i class="nav-icon fas fa-warehouse"></i>
                   <p>
                     Store Requisitions
@@ -42,16 +42,7 @@
               </li>
 
               <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=purchase_orders" class="nav-link nav-purchase_orders">
-                  <i class="nav-icon fas fa-file-invoice"></i>
-                  <p>
-                    Purchase Orders
-                  </p>
-                </a>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=deliveries" class="nav-link nav-deliveries">
+                <a href="<?php echo base_url ?>driver/?page=deliveries" class="nav-link nav-deliveries">
                   <i class="nav-icon fas fa-truck"></i>
                   <p>
                     Deliveries
@@ -59,46 +50,7 @@
                 </a>
               </li>
 
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=back_requisitions" class="nav-link nav-back_requisitions">
-                  <i class="nav-icon fas fa-exchange-alt"></i>
-                  <p>
-                    Back Requisitions
-                  </p>
-                </a>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=projects" class="nav-link nav-projects">
-                  <i class="nav-icon fas fa-funnel-dollar"></i>
-                  <p>
-                    Cost Centers
-                  </p>
-                </a>
-              </li>
-
-              <li class="nav-header">Store Maintenance</li>
-
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=items" class="nav-link nav-items">
-                  <i class="nav-icon fas fa-boxes"></i>
-                  <p>
-                    Item List
-                  </p>
-                </a>
-              </li>
-
-              <li class="nav-item dropdown">
-                <a href="<?php echo base_url ?>s_manager/?page=suppliers" class="nav-link nav-suppliers">
-                  <i class="nav-icon fas fa-truck-loading"></i>
-                  <p>
-                    Supplier List
-                  </p>
-                </a>
-              </li>
-
             </ul>
-
           </nav>
           <!-- /.sidebar-menu -->
         </div>
