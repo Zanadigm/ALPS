@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 07, 2023 at 05:49 PM
+-- Generation Time: Aug 16, 2023 at 12:48 PM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -38,7 +38,8 @@ CREATE TABLE `backorder_items` (
 --
 
 INSERT INTO `backorder_items` (`bo_id`, `item_id`, `quantity`) VALUES
-(1, 5, 5);
+(2, 6, 16),
+(3, 4, 20);
 
 -- --------------------------------------------------------
 
@@ -50,6 +51,7 @@ CREATE TABLE `backorder_list` (
   `id` int(11) NOT NULL,
   `bo_code` varchar(255) NOT NULL,
   `rq_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL,
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -57,23 +59,9 @@ CREATE TABLE `backorder_list` (
 -- Dumping data for table `backorder_list`
 --
 
-INSERT INTO `backorder_list` (`id`, `bo_code`, `rq_id`, `date_created`) VALUES
-(1, 'BO-0001', 22, '2023-08-07 03:49:17');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `client_info`
---
-
-CREATE TABLE `client_info` (
-  `id` int(30) NOT NULL,
-  `company_name` varchar(50) NOT NULL,
-  `company_email` varchar(50) NOT NULL,
-  `company_address` varchar(50) NOT NULL,
-  `company_location` varchar(50) NOT NULL,
-  `company_mobile` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `backorder_list` (`id`, `bo_code`, `rq_id`, `status`, `date_created`) VALUES
+(2, 'BO-0001', 10, 0, '2023-08-15 16:55:14'),
+(3, 'BO-0002', 21, 0, '2023-08-15 17:02:58');
 
 -- --------------------------------------------------------
 
@@ -92,15 +80,15 @@ CREATE TABLE `delivery_items` (
 --
 
 INSERT INTO `delivery_items` (`dn_id`, `item_id`, `quantity`) VALUES
-(3, 8, 10),
-(3, 4, 20),
-(3, 5, 25),
-(3, 6, 40),
-(4, 4, 5),
-(4, 5, 6),
-(4, 9, 2),
-(4, 10, 10),
-(4, 8, 5);
+(6, 4, 5),
+(6, 5, 6),
+(6, 6, 0),
+(6, 9, 2),
+(6, 10, 10),
+(6, 8, 5),
+(7, 8, 10),
+(7, 4, 0),
+(7, 5, 30);
 
 -- --------------------------------------------------------
 
@@ -126,8 +114,8 @@ CREATE TABLE `delivery_list` (
 --
 
 INSERT INTO `delivery_list` (`id`, `dn_no`, `rq_no`, `driver_id`, `status`, `notes`, `received_by`, `date_received`, `date_created`, `date_updated`) VALUES
-(3, 'DN-606009', 22, 5, 1, '', '2', '2023-08-07 04:10:47', '2023-08-07 03:49:16', '2023-08-07 04:10:47'),
-(4, 'DN-271781', 10, 5, 0, '', '', NULL, '2023-08-07 04:01:56', NULL);
+(6, 'DN-739217', 10, 0, 0, 'Bolts shall be available next week.', '', NULL, '2023-08-15 16:55:13', NULL),
+(7, 'DN-725872', 21, 5, 0, '', '', NULL, '2023-08-15 17:02:58', NULL);
 
 -- --------------------------------------------------------
 
@@ -138,11 +126,18 @@ INSERT INTO `delivery_list` (`id`, `dn_no`, `rq_no`, `driver_id`, `status`, `not
 CREATE TABLE `invoice_list` (
   `id` int(11) NOT NULL,
   `in_no` varchar(50) NOT NULL,
-  `dn_id` int(11) NOT NULL,
-  `status` int(11) NOT NULL COMMENT '0=pending,1=paid',
+  `rq_id` int(11) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT 0 COMMENT '0=pending,1=paid',
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `invoice_list`
+--
+
+INSERT INTO `invoice_list` (`id`, `in_no`, `rq_id`, `status`, `date_created`, `date_updated`) VALUES
+(1, 'IN-244030', 10, 0, '2023-08-15 15:41:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -286,11 +281,7 @@ INSERT INTO `requisition_items` (`rq_id`, `item_id`, `quantity`) VALUES
 (20, 4, 20),
 (21, 8, 10),
 (21, 4, 20),
-(21, 5, 30),
-(22, 8, 10),
-(22, 4, 20),
-(22, 5, 30),
-(22, 6, 40);
+(21, 5, 30);
 
 -- --------------------------------------------------------
 
@@ -321,14 +312,13 @@ CREATE TABLE `rq_list` (
 --
 
 INSERT INTO `rq_list` (`id`, `rq_no`, `deliver_to`, `ordered_by`, `approved_by`, `department_name`, `building_name`, `p_id`, `notes`, `status`, `date_fulfilled`, `fulfilled_by`, `checked_by`, `date_created`, `date_updated`) VALUES
-(10, 'RQ-437375', 'Stenland', 2, 3, 'Security', 'Security Office', 2, '', 3, '2023-08-07 04:01:57', 4, 5, '2023-07-04 01:55:30', '2023-08-07 04:01:57'),
+(10, 'RQ-437375', 'Stenland', 2, 3, 'Security', 'Security Office', 2, '', 2, '2023-08-15 16:55:14', 4, 5, '2023-07-04 01:55:30', '2023-08-15 16:55:14'),
 (14, 'RQ-929088', 'Mutomo Mission Hospital', 2, 3, 'Repair & Maintenance', 'Repair Office 302', 4, '', 1, '2023-08-05 12:19:07', 4, 5, '2023-07-08 22:08:12', '2023-08-05 12:19:07'),
 (15, 'RQ-149671', 'Stenland', 2, 3, 'Agriculture', 'Agriculture Office 202', 2, '', 1, '2023-08-05 12:46:10', 4, 5, '2023-07-08 23:22:28', '2023-08-05 12:46:10'),
 (16, 'RQ-000268', 'Katundu Primary School', 2, 3, 'Accomodation', 'Gate Section', 6, '', 1, '2023-08-05 12:39:39', 4, 5, '2023-07-09 01:01:52', '2023-08-05 12:39:39'),
 (17, 'RQ-532818', 'Stenland', 2, 3, 'Admin Office', 'Admin Office', 2, '', 1, '2023-08-01 16:06:23', 4, 5, '2023-07-14 23:20:29', '2023-08-01 16:06:23'),
 (20, 'RQ-120927', 'Sten', 2, 3, 'Sten', 'Sten', 4, '', 1, '2023-08-06 11:50:04', 4, 5, '2023-08-06 11:49:15', '2023-08-06 11:50:04'),
-(21, 'RQ-817527', 'Mandazi road', 2, 3, 'Maandazi', 'Chifoo', 6, '', 1, '2023-08-06 12:00:33', 4, 5, '2023-08-06 12:00:19', '2023-08-06 12:00:33'),
-(22, 'RQ-531052', 'test', 2, 3, 'test', 'test', 4, '', 2, '2023-08-07 03:08:12', 4, 5, '2023-08-06 12:08:02', '2023-08-07 03:08:12');
+(21, 'RQ-817527', 'Mandazi road', 2, 3, 'Maandazi', 'Chifoo', 6, '', 2, '2023-08-15 17:02:58', 4, 5, '2023-08-06 12:00:19', '2023-08-15 17:02:58');
 
 -- --------------------------------------------------------
 
@@ -456,12 +446,6 @@ ALTER TABLE `backorder_list`
   ADD KEY `rq_id` (`rq_id`);
 
 --
--- Indexes for table `client_info`
---
-ALTER TABLE `client_info`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indexes for table `delivery_items`
 --
 ALTER TABLE `delivery_items`
@@ -483,7 +467,7 @@ ALTER TABLE `delivery_list`
 --
 ALTER TABLE `invoice_list`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `p_id` (`dn_id`);
+  ADD KEY `p_id` (`rq_id`);
 
 --
 -- Indexes for table `item_list`
@@ -552,25 +536,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `backorder_list`
 --
 ALTER TABLE `backorder_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT for table `client_info`
---
-ALTER TABLE `client_info`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `delivery_list`
 --
 ALTER TABLE `delivery_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `invoice_list`
 --
 ALTER TABLE `invoice_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `item_list`
