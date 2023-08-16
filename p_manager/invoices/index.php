@@ -36,17 +36,17 @@
 					<tbody>
 						<?php
 						$i = 1;
-						$qry = $conn->query("SELECT v.*, dl.id as did  FROM `invoice_list` v inner join `delivery_list` dl on dl.id = v.dn_id");
+						$qry = $conn->query("SELECT v.*,r.deliver_to FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join `delivery_list` d on d.rq_no = v.rq_id");
 						while ($row = $qry->fetch_assoc()) :
-							$row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['did']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.unit_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['did']}'")->fetch_array()['total'];
+							$row['item_count'] = $conn->query("SELECT * FROM delivery_items inner join delivery_list on id = dn_id where rq_no = '{$row['id']}'")->num_rows;
+							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id inner join delivery_list dl on dl.id = d.dn_id where dn_id = (SELECT id FROM `delivery_list` WHERE rq_no = '{$row['id']}')")->fetch_array()['total'];
 						?>
 
 							<tr>
 								<td class="text-center"><?php echo $i++; ?></td>
 								<td class=""><?php echo date("M d,Y H:i", strtotime($row['date_created'])); ?></td>
 								<td class=""><?php echo $row['in_no'] ?></td>
-								<td class=""><?php echo("Not done yet")?></td>
+								<td class=""><?php echo $row['deliver_to']?></td>
 								<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
 								<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
 								<td>
@@ -56,7 +56,7 @@
 											echo '<span class="badge badge-success">Paid</span>';
 											break;
 										case '2':
-											echo '<span class="badge badge-success">Overdue</span>';
+											echo '<span class="badge badge-danger">Overdue</span>';
 											break;
 										default:
 											echo '<span class="badge badge-secondary">Pending</span>';

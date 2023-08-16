@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT v.*,r.* from `invoice_list` v inner join project_list p on p.id = v.dn_id inner join rq_list r on p.id = r.p_id where v.id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT v.*, r.* from `invoice_list` v inner join rq_list r on v.rq_id = r.id where v.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -104,22 +104,22 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     </thead>
                     <tbody>
                         <?php
-                        $summary = $conn->query("SELECT v.*, di.quantity, di.unit, i.name,i.description, i.unit_price from `invoice_list` v
-                        inner join `delivery_list` d on d.id = v.dn_id
+                        $summary = $conn->query("SELECT v.*, di.quantity, i.unit, i.name,i.description, i.selling_price from `invoice_list` v
+                        inner join `delivery_list` d on d.rq_no = v.rq_id
                         inner join `delivery_items` di on di.dn_id = d.id
                         inner join `item_list` i on i.id = di.item_id
                         where v.id = '{$_GET['id']}'");
                         $sub_total = 0;
                         while ($row = $summary->fetch_assoc()) :
-                            $sub_total += ($row['quantity'] * $row['unit_price']);
+                            $sub_total += ($row['quantity'] * $row['selling_price']);
                         ?>
                             <tr class="po-item" data-id="">
                                 <td class="align-middle p-0 text-center"><?php echo $row['quantity'] ?></td>
                                 <td class="align-middle p-1"><?php echo $row['unit'] ?></td>
                                 <td class="align-middle p-1"><?php echo $row['name'] ?></td>
                                 <td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
-                                <td class="align-middle p-1"><?php echo number_format($row['unit_price']) ?></td>
-                                <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['unit_price']) ?></td>
+                                <td class="align-middle p-1"><?php echo number_format($row['selling_price']) ?></td>
+                                <td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
                             </tr>
                         <?php endwhile; ?>
                     <tfoot>

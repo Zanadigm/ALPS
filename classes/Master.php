@@ -674,7 +674,7 @@ class Master extends DBConnection
 		
 		$confirm = $this->conn->query("UPDATE `delivery_list` SET `status` = '1', `date_received` = current_timestamp(), `received_by` = 2 where id = '{$id}'");
 		if ($confirm) {
-
+            
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Delivery Succesfully Confirmed.");
 		} else {
@@ -715,7 +715,7 @@ class Master extends DBConnection
 		
 		extract($_POST);
 
-		$dn_id = $id;
+		$rq_id = $id;
 
 		if (!empty($in_no)) {
 			$check = $this->conn->query("SELECT * FROM `invoice_list` where `in_no` = '{$in_no}' ")->num_rows;
@@ -737,7 +737,7 @@ class Master extends DBConnection
 			}
 		}
 
-		$sql = "INSERT INTO invoice_list (dn_id, in_no) VALUES ('$dn_id', '$in_no')";
+		$sql = "INSERT INTO invoice_list (rq_id, in_no) VALUES ('$rq_id', '$in_no')";
 		
 
 		$save = $this->conn->query($sql);
@@ -826,6 +826,9 @@ switch ($action) {
 		break;
 	case 'delete_dn':
 		echo $Master->delete_dn();
+		break;
+	case 'generate_invoice':
+		echo $Master->generate_invoice();
 		break;
 	case 'delete_in':
 		echo $Master->delete_in();
