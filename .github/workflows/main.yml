@@ -29,3 +29,11 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
+        exclude : /
+           ** /.htacess
+           ** /admin/.htacess
+           ** /ceo/.htacess
+           ** /driver/.htacess
+           ** /p_manager/.htacess
+           ** /s_manager/.htacess
+           
