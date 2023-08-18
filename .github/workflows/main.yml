@@ -31,6 +31,8 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         dry-run: true
         exclude: |
+           **/.git*
+           **/.git*/**
            ** /.htacess
            ** /admin/.htacess
            ** /ceo/.htacess
