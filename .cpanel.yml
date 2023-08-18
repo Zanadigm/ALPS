@@ -1,4 +1,0 @@
-deployment:
-tasks:
-- export DEPLOYPATH=/home/public_html/alps
-- /bin/cp -r * $DEPLOYPATH
