@@ -32,10 +32,10 @@ jobs:
         exclude: |
            **/.git*
            **/.git*/**
-           ** /.htacess
-           ** /admin/.htacess
-           ** /ceo/.htacess
-           ** /driver/.htacess
-           ** /p_manager/.htacess
-           ** /s_manager/.htacess
+           **/.htacess
+           **/admin/.htacess
+           **/ceo/.htacess
+           **/driver/.htacess
+           **/p_manager/.htacess
+           **/s_manager/.htacess
            
