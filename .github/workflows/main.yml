@@ -33,9 +33,10 @@ jobs:
               **/.git*
               **/.git*/**
               **/node_modules/**
-              **/admin/**/.*
-              **/ceo/**/.*
-              **/driver/**/.*
-              **/p_manager/**/.*
-              **/s_manager/**/.*
+              **/.htaccess
+              **/admin/.htaccess
+              **/ceo/.htaccess
+              **/driver/.htaccess
+              **/p_manager/.htaccess
+              **/s_manager/.htaccess
            
