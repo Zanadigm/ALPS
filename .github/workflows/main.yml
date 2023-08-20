@@ -29,10 +29,14 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
+        dry-run: true
         exclude: |
-           exclude: |
               **/.git*
               **/.git*/**
               **/node_modules/**
-              **/.**
+              **/admin/**/.*
+              **/ceo/**/.*
+              **/driver/**/.*
+              **/p_manager/**/.*
+              **/s_manager/**/.*
            
