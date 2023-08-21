@@ -34,8 +34,7 @@
 				<tbody>
 					<?php 
 					$i = 1;
-					$driver_id = $_settings->userdata('id');
-					$qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl inner join `users` u on dl.driver_id = u.id where dl.driver_id = $driver_id and dl.status = 0 order by unix_timestamp(dl.date_updated) ");
+					$qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl inner join `users` u on dl.driver_id = u.id where dl.status != 1 order by unix_timestamp(dl.date_updated)");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['id']}'")->num_rows;
 							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];
@@ -68,8 +67,10 @@
 				                   <span class="sr-only">Toggle Dropdown</span>
 				                </button>
 
-				                <div class="dropdown-menu" role="menu">
-								 	<a class="dropdown-item" href="?page=deliveries/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+								<div class="dropdown-menu" role="menu">
+								  	<a class="dropdown-item" href="?page=deliveries/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+				                    <div class="dropdown-divider"></div>
+				                    <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
 				                </div>
 							</td>
 						</tr>
@@ -82,11 +83,37 @@
 </div>
 <script>
 	$(document).ready(function(){
+		$('.delete_data').click(function(){
+			_conf("Are you sure to delete this delivery permanently?","delete_dn",[$(this).attr('data-id')])
+		})
 		$('.view_details').click(function(){
 			uni_modal("Delivery Details","deliveries/view_details.php?id="+$(this).attr('data-id'),'mid-large')
 		})
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();
 	})
+
+	function delete_dn($id){
+		start_loader();
+		$.ajax({
+			url:_base_url_+"classes/Master.php?f=delete_dn",
+			method:"POST",
+			data:{id: $id},
+			dataType:"json",
+			error:err=>{
+				console.log(err)
+				alert_toast("An error occured.",'error');
+				end_loader();
+			},
+			success:function(resp){
+				if(typeof resp== 'object' && resp.status == 'success'){
+					location.reload();
+				}else{
+					alert_toast("An error occured.",'error');
+					end_loader();
+				}
+			}
+		})
+	}
 	
 </script>

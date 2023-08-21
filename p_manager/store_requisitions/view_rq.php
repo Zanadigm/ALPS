@@ -276,14 +276,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             dataType: "json",
             error: err => {
                 console.log(err)
-                alert_toast("An error occured.", 'error');
+                alert_toast("Invoice already exists.", 'error');
                 end_loader();
             },
             success: function(resp) {
                 if (typeof resp == 'object' && resp.status == 'success') {
-                    location.reload();
+                    location.href = "./?page=invoices/view_details&id="+resp.id;
                 } else {
-                    alert_toast("An error occured.", 'error');
+                    alert_toast("Invoice already exists.", 'error');
                     end_loader();
                 }
             }

@@ -19,7 +19,7 @@
           <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
           </li>
           <li class="nav-item d-none d-sm-inline-block">
-            <a href="<?php echo base_url ?>" class="nav-link"><?php echo (!isMobileDevice()) ? $_settings->info('name'):$_settings->info('short_name'); ?> - CEO</a>
+            <a href="<?php echo base_url ?>" class="nav-link"><?php echo (!isMobileDevice()) ? $_settings->info('name'):$_settings->info('short_name'); ?> - DRIVER</a>
           </li>
         </ul>
         <!-- Right navbar links -->
@@ -54,7 +54,7 @@
                     <span class="sr-only">Toggle Dropdown</span>
                   </button>
                   <div class="dropdown-menu" role="menu">
-                    <a class="dropdown-item" href="<?php echo base_url.'ceo/?page=user' ?>"><span class="fa fa-user"></span> My Account</a>
+                    <a class="dropdown-item" href="<?php echo base_url.'driver/?page=user' ?>"><span class="fa fa-user"></span> My Account</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="<?php echo base_url.'/classes/Login.php?f=logout' ?>"><span class="fas fa-sign-out-alt"></span> Logout</a>
                   </div>

@@ -47,17 +47,17 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
 			<div class="row">
 			    <div class="col-md-4 form-group">
 					<label for="deliver_to">Deliver To <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="deliver_to" name="deliver_to" value="<?php echo isset($deliver_to) ? $deliver_to : '' ?>">
+					<input type="text" class="form-control form-control-sm rounded-0" id="deliver_to" name="deliver_to" value="<?php echo isset($deliver_to) ? $deliver_to : '' ?>" required>
 				</div>
 
 				<div class="col-md-4 form-group">
 					<label for="department_name">Department Name <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="department_name" name="department_name" value="<?php echo isset($department_name) ? $department_name : '' ?>">
+					<input type="text" class="form-control form-control-sm rounded-0" id="department_name" name="department_name" value="<?php echo isset($department_name) ? $department_name : '' ?>" required>
 				</div>
 
 				<div class="col-md-4 form-group">
 					<label for="building_name">Building Name & Room Number<span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="building_name" name="building_name" value="<?php echo isset($building_name) ? $building_name : '' ?>">
+					<input type="text" class="form-control form-control-sm rounded-0" id="building_name" name="building_name" value="<?php echo isset($building_name) ? $building_name : '' ?>" required>
 				</div>
 
 				<div class="col-md-6 form-group">

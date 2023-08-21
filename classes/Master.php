@@ -240,7 +240,7 @@ class Master extends DBConnection
 
 		$data = array();
 		while ($row = $qry->fetch_assoc()) {
-			$data[] = array("label" => $row['name'], "unit" => $row['unit'], "id" => $row['id'], "description" => $row['description'], "selling_price" => $row['selling_price']);
+			$data[] = array("label" => $row['name'], "unit" => $row['unit'], "id" => $row['id'], "description" => $row['description'], "selling_price" => $row['selling_price'], "buying_price" => $row['buying_price']);
 		}
 		return json_encode($data);
 	}
@@ -455,73 +455,6 @@ class Master extends DBConnection
 	 * ====================================================
 	 */
 
-	// function save_dn()
-	// {
-
-	// 	extract($_POST);
-
-	// 	$data = "";
-	// 	foreach ($_POST as $k => $v) {
-	// 		if (!in_array($k, array('id', 'dn_no')) && !is_array($_POST[$k])) {
-	// 			$v = addslashes(trim($v));
-	// 			if (!empty($data)) $data .= ",";
-	// 			$data .= " `{$k}`='{$v}' ";
-	// 		}
-	// 	}
-	// 	if (!empty($dn_no)) {
-	// 		$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
-	// 		if ($this->capture_err())
-	// 			return $this->capture_err();
-	// 		if ($check > 0) {
-	// 			$resp['status'] = 'dn_failed';
-	// 			$resp['msg'] = "Delivery Number already exist.";
-	// 			return json_encode($resp);
-	// 			exit;
-	// 		}
-	// 	} else {
-	// 		$dn_no = "";
-	// 		while (true) {
-	// 			$dn_no = "DN-" . (sprintf("%'.06d", mt_rand(1, 999999)));
-	// 			$check = $this->conn->query("SELECT * FROM `delivery_list` where `dn_no` = '{$dn_no}'")->num_rows;
-	// 			if ($check <= 0)
-	// 				break;
-	// 		}
-	// 	}
-
-	// 	$data .= ", dn_no = '{$dn_no}' ";
-
-	// 	if (empty($id)) {
-	// 		$sql = "INSERT INTO `delivery_list` set {$data} ";
-	// 	} else {
-	// 		$sql = "UPDATE `delivery_list` set {$data} where id = '{$id}' ";
-	// 	}
-
-	// 	$save = $this->conn->query($sql);
-
-	// 	if ($save) {
-	// 		$resp['status'] = 'success';
-	// 		$dn_id = empty($id) ? $this->conn->insert_id : $id;
-	// 		$resp['id'] = $dn_id;
-	// 		$data = "";
-	// 		foreach ($item_id as $k => $v) {
-	// 			if (!empty($data)) $data .= ",";
-	// 			$data .= "('{$dn_id}','{$v}','{$qty[$k]}')";
-	// 		}
-	// 		if (!empty($data)) {
-	// 			$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
-	// 			$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`quantity`) VALUES {$data} ");
-	// 		}
-	// 		if (empty($id))
-	// 			$this->settings->set_flashdata('success', "Delivery Note successfully saved.");
-	// 		else
-	// 			$this->settings->set_flashdata('success', "Delivery Note successfully updated.");
-	// 	} else {
-	// 		$resp['status'] = 'failed';
-	// 		$resp['err'] = $this->conn->error . "[{$sql}]";
-	// 	}
-	// 	return json_encode($resp);
-	// }
-
 	function save_dn(){
         
         if (empty($_POST['id'])) {
@@ -614,7 +547,9 @@ class Master extends DBConnection
 			}
 			if (!empty($data)) {
 				$this->conn->query("DELETE FROM `delivery_items` where dn_id = '{$dn_id}'");
-				$save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`quantity`) VALUES {$data} ");
+				if($qty>0){
+				    $save = $this->conn->query("INSERT INTO `delivery_items` (`dn_id`,`item_id`,`quantity`) VALUES {$data} ");
+				}
 			}
             
             if (isset($bo_ids)) {
@@ -637,6 +572,7 @@ class Master extends DBConnection
                 
             } else {
                 $this->conn->query("UPDATE `rq_list` set status = 3 where id = '{$rq_no}'");
+				$this->conn->query("UPDATE `backorder_list` set status = 2 where rq_id = '{$rq_no}'");
             }
         } else {
             $resp['status'] = 'failed';
