@@ -1,6 +1,6 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/remmygro/alps/
+    - export DEPLOYPATH=/home/remmygro/public_html
     - /bin/cp -R admin $DEPLOYPATH
     - /bin/cp -R build $DEPLOYPATH
     - /bin/cp -R ceo $DEPLOYPATH
