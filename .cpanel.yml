@@ -18,5 +18,3 @@ deployment:
     - /bin/cp 404.html $DEPLOYPATH
     - /bin/cp README.md $DEPLOYPATH
     - /bin/cp config.php $DEPLOYPATH
-    - /bin/cp index.php $DEPLOYPATH
-    - /bin/cp initialise.php $DEPLOYPATH
