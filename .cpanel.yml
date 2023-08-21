@@ -1,0 +1,22 @@
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/remmygro/alps/
+    - /bin/cp -R admin $DEPLOYPATH
+    - /bin/cp -R build $DEPLOYPATH
+    - /bin/cp -R ceo $DEPLOYPATH
+    - /bin/cp -R classes $DEPLOYPATH
+    - /bin/cp -R database $DEPLOYPATH
+    - /bin/cp -R dist $DEPLOYPATH
+    - /bin/cp -R driver $DEPLOYPATH
+    - /bin/cp -R inc $DEPLOYPATH
+    - /bin/cp -R libs $DEPLOYPATH
+    - /bin/cp -R p_manager $DEPLOYPATH
+    - /bin/cp -R plugins $DEPLOYPATH
+    - /bin/cp -R s_manager $DEPLOYPATH
+    - /bin/cp -R uploads $DEPLOYPATH
+    - /bin/cp .htaccess $DEPLOYPATH
+    - /bin/cp 404.html $DEPLOYPATH
+    - /bin/cp README.md $DEPLOYPATH
+    - /bin/cp config.php $DEPLOYPATH
+    - /bin/cp index.php $DEPLOYPATH
+    - /bin/cp initialise.php $DEPLOYPATH
