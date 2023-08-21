@@ -36,10 +36,10 @@
 					<tbody>
 						<?php
 						$i = 1;
-						$qry = $conn->query("SELECT v.*,r.deliver_to FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join `delivery_list` d on d.rq_no = v.rq_id where v.status !=1 ");
+						$qry = $conn->query("SELECT v.*,r.deliver_to FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id where v.status !=1");
 						while ($row = $qry->fetch_assoc()) :
-							$row['item_count'] = $conn->query("SELECT * FROM delivery_items inner join delivery_list on id = dn_id where rq_no = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id inner join delivery_list dl on dl.id = d.dn_id where dn_id = (SELECT id FROM `delivery_list` WHERE rq_no = '{$row['id']}')")->fetch_array()['total'];
+							$row['item_count'] = $conn->query("SELECT * FROM delivery_items inner join delivery_list on id = dn_id where rq_no = '{$row['rq_id']}'")->num_rows;
+							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id inner join delivery_list dl on dl.id = d.dn_id where rq_no = '{$row['rq_id']}'")->fetch_array()['total'];
 						?>
 
 							<tr>
