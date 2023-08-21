@@ -35,7 +35,7 @@
 					<?php 
 					$i = 1;
 					$driver_id = $_settings->userdata('id');
-					$qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl inner join `users` u on dl.driver_id = u.id where dl.driver_id = $driver_id and dl.status = 0 order by unix_timestamp(dl.date_updated) ");
+					$qry = $conn->query("SELECT dl.*, u.username FROM `delivery_list` dl inner join `users` u on dl.driver_id = u.id where dl.status = 0 and dl.driver_id = $driver_id order by unix_timestamp(dl.date_updated) ");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM delivery_items where dn_id = '{$row['id']}'")->num_rows;
 							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id where dn_id = '{$row['id']}'")->fetch_array()['total'];

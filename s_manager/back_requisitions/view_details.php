@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT r.bo_code, r.id, rq.*, p.name as cost_center  from `backorder_list` r join rq_list rq on rq.id = r.rq_id join `project_list` p on p.id = rq.p_id where r.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT r.bo_code, r.id as boid, r.status as bo_status, rq.*, p.name as cost_center  from `backorder_list` r join rq_list rq on rq.id = r.rq_id join `project_list` p on p.id = rq.p_id where r.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -33,10 +33,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </style>
 <div class="card card-outline card-info">
     <div class="card-header">
-    <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
+    <h3 class="card-title"><?php echo("Back Requisition Details") ?> </h3>
         <div class="card-tools">
-            <?php if ($status == 1) : ?>
-                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Process This Order</a>
+            <?php if ($bo_status == 0) : ?>
+                <a href="?page=deliveries/manage_delivery&boid=<?php echo $boid ?>" style="margin-right: 10px‒;margin-right: 438px;" class="btn btn-flat btn-primary">Process This Order</a>
             <?php endif; ?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>

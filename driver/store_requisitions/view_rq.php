@@ -35,19 +35,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
         <div class="card-tools">
-            <?php if ($status == 0) { ?>
-                <a class="btn btn-flat btn-primary approve_requisition" href="javascript:void(0)" data-id="<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Approve This Order</a>
-            <?php } else if ($status == 1) { ?>
-                <a href="?page=deliveries/manage_delivery&rqid=<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Process This Order</a>
-            <?php } else if ($status == 3) { ?>
-                <a class="btn btn-flat btn-primary generate_invoice" href="javascript:void(0)" data-id="<?php echo $id ?>" style="margin-right: 10px‒;margin-right: 309px;" class="btn btn-flat btn-primary">Generate Invoice</a>
-            <?php }?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
-            <a class="btn btn-sm btn-flat btn-primary" href="?page=store_requisitions/manage_rq&id=<?php echo $id ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
     </div>
     <div class="card-body" id="out_print">
+
         <div class="row">
             <div class="col-4">
                 <img src="<?php echo validate_image($_settings->info('logo')) ?>" alt="" height="200px">
@@ -161,7 +154,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $requested_items_qry = $conn->query("SELECT r.*,i.name,i.unit, i.description, i.selling_price FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+                            $requested_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description, i.selling_price FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
                             $sub_total = 0;
                             while ($row = $requested_items_qry->fetch_assoc()) :
                                 $sub_total += ($row['quantity'] * $row['selling_price']);
@@ -198,7 +191,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                         <label for="date_fulfilled" class="contorol-label">Date Fulfilled:</label>
                         <?php
                         if ($status == 3) { ?>
-
                             <p><?php echo isset($date_fulfilled) ? $date_fulfilled : "" ?></p>
                         <?php } else { ?>
                             <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
@@ -233,8 +225,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <p style="color:red"><?php echo ("Pending Fulfillment") ?></p>
                         <?php } ?>
                     </div>
-
-                    
                 </div>
             </div>
         </div>
@@ -263,19 +253,37 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     </tr>
 </table>
 <script>
+    $(document).ready(function() {
+        $('.generate_invoice').click(function() {
+            _conf("Are you sure to generate an invoice for this order?", "generate_invoice", [$(this).attr('data-id')])
+        })
+    })
+
+    function generate_invoice($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=generate_invoice",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
     $(function() {
-        $(document).ready(function() {
-            $('.approve_requisition').click(function() {
-                _conf("Are you sure to approve this Requisition Order? Action cannot be undone!", "approve_requisition", [$(this).attr('data-id')])
-            })
-        })
-
-        $(document).ready(function() {
-            $('.generate_invoice').click(function() {
-                _conf("Are you sure to generate an invoice for this order?", "generate_invoice", [$(this).attr('data-id')])
-            })
-        })
-
         $('#print').click(function(e) {
             e.preventDefault();
             start_loader();
@@ -298,54 +306,4 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             }, 200);
         })
     })
-    
-    function approve_requisition($id) {
-        start_loader();
-        $.ajax({
-            url: _base_url_ + "classes/Master.php?f=approve_requisition",
-            method: "POST",
-            data: {
-                id: $id 
-            },
-            dataType: "json",
-            error: err => {
-                console.log(err)
-                alert_toast("An error occured.", 'error');
-                end_loader();
-            },
-            success: function(resp) {
-                if (typeof resp == 'object' && resp.status == 'success') {
-                    location.reload();
-                } else {
-                    alert_toast("An error occured.", 'error');
-                    end_loader();
-                }
-            }
-        })
-    }
-
-    function generate_invoice($id) {
-        start_loader();
-        $.ajax({
-            url: _base_url_ + "classes/Master.php?f=generate_invoice",
-            method: "POST",
-            data: {
-                id: $id
-            },
-            dataType: "json",
-            error: err => {
-                console.log(err)
-                alert_toast("Invoice already exists.", 'error');
-                end_loader();
-            },
-            success: function(resp) {
-                if (typeof resp == 'object' && resp.status == 'success') {
-                    location.href = "./?page=invoices/view_details&id="+resp.id;
-                } else {
-                    alert_toast("Invoice already exists.", 'error');
-                    end_loader();
-                }
-            }
-        })
-    }
 </script>

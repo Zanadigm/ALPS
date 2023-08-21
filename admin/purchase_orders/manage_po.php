@@ -172,7 +172,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		<td class="align-middle p-1 item-unit"></td>
 		<td class="align-middle p-1 item-description"></td>
 		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="buying_price[]" readonly value="0" />
+			<input type="number" step="any" class="text-right w-100 border-0 buying-price" name="buying_price[]" readonly value="0" />
 		</td>
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
@@ -237,7 +237,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				_item.find('input[name="item_id[]"]').val(ui.item.id)
 				_item.find('.item-description').text(ui.item.description)
 				_item.find('.item-unit').text(ui.item.unit)
-				_item.find('.selling-price').val(ui.item.buying_price)
+				_item.find('.buying-price').val(ui.item.buying_price)
 			}
 		})
 	}
@@ -281,6 +281,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				alert_toast(" Please add atleast 1 item on the list.", 'warning')
 				return false;
 			}
+
+			var selectedSupplier = $('#supplier_id').val();
+            console.log("Selected Supplier:", selectedSupplier);
+        
+            if (!selectedSupplier) {
+                alert_toast("Please select a supplier first.", 'warning');
+                return false;
+            }
+			
 			start_loader();
 			$.ajax({
 				url: _base_url_ + "classes/Master.php?f=save_po",

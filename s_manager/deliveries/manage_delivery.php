@@ -26,13 +26,32 @@
 			<input type="hidden" name ="id" value="<?php echo isset($id) ? $id : '' ?>">
 
                <?php
-			    $order_id = $_GET['rqid'];
-				$qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
-				if($qry->num_rows > 0){
-					foreach($qry->fetch_assoc() as $k => $v){
-						$$k=$v;
+
+                if(isset($_GET['rqid'])){
+                    $order_id = $_GET['rqid'];
+				    $qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
+				    if($qry->num_rows > 0){
+					    foreach($qry->fetch_assoc() as $k => $v){
+						    $$k=$v;
+					    }
+				    }
+                } elseif (isset($_GET['boid'])){
+					$order_id = $_GET['boid'];
+					$qry = $conn->query("SELECT id as boid, rq_id as id  from `backorder_list` where id = '{$order_id}' ");
+					if($qry->num_rows > 0){
+						foreach($qry->fetch_assoc() as $k => $v){
+							$$k=$v;
+						}
 					}
-				}
+                }
+
+			    // $order_id = $_GET['rqid'];
+				// $qry = $conn->query("SELECT * from `rq_list` where id = '{$order_id}' ");
+				// if($qry->num_rows > 0){
+				// 	foreach($qry->fetch_assoc() as $k => $v){
+				// 		$$k=$v;
+				// 	}
+				// }
 			   ?>
 
 			<div class="row">
@@ -83,30 +102,38 @@
 						</thead>
 						<tbody>
 							<?php 
+							
 							if(isset($id)):
-							$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
-							echo $conn->error;
-							while($row = $delivery_items_qry->fetch_assoc()):
-								$row['qty'] = $row['quantity'];
-							?>
-							<tr class="po-item" data-id="">
-								<td class="align-middle p-1 text-center">
-									<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
-								</td>
-								<td class="py-1 px-2 text-center qty">
-									<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" max = "<?php echo $row['quantity']; ?>" min="0"/>
-									<input type="hidden" name="oqty[]" value="<?php echo $row['quantity']; ?>">
-								</td>
-								<td class="align-middle p-1">
-									<input type="text" class="text-center w-100 border-0" name="unit[]" readonly value="<?php echo $row['unit'] ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
-								</td>
-								<td class="align-middle p-1">
-									<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
-									<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>" required style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
-								</td>
-								<td class="align-middle p-1 item-description" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo $row['description'] ?></td>
-							</tr>
-							<?php endwhile;endif; ?>
+								if(isset($_GET['rqid'])){
+									$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `requisition_items` r inner join item_list i on r.item_id = i.id where r.`rq_id` = '$id' ");
+							        echo $conn->error;
+								} elseif (isset($_GET['boid'])){
+									$delivery_items_qry = $conn->query("SELECT r.*,i.name, i.unit, i.description FROM `backorder_items` r inner join item_list i on r.item_id = i.id where r.`bo_id` = '$boid' ");
+							        echo $conn->error;
+								}
+							    
+							    while($row = $delivery_items_qry->fetch_assoc()):
+							    	$row['qty'] = $row['quantity'];?>
+
+							        <tr class="po-item" data-id="">
+							        	<td class="align-middle p-1 text-center">
+							        		<button class="btn btn-sm btn-danger py-0" type="button" onclick="rem_item($(this))"><i class="fa fa-times"></i></button>
+							        	</td>
+							        	<td class="py-1 px-2 text-center qty">
+							        		<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" max = "<?php echo $row['quantity']; ?>" min="0"/>
+							        		<input type="hidden" name="oqty[]" value="<?php echo $row['quantity']; ?>">
+							        	</td>
+							        	<td class="align-middle p-1">
+							        		<input type="text" class="text-center w-100 border-0" name="unit[]" readonly value="<?php echo $row['unit'] ?>" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
+							        	</td>
+							        	<td class="align-middle p-1">
+							        		<input type="hidden" name="item_id[]" value="<?php echo $row['item_id'] ?>">
+							        		<input type="text" class="text-center w-100 border-0 item_id" readonly value="<?php echo $row['name'] ?>" required style="pointer-events: none; background-color: #f0f0f0; color: #888888;"/>
+							        	</td>
+							        	<td class="align-middle p-1 item-description" style="pointer-events: none; background-color: #f0f0f0; color: #888888;"><?php echo $row['description'] ?></td>
+							        </tr>
+							    <?php endwhile;
+							endif; ?>
 						</tbody>
 					</table>
 					<div class="row">
@@ -230,6 +257,15 @@
 				alert_toast(" Please add atleast 1 item on the list.",'warning')
 				return false;
 			}
+
+			
+			var selectedDriver = $('#driver_id').val();
+        
+            if (!selectedDriver) {
+                alert_toast("Please select a driver first.", 'warning');
+                return false;
+            }
+
 			start_loader();
 			$.ajax({
 				url:_base_url_+"classes/Master.php?f=save_dn",

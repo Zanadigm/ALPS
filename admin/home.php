@@ -105,4 +105,95 @@
     </a>
   </div>
 
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=invoices/pending" style="color:#343a40">
+      <div class="info-box">
+        <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-file-invoice-dollar"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Invoices</span>
+          <span class="info-box-number">
+            <?php
+            $delivery = $conn->query("SELECT * FROM invoice_list")->num_rows;
+            echo number_format($delivery);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+</div>
+
+<h2 class="text-dark" style="color: red;">Pending Tasks</h2>
+<hr class="border-dark">
+
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=store_requisitions/pending" style="color:#343a40">
+      <div class="info-box mb-3" style="background-color: #ffc10726;">
+        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-warehouse"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Store Requisitions</span>
+          <span class="info-box-number" style="color: red;">
+            <?php
+            $rq = $conn->query("SELECT * FROM rq_list WHERE `status` !=3")->num_rows;
+            echo number_format($rq);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=purchase_orders/pending" style="color:#343a40">
+      <div class="info-box mb-3" style="background-color: #ffc10726;">
+        <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-file-invoice"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Local Purchase Orders</span>
+          <span class="info-box-number" style="color: red;">
+            <?php
+            $pending_po = $conn->query("SELECT * FROM po_list WHERE `status` !=1")->num_rows;
+            echo number_format($pending_po);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=deliveries/pending" style="color:#343a40">
+      <div class="info-box mb-3" style="background-color: #ffc10726;">
+        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-truck"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Deliveries</span>
+          <span class="info-box-number" style="color: red;">
+            <?php
+            $delivery = $conn->query("SELECT * FROM delivery_list WHERE `status` !=1")->num_rows;
+            echo number_format($delivery);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=invoices/pending" style="color:#343a40">
+      <div class="info-box mb-3" style="background-color: #ffc10726;">
+        <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-file-invoice-dollar"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Invoices</span>
+          <span class="info-box-number" style="color: red;">
+            <?php
+            $delivery = $conn->query("SELECT * FROM invoice_list WHERE `status` !=1")->num_rows;
+            echo number_format($delivery);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
 </div>

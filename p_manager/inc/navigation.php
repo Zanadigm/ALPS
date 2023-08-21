@@ -84,6 +84,17 @@
                         </p>
                       </a>
                     </li>
+
+                    <li class="nav-header">Store Maintenance</li>
+
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>p_manager/?page=items" class="nav-link nav-items">
+                        <i class="nav-icon fas fa-boxes"></i>
+                        <p>
+                          Item List
+                        </p>
+                      </a>
+                    </li>
                     
                   </ul>
                 </nav>

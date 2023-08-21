@@ -280,6 +280,15 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				alert_toast(" Please add atleast 1 item on the list.", 'warning')
 				return false;
 			}
+
+			var selectedSupplier = $('#supplier_id').val();
+            console.log("Selected Supplier:", selectedSupplier);
+        
+            if (!selectedSupplier) {
+                alert_toast("Please select a supplier first.", 'warning');
+                return false;
+            }
+			
 			start_loader();
 			$.ajax({
 				url: _base_url_ + "classes/Master.php?f=save_po",

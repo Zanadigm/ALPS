@@ -5,7 +5,10 @@
 <?php endif; ?>
 <div class="card card-outline card-primary">
 	<div class="card-header">
-		<h3 class="card-title">List of Invoices</h3>
+		<h3 class="card-title">List of Purchase Orders</h3>
+		<div class="card-tools">
+			<a href="?page=purchase_orders/manage_po" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span> Create New</a>
+		</div>
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
@@ -25,8 +28,8 @@
 						<tr class="bg-navy disabled">
 							<th>#</th>
 							<th>Date Created</th>
-							<th>IN #</th>
-							<th>Client</th>
+							<th>PO #</th>
+							<th>Supplier</th>
 							<th>Items</th>
 							<th>Total Amount</th>
 							<th>Status</th>
@@ -36,27 +39,26 @@
 					<tbody>
 						<?php
 						$i = 1;
-						$qry = $conn->query("SELECT v.*,r.deliver_to FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id");
+						$qry = $conn->query("SELECT po.*, s.name as sname FROM `po_list` po inner join `supplier_list` s on po.supplier_id = s.id  where po.status !=1 order by unix_timestamp(po.date_updated)");
 						while ($row = $qry->fetch_assoc()) :
-							$row['item_count'] = $conn->query("SELECT * FROM delivery_items inner join delivery_list on id = dn_id where rq_no = '{$row['rq_id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id inner join delivery_list dl on dl.id = d.dn_id where rq_no = '{$row['rq_id']}'")->fetch_array()['total'];
+							$row['item_count'] = $conn->query("SELECT * FROM order_items where po_id = '{$row['id']}'")->num_rows;
+							$row['total_amount'] = $conn->query("SELECT sum(o.quantity * i.buying_price) as total FROM order_items o inner join item_list i on i.id=o.item_id where po_id = '{$row['id']}'")->fetch_array()['total'];
 						?>
-
 							<tr>
 								<td class="text-center"><?php echo $i++; ?></td>
 								<td class=""><?php echo date("M d,Y H:i", strtotime($row['date_created'])); ?></td>
-								<td class=""><?php echo $row['in_no'] ?></td>
-								<td class=""><?php echo $row['deliver_to']?></td>
+								<td class=""><?php echo $row['po_no'] ?></td>
+								<td class=""><?php echo $row['sname'] ?></td>
 								<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
 								<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
 								<td>
 									<?php
 									switch ($row['status']) {
 										case '1':
-											echo '<span class="badge badge-success">Paid</span>';
+											echo '<span class="badge badge-success">Approved</span>';
 											break;
 										case '2':
-											echo '<span class="badge badge-danger">Overdue</span>';
+											echo '<span class="badge badge-danger">Denied</span>';
 											break;
 										default:
 											echo '<span class="badge badge-secondary">Pending</span>';
@@ -70,9 +72,13 @@
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
 									<div class="dropdown-menu" role="menu">
-										<a class="dropdown-item" href="?page=invoices/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-										<div class="dropdown-divider"></div>
-										<a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
+										<a class="dropdown-item" href="?page=purchase_orders/view_po&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+										<?php if ($row['status'] != 1) : ?>
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item" href="?page=purchase_orders/manage_po&id=<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Edit</a>
+											<div class="dropdown-divider"></div>
+											<a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
+										<?php endif; ?>
 									</div>
 								</td>
 							</tr>
@@ -86,19 +92,19 @@
 <script>
 	$(document).ready(function() {
 		$('.delete_data').click(function() {
-			_conf("Are you sure to delete this invoice permanently?", "delete_in", [$(this).attr('data-id')])
+			_conf("Are you sure to delete this purchase order permanently?", "delete_po", [$(this).attr('data-id')])
 		})
 		$('.view_details').click(function() {
-			uni_modal("Reservaton Details", "invoices/view_details.php?id=" + $(this).attr('data-id'), 'mid-large')
+			uni_modal("Purchase Order Details", "purchase_orders/view_details.php?id=" + $(this).attr('data-id'), 'mid-large')
 		})
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();
 	})
 
-	function delete_in($id) {
+	function delete_po($id) {
 		start_loader();
 		$.ajax({
-			url: _base_url_ + "classes/Master.php?f=delete_in",
+			url: _base_url_ + "classes/Master.php?f=delete_po",
 			method: "POST",
 			data: {
 				id: $id

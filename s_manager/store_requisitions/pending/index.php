@@ -5,7 +5,7 @@
 <?php endif; ?>
 <div class="card card-outline card-primary">
 	<div class="card-header">
-		<h3 class="card-title">List of Back Requisitions</h3>
+		<h3 class="card-title">List of Store Requisitions</h3>
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
@@ -14,10 +14,9 @@
 				<colgroup>
 					<col width="5%">
 					<col width="15%">
-					<col width="15%">
-					<col width="15%">
-					<col width="15%">
-					<col width="5%">
+					<col width="20%">
+					<col width="20%">
+					<col width="10%">
 					<col width="10%">
 					<col width="10%">
 					<col width="10%">
@@ -26,7 +25,6 @@
 					<tr class="bg-navy disabled">
 						<th>#</th>
 						<th>Date Created</th>
-						<th>BO #</th>
 						<th>RQ #</th>
 						<th>Cost Center</th>
 						<th>Items</th>
@@ -38,15 +36,14 @@
 				<tbody>
 					<?php 
 					$i = 1;
-					$qry = $conn->query("SELECT bo.*, rq.rq_no, p.name as pname FROM `backorder_list` bo inner join `rq_list` rq on rq.id = bo.rq_id inner join project_list p on rq.p_id = p.id order by unix_timestamp(rq.date_updated)");
+					$qry = $conn->query("SELECT rq.*, p.name as pname FROM `rq_list` rq inner join `project_list` p on rq.p_id = p.id where rq.status !=3 order by unix_timestamp(rq.date_updated)");
 						while($row = $qry->fetch_assoc()):
-							$row['item_count'] = $conn->query("SELECT * FROM backorder_items where bo_id = '{$row['id']}'")->num_rows;
-							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.selling_price) as total FROM backorder_items r inner join item_list i on i.id = r.item_id where bo_id = '{$row['id']}'")->fetch_array()['total'];
+							$row['item_count'] = $conn->query("SELECT * FROM requisition_items where rq_id = '{$row['id']}'")->num_rows;
+							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.selling_price) as total FROM requisition_items r inner join item_list i on i.id = r.item_id where rq_id = '{$row['id']}'")->fetch_array()['total'];
 					?>
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td class=""><?php echo date("M d,Y H:i",strtotime($row['date_created'])) ; ?></td>
-							<td class=""><?php echo $row['bo_code'] ?></td>
 							<td class=""><?php echo $row['rq_no'] ?></td>
 							<td class=""><?php echo $row['pname'] ?></td>
 							<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
@@ -55,9 +52,12 @@
 								<?php 
 									switch ($row['status']) {
 										case '1':
-											echo '<span class="badge badge-warning">Partially Fulfilled</span>';
+											echo '<span class="badge badge-primary">Approved</span>';
 											break;
 										case '2':
+											echo '<span class="badge badge-warning">Partially Fulfilled</span>';
+											break;
+										case '3':
 											echo '<span class="badge badge-success">Fulfilled</span>';
 											break;
 										default:
@@ -72,7 +72,7 @@
 										<span class="sr-only">Toggle Dropdown</span>
 									</button>
 									<div class="dropdown-menu" role="menu">
-										<a class="dropdown-item" href="?page=back_requisitions/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+										<a class="dropdown-item" href="?page=store_requisitions/view_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
 				                  </div>
 							</td>
 						</tr>
@@ -86,7 +86,7 @@
 <script>
 	$(document).ready(function() {
 		$('.view_details').click(function() {
-			uni_modal("Back Requisition Details", "back_requisitions/view_details.php?id=" + $(this).attr('data-id'), 'mid-large')
+			uni_modal("Requisition Order Details", "store_requisitions/view_rq.php?id=" + $(this).attr('data-id'), 'mid-large')
 		})
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();

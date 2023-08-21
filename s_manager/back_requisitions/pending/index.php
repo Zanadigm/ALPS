@@ -38,7 +38,7 @@
 				<tbody>
 					<?php 
 					$i = 1;
-					$qry = $conn->query("SELECT bo.*, rq.rq_no, p.name as pname FROM `backorder_list` bo inner join `rq_list` rq on rq.id = bo.rq_id inner join project_list p on rq.p_id = p.id order by unix_timestamp(rq.date_updated)");
+					$qry = $conn->query("SELECT bo.*, rq.rq_no, p.name as pname FROM `backorder_list` bo inner join `rq_list` rq on rq.id = bo.rq_id inner join project_list p on rq.p_id = p.id where bo.status != 2 order by unix_timestamp(rq.date_updated)");
 						while($row = $qry->fetch_assoc()):
 							$row['item_count'] = $conn->query("SELECT * FROM backorder_items where bo_id = '{$row['id']}'")->num_rows;
 							$row['total_amount'] = $conn->query("SELECT sum(r.quantity * i.selling_price) as total FROM backorder_items r inner join item_list i on i.id = r.item_id where bo_id = '{$row['id']}'")->fetch_array()['total'];
@@ -55,9 +55,12 @@
 								<?php 
 									switch ($row['status']) {
 										case '1':
-											echo '<span class="badge badge-warning">Partially Fulfilled</span>';
+											echo '<span class="badge badge-primary">Approved</span>';
 											break;
 										case '2':
+											echo '<span class="badge badge-warning">Partially Fulfilled</span>';
+											break;
+										case '3':
 											echo '<span class="badge badge-success">Fulfilled</span>';
 											break;
 										default:
