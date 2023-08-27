@@ -16,7 +16,7 @@
       text-shadow: 1px 1px #4c1d1d
     }
   </style>
-  <h1 class="text-center text-dark py-5 login-title"><b><?php echo $_settings->info('name') ?></b></h1>
+  <h1 class="text-center py-5 login-title" style="color: #ffffff ;"><b><?php echo $_settings->info('name') ?></b></h1>
 <div class="login-box">
   <!-- /.login-logo -->
   <div class="card card-outline">

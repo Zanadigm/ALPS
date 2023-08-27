@@ -119,7 +119,7 @@
           <span class="info-box-text">Store Requisitions</span>
           <span class="info-box-number" style="color: red;">
             <?php
-            $rq = $conn->query("SELECT * FROM rq_list WHERE `status` !=3")->num_rows;
+            $rq = $conn->query("SELECT * FROM rq_list WHERE `has_invoice` = 0")->num_rows;
             echo number_format($rq);
             ?>
           </span>

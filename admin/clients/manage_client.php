@@ -1,7 +1,7 @@
 <?php
 require_once('../../config.php');
 if(isset($_GET['id']) && $_GET['id'] > 0){
-    $qry = $conn->query("SELECT * from `project_list` where id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT * from `client_list` where id = '{$_GET['id']}' ");
     if($qry->num_rows > 0){
         foreach($qry->fetch_assoc() as $k => $v){
             $$k=stripslashes($v);
@@ -20,50 +20,47 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
         height: auto;
     }
 </style>
-<form action="" id="project-form">
-    <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
+<form action="" id="supplier-form">
+     <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
     <div class="container-fluid">
         <div class="form-group">
-            <label for="name" class="control-label">Project Name</label>
+            <label for="name" class="control-label">Client Name</label>
             <input type="text" name="name" id="name" class="form-control rounded-0" value="<?php echo isset($name) ? $name :"" ?>" required>
         </div>
-
         <div class="form-group">
-            <label for="address" class="control-label">Description</label>
-            <textarea rows="3" name="description" id="description" class="form-control rounded-0" required><?php echo isset($description) ? $description :"" ?></textarea>
+            <label for="location" class="control-label">Location</label>
+            <textarea rows="3" name="location" id="location" class="form-control rounded-0" required><?php echo isset($location) ? $location :"" ?></textarea>
         </div>
-
         <div class="form-group">
-			<label for="client" class="control-label">Client</label>
-			<select name="client" id="client" class="form-control rounded-0" required>
-				<option value="" disabled <?php echo !isset($client_id) ? "selected" : '' ?>></option>
-				<?php
-				$client_qry = $conn->query("SELECT * FROM `client_list` order by `name` asc");
-				while ($row = $client_qry->fetch_assoc()) :
-				?>
-					<option value="<?php echo $row['id'] ?>" <?php echo isset($client_id) && $client_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0 ? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
-				<?php endwhile; ?>
-			</select>
+            <label for="address" class="control-label">Postal Address</label>
+            <textarea rows="3" name="address" id="address" class="form-control rounded-0" required><?php echo isset($address) ? $address :"" ?></textarea>
         </div>
-        
+        <div class="form-group">
+            <label for="email" class="control-label">Email</label>
+            <input type="email" name="email" id="email" class="form-control rounded-0" value="<?php echo isset($email) ? $email :"" ?>" required>
+        </div>
+        <div class="form-group">
+            <label for="contact" class="control-label">Contact</label>
+            <input type="text" name="contact" id="contact" class="form-control rounded-0" value="<?php echo isset($contact) ? $contact :"" ?>" required>
+        </div>
         <div class="form-group">
             <label for="status" class="control-label">Status</label>
             <select name="status" id="status" class="form-control rounded-0" required>
-                <option value="0" <?php echo isset($status) && $status =="" ? "selected": "0" ?>>Open</option>
-                <option value="1" <?php echo isset($status) && $status =="" ? "selected": "1" ?>>Closed</option>
+                <option value="1" <?php echo isset($status) && $status =="" ? "selected": "1" ?> >Active</option>
+                <option value="0" <?php echo isset($status) && $status =="" ? "selected": "0" ?>>Inactive</option>
             </select>
         </div>
     </div>
 </form>
 <script>
     $(function(){
-        $('#project-form').submit(function(e){
+        $('#supplier-form').submit(function(e){
 			e.preventDefault();
             var _this = $(this)
 			 $('.err-msg').remove();
 			start_loader();
 			$.ajax({
-				url:_base_url_+"classes/Master.php?f=save_project",
+				url:_base_url_+"classes/Master.php?f=save_client",
 				data: new FormData($(this)[0]),
                 cache: false,
                 contentType: false,

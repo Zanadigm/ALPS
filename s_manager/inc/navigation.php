@@ -97,6 +97,15 @@
                 </a>
               </li>
 
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>s_manager/?page=clients" class="nav-link nav-clients">
+                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <p>
+                    Client List
+                  </p>
+                </a>
+              </li>
+
             </ul>
 
           </nav>

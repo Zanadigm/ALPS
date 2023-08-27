@@ -64,16 +64,20 @@
 											echo '<span class="badge badge-secondary">Pending</span>';
 											break;
 									}
-									?>
-								</td>
-								<td align="center">
-									<button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-										Action
-										<span class="sr-only">Toggle Dropdown</span>
-									</button>
-									<div class="dropdown-menu" role="menu">
-										<a class="dropdown-item" href="?page=back_requisitions/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-				                  </div>
+								?>
+							</td>
+							<td align="center">
+								<button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
+									Action
+									<span class="sr-only">Toggle Dropdown</span>
+								</button>
+								<div class="dropdown-menu" role="menu">
+									<a class="dropdown-item" href="?page=back_requisitions/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+									<?php if ($has_po = 0){?>
+									<div class="dropdown-divider"></div>
+									<a class="dropdown-item" href="?page=purchase_orders/manage_po&boid=<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Create LPO</a>
+									<?php } ?>
+				                </div>
 							</td>
 						</tr>
 					<?php endwhile; ?>

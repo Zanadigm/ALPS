@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT v.*, r.* from `invoice_list` v inner join rq_list r on v.rq_id = r.id where v.id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT v.*,c.*, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client where v.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -59,10 +59,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             <div class="col-3 d-flex align-items-center">
                 <div>
                     <p class="m-0" style="font-weight: bold; text-transform: uppercase">BILL TO</p>
-                    <p class="m-0">Client : <?php echo ($deliver_to) ?></p>
-                    <p class="m-0">Department : <?php echo ($department_name) ?></p>
-                    <p class="m-0">Building: <?php echo ($building_name) ?></p>
-                    <p class="m-0">Client : <?php echo ($deliver_to) ?></p>
+                    <p class="m-0"><?php echo $name ?></p>
+                    <p class="m-0"><?php echo $location ?></p>
+                    <p class="m-0"><?php echo $contact ?></p>
+                    <p class="m-0"><?php echo $email ?></p>
 
                 </div>
             </div>
@@ -70,7 +70,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             <div class="col-3 d-flex align-items-center">
                 <div>
                     <H2>INVOICE</H2>
-                    <p class="m-0">Invoice Number : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Invoice N0 : <?php echo ($in_no) ?></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
                     <p class="m-0">Due Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
 

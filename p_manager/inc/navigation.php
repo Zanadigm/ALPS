@@ -75,6 +75,15 @@
                         </p>
                       </a>
                     </li>
+                    
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>p_manager/?page=quotations" class="nav-link nav-quotations">
+                        <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                        <p>
+                          Quotations
+                        </p>
+                      </a>
+                    </li>
 
                     <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>p_manager/?page=suppliers" class="nav-link nav-suppliers">
@@ -85,7 +94,25 @@
                       </a>
                     </li>
 
-                    <li class="nav-header">Store Maintenance</li>
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>p_manager/?page=clients" class="nav-link nav-clients">
+                        <i class="nav-icon fas fa-truck-loading"></i>
+                        <p>
+                        Client List
+                        </p>
+                      </a>
+                    </li>
+
+                    <li class="nav-header">Maintenance</li>
+
+                    <li class="nav-item dropdown">
+                      <a href="<?php echo base_url ?>p_manager/?page=user/list" class="nav-link nav-user_list">
+                        <i class="nav-icon fas fa-users"></i>
+                        <p>
+                          User List
+                        </p>
+                      </a>
+                    </li>
 
                     <li class="nav-item dropdown">
                       <a href="<?php echo base_url ?>p_manager/?page=items" class="nav-link nav-items">

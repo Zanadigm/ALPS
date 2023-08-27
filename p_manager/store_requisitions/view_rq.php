@@ -35,7 +35,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo("Requisition Order Details") ?> </h3>
         <div class="card-tools">
-            <?php if ($status == 3) : ?>
+            <?php if ($status == 3 && $has_invoice == 0) : ?>
                 <a class="btn btn-flat btn-primary generate_invoice" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Generate Invoice</a>
             <?php endif?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>

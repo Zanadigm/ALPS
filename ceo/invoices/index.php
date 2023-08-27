@@ -14,8 +14,9 @@
 					<colgroup>
 						<col width="5%">
 						<col width="15%">
-						<col width="20%">
-						<col width="20%">
+						<col width="15%">
+						<col width="25%">
+						<col width="10%">
 						<col width="10%">
 						<col width="10%">
 						<col width="10%">
@@ -27,6 +28,7 @@
 							<th>Date Created</th>
 							<th>IN #</th>
 							<th>Client</th>
+							<th>Cost Center</th>
 							<th>Items</th>
 							<th>Total Amount</th>
 							<th>Status</th>
@@ -36,7 +38,7 @@
 					<tbody>
 						<?php
 						$i = 1;
-						$qry = $conn->query("SELECT v.*,r.deliver_to FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id");
+						$qry = $conn->query("SELECT v.*,c.name as client_name, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client;");
 						while ($row = $qry->fetch_assoc()) :
 							$row['item_count'] = $conn->query("SELECT * FROM delivery_items inner join delivery_list on id = dn_id where rq_no = '{$row['rq_id']}'")->num_rows;
 							$row['total_amount'] = $conn->query("SELECT sum(d.quantity * i.selling_price) as total FROM delivery_items d inner join item_list i on i.id = d.item_id inner join delivery_list dl on dl.id = d.dn_id where rq_no = '{$row['rq_id']}'")->fetch_array()['total'];
@@ -46,7 +48,8 @@
 								<td class="text-center"><?php echo $i++; ?></td>
 								<td class=""><?php echo date("M d,Y H:i", strtotime($row['date_created'])); ?></td>
 								<td class=""><?php echo $row['in_no'] ?></td>
-								<td class=""><?php echo $row['deliver_to']?></td>
+								<td class=""><?php echo $row['client_name']?></td>
+								<td class=""><?php echo $row['project_name']?></td>
 								<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
 								<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
 								<td>

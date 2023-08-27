@@ -32,6 +32,19 @@ if(isset($_GET['id']) && $_GET['id'] > 0){
             <label for="address" class="control-label">Description</label>
             <textarea rows="3" name="description" id="description" class="form-control rounded-0" required><?php echo isset($description) ? $description :"" ?></textarea>
         </div>
+
+        <div class="form-group">
+			<label for="client" class="control-label">Client</label>
+			<select name="client" id="client" class="form-control rounded-0" required>
+				<option value="" disabled <?php echo !isset($client_id) ? "selected" : '' ?>></option>
+				<?php
+				$client_qry = $conn->query("SELECT * FROM `client_list` order by `name` asc");
+				while ($row = $client_qry->fetch_assoc()) :
+				?>
+					<option value="<?php echo $row['id'] ?>" <?php echo isset($client_id) && $client_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0 ? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
+				<?php endwhile; ?>
+			</select>
+        </div>
         
         <div class="form-group">
             <label for="status" class="control-label">Status</label>

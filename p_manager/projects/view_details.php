@@ -1,6 +1,6 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT * from `project_list` where id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT p.*, c.name as clientname from `project_list` p inner join client_list c on c.id = p.client where p.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -55,7 +55,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <div>
                     <H2>COST CENTER MATERIAL SUMMARY</H2>
                     <p class="m-0">Cost Center : <?php echo ($name) ?></p>
-                    <p class="m-0">Description : <?php echo ($description) ?></p>
+                    <p class="m-0">Client : <?php echo ($clientname) ?></p>
                 </div>
             </div>
         </div>
