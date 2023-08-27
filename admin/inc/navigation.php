@@ -79,10 +79,28 @@
               </li>
 
               <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=quotations" class="nav-link nav-quotations">
+                  <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                  <p>
+                    Quotations
+                  </p>
+                </a>
+              </li>
+
+              <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>admin/?page=suppliers" class="nav-link nav-suppliers">
                   <i class="nav-icon fas fa-truck-loading"></i>
                   <p>
                     Supplier List
+                  </p>
+                </a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>admin/?page=clients" class="nav-link nav-clients">
+                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <p>
+                    Client List
                   </p>
                 </a>
               </li>

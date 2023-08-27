@@ -13,9 +13,10 @@
 				<colgroup>
 					<col width="5%">
 					<col width="15%">
-					<col width="20%">
+					<col width="15%">
+					<col width="25%">
 					<col width="30%">
-					<col width="20%">
+					<col width="15%">
 					<col width="10%">
 				</colgroup>
 				<thead>
@@ -23,6 +24,7 @@
 						<th>#</th>
 						<th>Date Created</th>
 						<th>Name</th>
+						<th>Client</th>
 						<th>Description</th>
 						<th>Status</th>
 						<th>Action</th>
@@ -31,13 +33,14 @@
 				<tbody>
 					<?php 
 					$i = 1;
-					$qry = $conn->query("SELECT * from `project_list` order by (`created_on`) asc ");
+					$qry = $conn->query("SELECT p.*, c.name as clientname from project_list p inner join client_list c on p.client = c.id order by (`created_on`) asc ");
 					while($row = $qry->fetch_assoc()):
 					?>
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td><?php echo date("Y-m-d H:i",strtotime($row['created_on'])) ?></td>
 							<td><?php echo $row['name'] ?></td>
+							<td><?php echo $row['clientname'] ?></td>
 							<td><?php echo $row['description'] ?></td>
 							<td class="text-center">
 								<?php if($row['status'] == 0): ?>

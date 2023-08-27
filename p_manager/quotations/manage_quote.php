@@ -1,13 +1,6 @@
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-	$qry = $conn->query("SELECT * from `po_list` where id = '{$_GET['id']}' ");
-	if ($qry->num_rows > 0) {
-		foreach ($qry->fetch_assoc() as $k => $v) {
-			$$k = $v;
-		}
-	}
-} else if (isset($_GET['boid']) && $_GET['boid'] > 0) {
-	$qry = $conn->query("SELECT * from `backorder_list` where id = '{$_GET['boid']}' ");
+	$qry = $conn->query("SELECT * from `quotation_list` where id = '{$_GET['id']}' ");
 	if ($qry->num_rows > 0) {
 		foreach ($qry->fetch_assoc() as $k => $v) {
 			$$k = $v;
@@ -32,36 +25,35 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		margin: 0;
 	}
 
-	[name="tax_percentage"],[name="discount_percentage"] {
+	[name="tax_percentage"],[name="discount_percentage"], [name="labor_percentage"]{
 		width: 5vw;
 	}
 </style>
 <div class="card card-outline card-info">
 	<div class="card-header">
-		<h3 class="card-title"><?php echo isset($id) ? "Update Purchase Order Details" : "New Purchase Order" ?> </h3>
+		<h3 class="card-title"><?php echo isset($id) ? "Update Quotation" : "New Quotation" ?> </h3>
 	</div>
 	<div class="card-body">
 		<form action="" id="po-form">
-		    <?php if (!isset($_GET['boid'])){ ?>
 			<input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
-			<?php } ?>
+			<input type="hidden" name="validity" value="<?php echo isset($validity) ? $validity : (new DateTime())->modify('+30 days')->format('Y-m-d') ?>">
 			<div class="row">
 				<div class="col-md-6 form-group">
-					<label for="supplier_id">Supplier</label>
-					<select name="supplier_id" id="supplier_id" class="custom-select custom-select-sm rounded-0 select2">
-						<option value="" disabled <?php echo !isset($supplier_id) ? "selected" : '' ?>></option>
+					<label for="client_id">Client</label>
+					<select name="client_id" id="client_id" class="custom-select custom-select-sm rounded-0 select2">
+						<option value="" disabled <?php echo !isset($client_id) ? "selected" : '' ?>></option>
 						<?php
-						$supplier_qry = $conn->query("SELECT * FROM `supplier_list` order by `name` asc");
-						while ($row = $supplier_qry->fetch_assoc()) :
+						$client_qry = $conn->query("SELECT * FROM `client_list` order by `name` asc");
+						while ($row = $client_qry->fetch_assoc()) :
 						?>
-							<option value="<?php echo $row['id'] ?>" <?php echo isset($supplier_id) && $supplier_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0 ? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
+							<option value="<?php echo $row['id'] ?>" <?php echo isset($client_id) && $client_id == $row['id'] ? 'selected' : '' ?> <?php echo $row['status'] == 0 ? 'disabled' : '' ?>><?php echo $row['name'] ?></option>
 						<?php endwhile; ?>
 					</select>
 				</div>
 
 				<div class="col-md-6 form-group">
-					<label for="po_no">PO # <span class="po_err_msg text-danger"></span></label>
-					<input type="text" class="form-control form-control-sm rounded-0" id="po_no" name="po_no" readonly value="<?php echo isset($po_no) ? $po_no : '' ?>">
+					<label for="qo_no">QO # <span class="po_err_msg text-danger"></span></label>
+					<input type="text" class="form-control form-control-sm rounded-0" id="qo_no" name="qo_no" readonly value="<?php echo isset($qo_no) ? $qo_no : '' ?>">
 					<small><i>Leave this blank to Automatically Generate upon saving.</i></small>
 				</div>
 			</div>
@@ -91,14 +83,8 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						<tbody>
 							<?php
 							if (isset($id)) :
-								if(isset($_GET['id'])){
-									$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.buying_price, i.description FROM `order_items` o inner join item_list i on o.item_id = i.id where o.`po_id` = '$id' ");
-								    echo $conn->error;
-								} else if (isset($_GET['boid'])){
-									$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.buying_price, i.description FROM `backorder_items` o inner join item_list i on o.item_id = i.id where o.`bo_id` = '$id' ");
-								    echo $conn->error;
-								}
-								
+								$order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.selling_price, i.description FROM `quotation_items` o inner join item_list i on o.item_id = i.id where o.`qo_id` = '$id' ");
+								echo $conn->error;
 								while ($row = $order_items_qry->fetch_assoc()) :
 							?>
 									<tr class="po-item" data-id="">
@@ -111,14 +97,14 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 										</td>
 
 										<td class="align-middle p-0 text-center">
-											<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" />
+											<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" value="<?php echo $row['quantity'] ?>" required/>
 										</td>
 										<td class="align-middle p-1 item-unit"><?php echo $row['unit'] ?></td>
 										<td class="align-middle p-1 item-description"><?php echo $row['description'] ?></td>
 										<td class="align-middle p-1">
-											<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="buying_price[]" readonly value="<?php echo ($row['buying_price']) ?>" />
+											<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="selling_price[]" readonly value="<?php echo ($row['selling_price']) ?>" />
 										</td>
-										<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['buying_price']) ?></td>
+										<td class="align-middle p-1 text-right total-price"><?php echo number_format($row['quantity'] * $row['selling_price']) ?></td>
 									</tr>
 							<?php endwhile;
 							endif; ?>
@@ -128,6 +114,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							<tr>
 								<th class="p-1 text-right" colspan="6"><span><button class="btn btn btn-sm btn-flat btn-primary py-0 mx-1" type="button" id="add_row">Add Row</button></span> Sub Total</th>
 								<th class="p-1 text-right" id="sub_total">0</th>
+							</tr>
+							<tr>
+								<th class="p-1 text-right" colspan="6">Labor (%)
+									<input type="number" step="any" name="labor_percentage" class="border-light text-right" value="<?php echo isset($labor_percentage) ? $labor_percentage : 0 ?>">
+								</th>
+								<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($labor_amount) ? $labor_amount : 0 ?>" name="labor_amount"></th>
 							</tr>
 							<tr>
 								<th class="p-1 text-right" colspan="6">Discount (%)
@@ -153,14 +145,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							<label for="notes" class="control-label">Notes</label>
 							<textarea name="notes" id="notes" cols="10" rows="4" class="form-control rounded-0"><?php echo isset($notes) ? $notes : '' ?></textarea>
 						</div>
-						<div class="col-md-6" hidden="true">
-							<label for="status" class="control-label">Status</label>
-							<select name="status" id="status" class="form-control form-control-sm rounded-0">
-								<option value="0" <?php echo isset($status) && $status == 0 ? 'selected' : '' ?>>Pending</option>
-								<option value="1" <?php echo isset($status) && $status == 1 ? 'selected' : '' ?>>Approved</option>
-								<option value="2" <?php echo isset($status) && $status == 2 ? 'selected' : '' ?>>Denied</option>
-							</select>
-						</div>
 					</div>
 				</div>
 			</div>
@@ -181,12 +165,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			<input type="text" class="text-center w-100 border-0 item_id" required />
 		</td>
 		<td class="align-middle p-0 text-center">
-			<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" />
+			<input type="number" class="text-center w-100 border-0" step="any" name="qty[]" required/>
 		</td>
 		<td class="align-middle p-1 item-unit"></td>
 		<td class="align-middle p-1 item-description"></td>
 		<td class="align-middle p-1">
-			<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="buying_price[]" readonly value="0" />
+			<input type="number" step="any" class="text-right w-100 border-0 selling-price" name="selling_price[]" readonly value="0" />
 		</td>
 		<td class="align-middle p-1 text-right total-price">0</td>
 	</tr>
@@ -200,10 +184,10 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		var _total = 0
 		$('.po-item').each(function() {
 			var qty = $(this).find("[name='qty[]']").val()
-			var buying_price = $(this).find("[name='buying_price[]']").val()
+			var selling_price = $(this).find("[name='selling_price[]']").val()
 			var row_total = 0;
-			if (qty > 0 && buying_price > 0) {
-				row_total = parseFloat(qty) * parseFloat(buying_price)
+			if (qty > 0 && selling_price > 0) {
+				row_total = parseFloat(qty) * parseFloat(selling_price)
 			}
 			$(this).find('.total-price').text(parseFloat(row_total).toLocaleString('en-US'))
 		})
@@ -212,6 +196,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			_price = _price.replace(/\,/gi, '')
 			_total += parseFloat(_price)
 		})
+
 		var discount_perc = 0
 		if ($('[name="discount_percentage"]').val() > 0) {
 			discount_perc = $('[name="discount_percentage"]').val()
@@ -222,10 +207,18 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		if ($('[name="tax_percentage"]').val() > 0) {
 			tax_perc = $('[name="tax_percentage"]').val()
 		}
+
+		var labor_perc = 0
+		if ($('[name="labor_percentage"]').val() > 0) {
+			labor_perc = $('[name="labor_percentage"]').val()
+		}
+		var labor_amount = _total * (labor_perc / 100);
+		$('[name="labor_amount"]').val(parseFloat(labor_amount).toLocaleString("en-US"))
+		
 		var tax_amount = _total * (tax_perc / 100);
 		$('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
-		$('#total').text(parseFloat(_total - discount_amount).toLocaleString("en-US"))
+		$('#total').text(parseFloat(_total +labor_amount - discount_amount).toLocaleString("en-US"))
 	}
 
 	function _autocomplete(_item) {
@@ -251,7 +244,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				_item.find('input[name="item_id[]"]').val(ui.item.id)
 				_item.find('.item-description').text(ui.item.description)
 				_item.find('.item-unit').text(ui.item.unit)
-				_item.find('.selling-price').val(ui.item.buying_price)
+				_item.find('.selling-price').val(ui.item.selling_price)
 			}
 		})
 	}
@@ -263,7 +256,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			tr.find('[name="qty[]"]').on('input keypress', function(e) {
 				calculate()
 			})
-			$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress', function(e) {
+			$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"],[name="labor_percentage"]').on('input keypress', function(e) {
 				calculate()
 			})
 		})
@@ -274,7 +267,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				tr.find('[name="qty[]"]').on('input keypress', function(e) {
 					calculate()
 				})
-				$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"]').on('input keypress', function(e) {
+				$('#item-list tfoot').find('[name="discount_percentage"],[name="tax_percentage"],[name="labor_percentage"]').on('input keypress', function(e) {
 					calculate()
 				})
 				tr.find('[name="qty[]"]').trigger('keypress')
@@ -283,30 +276,29 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 			$('#add_row').trigger('click')
 		}
 		$('.select2').select2({
-			placeholder: "Please Select here",
+			placeholder: "Please Select client here",
 			width: "relative"
 		})
+
 		$('#po-form').submit(function(e) {
 			e.preventDefault();
 			var _this = $(this)
 			$('.err-msg').remove();
-			$('[name="po_no"]').removeClass('border-danger')
+			$('[name="qo_no"]').removeClass('border-danger')
 			if ($('#item-list .po-item').length <= 0) {
 				alert_toast(" Please add atleast 1 item on the list.", 'warning')
 				return false;
 			}
 
-			var selectedSupplier = $('#supplier_id').val();
-            console.log("Selected Supplier:", selectedSupplier);
-        
-            if (!selectedSupplier) {
-                alert_toast("Please select a supplier first.", 'warning');
+			var selectedclient = $('#client_id').val();
+            if (!selectedclient) {
+                alert_toast("Please select a client first.", 'warning');
                 return false;
             }
-			
+
 			start_loader();
 			$.ajax({
-				url: _base_url_ + "classes/Master.php?f=save_po",
+				url: _base_url_ + "classes/Master.php?f=save_qo",
 				data: new FormData($(this)[0]),
 				cache: false,
 				contentType: false,
@@ -321,7 +313,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				},
 				success: function(resp) {
 					if (typeof resp == 'object' && resp.status == 'success') {
-						location.href = "./?page=purchase_orders/view_po&id=" + resp.id;
+						location.href = "./?page=quotations/view_details&id=" + resp.id;
 					} else if ((resp.status == 'failed' || resp.status == 'po_failed') && !!resp.msg) {
 						var el = $('<div>')
 						el.addClass("alert alert-danger err-msg").text(resp.msg)
@@ -332,7 +324,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 						}, "fast");
 						end_loader()
 						if (resp.status == 'po_failed') {
-							$('[name="po_no"]').addClass('border-danger').focus()
+							$('[name="qo_no"]').addClass('border-danger').focus()
 						}
 					} else {
 						alert_toast("An error occured", 'error');

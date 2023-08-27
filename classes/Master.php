@@ -91,6 +91,71 @@ class Master extends DBConnection
 	}
 
 	/**
+	 * Clients
+	 * ====================================================
+	 */
+
+	function save_client()
+	{
+
+		extract($_POST);
+
+		$data = "";
+		foreach ($_POST as $k => $v) {
+			if (!in_array($k, array('id'))) {
+				$v = addslashes(trim($v));
+				if (!empty($data)) $data .= ",";
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+		$check = $this->conn->query("SELECT * FROM `client_list` where `name` = '{$name}' " . (!empty($id) ? " and id != {$id} " : "") . " ")->num_rows;
+		if ($this->capture_err())
+			return $this->capture_err();
+		if ($check > 0) {
+			$resp['status'] = 'failed';
+			$resp['msg'] = "Client already exist.";
+			return json_encode($resp);
+			exit;
+		}
+
+		if (empty($id)) {
+			$sql = "INSERT INTO `client_list` set {$data} ";
+			$save = $this->conn->query($sql);
+		} else {
+			$sql = "UPDATE `client_list` set {$data} where id = '{$id}' ";
+			$save = $this->conn->query($sql);
+		}
+
+		if ($save) {
+			$resp['status'] = 'success';
+			if (empty($id))
+				$this->settings->set_flashdata('success', "New Client successfully saved.");
+			else
+				$this->settings->set_flashdata('success', "Cleint successfully updated.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error . "[{$sql}]";
+		}
+		return json_encode($resp);
+	}
+
+	function delete_client()
+	{
+
+		extract($_POST);
+
+		$del = $this->conn->query("DELETE FROM `client_list` where id = '{$id}'");
+		if ($del) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Client successfully deleted.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
+	}
+
+	/**
 	 * Projects/Cost Centers
 	 * ====================================================
 	 */
@@ -243,6 +308,97 @@ class Master extends DBConnection
 			$data[] = array("label" => $row['name'], "unit" => $row['unit'], "id" => $row['id'], "description" => $row['description'], "selling_price" => $row['selling_price'], "buying_price" => $row['buying_price']);
 		}
 		return json_encode($data);
+	}
+
+	/**
+	 * Quotations
+	 * ====================================================
+	 */
+
+	function save_qo(){
+
+		extract($_POST);
+		$data = "";
+
+		foreach ($_POST as $k => $v) {
+			if (in_array($k, array('discount_amount','labor_amount','tax_amount')))
+				$v = str_replace(',', '', $v);
+			if (!in_array($k, array('id', 'qo_no')) && !is_array($_POST[$k])) {
+				$v = addslashes(trim($v));
+				if (!empty($data)) $data .= ",";
+				$data .= " `{$k}`='{$v}' ";
+			}
+		}
+
+		if (!empty($qo_no)) {
+			$check = $this->conn->query("SELECT * FROM `quotation_list` where `qo_no` = '{$qo_no}' " . ($id > 0 ? " and id != '{$id}' " : ""))->num_rows;
+			if ($this->capture_err())
+				return $this->capture_err();
+			if ($check > 0) {
+				$resp['status'] = 'po_failed';
+				$resp['msg'] = "Quotation Number already exist.";
+				return json_encode($resp);
+				exit;
+			}
+		} else {
+			$qo_no = "";
+			while (true) {
+				$qo_no = "	QO-" . (sprintf("%'.06d", mt_rand(1, 999999)));
+				$check = $this->conn->query("SELECT * FROM `quotation_list` where `qo_no` = '{$qo_no}'")->num_rows;
+				if ($check <= 0)
+				    echo($qo_no);
+					break;
+			}
+		}
+
+		$data .= ", qo_no = '{$qo_no}' ";
+
+		if (empty($id)) {
+			$sql = "INSERT INTO `quotation_list` set {$data} ";
+		} else {
+			$sql = "UPDATE `quotation_list` set {$data} where id = '{$id}' ";
+		}
+
+		$save = $this->conn->query($sql);
+
+		if ($save) {
+			$resp['status'] = 'success';
+			$qo_id = empty($id) ? $this->conn->insert_id : $id;
+			$resp['id'] = $qo_id;
+			$data = "";
+			foreach ($item_id as $k => $v) {
+				if (!empty($data)) $data .= ",";
+				$data .= "('{$qo_id}','{$v}','{$qty[$k]}')";
+			}
+			if (!empty($data)) {
+				$this->conn->query("DELETE FROM `quotation_items` where qo_id = '{$qo_id}'");
+				$save = $this->conn->query("INSERT INTO `quotation_items` (`qo_id`,`item_id`,`quantity`) VALUES {$data} ");
+			}
+			if (empty($id))
+				$this->settings->set_flashdata('success', "Quotation successfully saved.");
+			else
+				$this->settings->set_flashdata('success', "Quotation successfully updated.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['err'] = $this->conn->error . "[{$sql}]";
+		}
+		return json_encode($resp);
+	}
+
+	function delete_qo()
+	{
+
+		extract($_POST);
+
+		$del = $this->conn->query("DELETE FROM `qoutation_list` where id = '{$id}'");
+		if ($del) {
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Quotation successfully deleted.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+		return json_encode($resp);
 	}
 
 	/**
@@ -679,6 +835,7 @@ class Master extends DBConnection
 		$save = $this->conn->query($sql);
 
 		if ($save) {
+			$this->conn->query("UPDATE rq_list set has_invoice = 1 where id = '{$id}'");
 			$resp['status'] = 'success';
 			$resp['id'] = $this->conn->insert_id;
 
@@ -720,6 +877,18 @@ switch ($action) {
 		break;
 	case 'delete_supplier':
 		echo $Master->delete_supplier();
+		break;
+	case 'save_client':
+		echo $Master->save_client();
+		break;
+	case 'delete_client':
+		echo $Master->delete_client();
+		break;
+	case 'save_qo':
+		echo $Master->save_qo();
+		break;
+	case 'delete_qo':
+		echo $Master->delete_qo();
 		break;
 	case 'save_project':
 		echo $Master->save_project();

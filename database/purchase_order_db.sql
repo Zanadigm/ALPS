@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 16, 2023 at 12:48 PM
+-- Generation Time: Aug 27, 2023 at 02:07 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -33,14 +33,6 @@ CREATE TABLE `backorder_items` (
   `quantity` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `backorder_items`
---
-
-INSERT INTO `backorder_items` (`bo_id`, `item_id`, `quantity`) VALUES
-(2, 6, 16),
-(3, 4, 20);
-
 -- --------------------------------------------------------
 
 --
@@ -52,16 +44,34 @@ CREATE TABLE `backorder_list` (
   `bo_code` varchar(255) NOT NULL,
   `rq_id` int(11) NOT NULL,
   `status` int(11) NOT NULL,
+  `has_po` tinyint(1) NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `client_list`
+--
+
+CREATE TABLE `client_list` (
+  `id` int(30) NOT NULL,
+  `name` varchar(250) NOT NULL,
+  `location` varchar(250) NOT NULL,
+  `address` text NOT NULL,
+  `contact` varchar(50) NOT NULL,
+  `email` varchar(150) NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1 COMMENT ' 0 = Inactive, 1 = Active',
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `backorder_list`
+-- Dumping data for table `client_list`
 --
 
-INSERT INTO `backorder_list` (`id`, `bo_code`, `rq_id`, `status`, `date_created`) VALUES
-(2, 'BO-0001', 10, 0, '2023-08-15 16:55:14'),
-(3, 'BO-0002', 21, 0, '2023-08-15 17:02:58');
+INSERT INTO `client_list` (`id`, `name`, `location`, `address`, `contact`, `email`, `status`, `date_created`) VALUES
+(1, 'SMPI', 'Mutomo, Kitui', 'P.O Box 83', '9089895633', 'smpi@ngo.org', 1, '2023-08-25 17:53:35'),
+(2, 'Our Lady of Lourdes Hospital', 'Mutomo, Kitui', 'P.O Box 78', '0789456325', 'ourlady@gmail.com', 1, '2023-08-25 17:54:21');
 
 -- --------------------------------------------------------
 
@@ -74,21 +84,6 @@ CREATE TABLE `delivery_items` (
   `item_id` int(11) NOT NULL,
   `quantity` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `delivery_items`
---
-
-INSERT INTO `delivery_items` (`dn_id`, `item_id`, `quantity`) VALUES
-(6, 4, 5),
-(6, 5, 6),
-(6, 6, 0),
-(6, 9, 2),
-(6, 10, 10),
-(6, 8, 5),
-(7, 8, 10),
-(7, 4, 0),
-(7, 5, 30);
 
 -- --------------------------------------------------------
 
@@ -109,14 +104,6 @@ CREATE TABLE `delivery_list` (
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `delivery_list`
---
-
-INSERT INTO `delivery_list` (`id`, `dn_no`, `rq_no`, `driver_id`, `status`, `notes`, `received_by`, `date_received`, `date_created`, `date_updated`) VALUES
-(6, 'DN-739217', 10, 0, 0, 'Bolts shall be available next week.', '', NULL, '2023-08-15 16:55:13', NULL),
-(7, 'DN-725872', 21, 5, 0, '', '', NULL, '2023-08-15 17:02:58', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -131,13 +118,6 @@ CREATE TABLE `invoice_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `invoice_list`
---
-
-INSERT INTO `invoice_list` (`id`, `in_no`, `rq_id`, `status`, `date_created`, `date_updated`) VALUES
-(1, 'IN-244030', 10, 0, '2023-08-15 15:41:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -161,13 +141,22 @@ CREATE TABLE `item_list` (
 --
 
 INSERT INTO `item_list` (`id`, `name`, `unit`, `description`, `selling_price`, `buying_price`, `status`, `date_created`) VALUES
-(4, 'Flood Lights', 'Pcs', '300 Wat Solar Led Flood Lights', 12000, 10000, 1, '2023-06-24 21:31:10'),
-(5, 'G.I Stands', 'Pcs', '2&#039;&#039; Pipes', 10000, 9000, 1, '2023-06-24 21:31:44'),
-(6, 'Bolts', 'Pcs', '3&#039;&#039; Bolts', 700, 600, 1, '2023-06-24 21:32:15'),
-(7, 'Chain link', 'Pcs', 'Plastic coated Shamba chain link', 6000, 5000, 1, '2023-06-30 16:02:37'),
-(8, 'Cement', 'Bags', 'Simba cement', 600, 550, 1, '2023-06-30 16:02:57'),
-(9, 'Binding Wire', 'Roll', 'Roll of binding wire', 2000, 1500, 1, '2023-06-30 16:09:05'),
-(10, 'Concrete Posts', 'Pcs', 'Concrete fencing posts', 200, 150, 1, '2023-06-30 16:09:44');
+(1, '2ft Fluorescent Fitting', 'Pc', 'Magnetic', 10000, 800, 1, '2023-08-25 07:26:22'),
+(2, '2ft Tube', 'Pc', 'Day Light', 200, 150, 1, '2023-08-25 07:27:24'),
+(3, 'Lamp Holder', 'Pc', 'Straight - Pin Type', 150, 100, 1, '2023-08-25 07:28:48'),
+(4, '2.5mm T.w.E Cable', 'Mtrs', 'East African', 180, 150, 1, '2023-08-25 07:31:29'),
+(5, 'Cable Clips', 'Pc', '6*10', 120, 100, 1, '2023-08-25 07:58:40'),
+(6, 'Bulb', 'Pc', 'Energy Saver', 200, 150, 1, '2023-08-25 08:01:43'),
+(7, 'Joint Box', 'Pc', '20A', 120, 100, 1, '2023-08-25 08:11:25'),
+(8, 'Switch Box', 'Pc', 'Single', 50, 30, 1, '2023-08-25 08:11:58'),
+(9, 'Conduits', 'Pc', '20mm', 180, 150, 1, '2023-08-25 08:12:32'),
+(10, 'Switch', 'Pc', '1g2w', 100, 80, 1, '2023-08-25 08:14:58'),
+(11, 'Tangit Glue', 'Lt', '1/2 Ltr', 750, 600, 1, '2023-08-25 18:19:21'),
+(12, '4ft Fitting ', 'Pc', 'Magnetic', 1400, 1000, 1, '2023-08-25 18:22:14'),
+(13, '4Ft Tube', 'Pc', 'Daylight', 250, 180, 1, '2023-08-25 18:22:54'),
+(14, 'Socket Outlet', 'Pc', 'Double', 350, 250, 1, '2023-08-25 18:29:10'),
+(15, 'Ceiling Rose', 'Pc', 'Complete', 200, 150, 1, '2023-08-25 18:29:43'),
+(16, 'MCCB', 'Pc', '16A', 250, 180, 1, '2023-08-25 18:39:18');
 
 -- --------------------------------------------------------
 
@@ -180,17 +169,6 @@ CREATE TABLE `order_items` (
   `item_id` int(11) NOT NULL,
   `quantity` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `order_items`
---
-
-INSERT INTO `order_items` (`po_id`, `item_id`, `quantity`) VALUES
-(1, 4, 3),
-(1, 5, 3),
-(1, 6, 12),
-(2, 4, 5),
-(8, 4, 10);
 
 -- --------------------------------------------------------
 
@@ -212,15 +190,6 @@ CREATE TABLE `po_list` (
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `po_list`
---
-
-INSERT INTO `po_list` (`id`, `po_no`, `supplier_id`, `discount_percentage`, `discount_amount`, `tax_percentage`, `tax_amount`, `notes`, `status`, `date_created`, `date_updated`) VALUES
-(1, 'PO-648826', 1, 0, 0, 0, 0, '', 1, '2023-06-28 14:54:19', '2023-06-28 20:53:47'),
-(2, 'PO-637567', 2, 0, 0, 0, 0, '', 1, '2023-06-29 12:26:48', '2023-07-06 09:44:57'),
-(8, 'PO-775181', 2, 0, 0, 0, 0, '', 0, '2023-07-07 17:58:16', '2023-07-09 01:43:34');
-
 -- --------------------------------------------------------
 
 --
@@ -231,19 +200,55 @@ CREATE TABLE `project_list` (
   `id` int(10) NOT NULL,
   `name` varchar(50) NOT NULL,
   `description` text NOT NULL,
+  `client` int(11) NOT NULL,
   `status` int(10) NOT NULL COMMENT '0=open,1=closed',
   `created_on` datetime NOT NULL DEFAULT current_timestamp(),
-  `updated_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp()
+  `updated_on` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `project_list`
 --
 
-INSERT INTO `project_list` (`id`, `name`, `description`, `status`, `created_on`, `updated_on`) VALUES
-(2, 'Stenland Security Lights', 'Supply and Installation of 3 security lights', 0, '2023-06-24 20:39:33', '0000-00-00 00:00:00'),
-(4, 'Nursing School', 'Mutomo Mission nursing school classroom', 0, '2023-07-08 22:04:00', '0000-00-00 00:00:00'),
-(6, 'Katundu Primary School', 'Dormitory', 0, '2023-07-09 00:58:19', '0000-00-00 00:00:00');
+INSERT INTO `project_list` (`id`, `name`, `description`, `client`, `status`, `created_on`, `updated_on`) VALUES
+(1, 'Stenland Pit Latrine', 'Electrification', 1, 0, '2023-08-25 08:05:35', '2023-08-25 08:10:42'),
+(2, 'St. Joseph Kaindu Primary School', '2 Door Washroom Construction', 1, 0, '2023-08-25 12:50:12', '0000-00-00 00:00:00'),
+(3, 'Repairs & Maintenance', 'Stenland', 1, 0, '2023-08-25 18:18:02', '0000-00-00 00:00:00'),
+(4, 'Security House', 'Electrification', 1, 0, '2023-08-25 18:27:40', '2023-08-25 18:28:05');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quotation_items`
+--
+
+CREATE TABLE `quotation_items` (
+  `qo_id` int(11) NOT NULL,
+  `item_id` int(11) NOT NULL,
+  `quantity` float NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quotation_list`
+--
+
+CREATE TABLE `quotation_list` (
+  `id` int(30) NOT NULL,
+  `qo_no` varchar(100) NOT NULL,
+  `client_id` int(30) NOT NULL,
+  `discount_percentage` float NOT NULL,
+  `discount_amount` float NOT NULL,
+  `tax_percentage` float NOT NULL,
+  `tax_amount` float NOT NULL,
+  `labor_percentage` float NOT NULL,
+  `labor_amount` float NOT NULL,
+  `notes` text NOT NULL,
+  `date_created` datetime NOT NULL DEFAULT current_timestamp(),
+  `validity` datetime NOT NULL,
+  `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -262,26 +267,27 @@ CREATE TABLE `requisition_items` (
 --
 
 INSERT INTO `requisition_items` (`rq_id`, `item_id`, `quantity`) VALUES
-(10, 4, 5),
-(10, 5, 6),
-(10, 6, 16),
-(10, 9, 2),
-(10, 10, 10),
-(10, 8, 5),
-(14, 4, 10),
-(14, 8, 5),
-(14, 5, 4),
-(14, 6, 20),
-(16, 4, 4),
-(16, 8, 5),
-(15, 4, 3),
-(17, 8, 2),
-(17, 4, 5),
-(20, 8, 10),
-(20, 4, 20),
-(21, 8, 10),
-(21, 4, 20),
-(21, 5, 30);
+(2, 11, 1),
+(2, 1, 3),
+(2, 2, 3),
+(1, 1, 1),
+(1, 2, 1),
+(1, 3, 2),
+(1, 4, 6),
+(1, 5, 1),
+(1, 6, 2),
+(1, 8, 1),
+(1, 9, 2),
+(1, 10, 1),
+(1, 12, 1),
+(1, 13, 1),
+(1, 7, 1),
+(3, 1, 1),
+(3, 2, 1),
+(3, 15, 1),
+(3, 10, 1),
+(3, 14, 1),
+(3, 16, 2);
 
 -- --------------------------------------------------------
 
@@ -303,6 +309,7 @@ CREATE TABLE `rq_list` (
   `date_fulfilled` datetime DEFAULT NULL ON UPDATE current_timestamp(),
   `fulfilled_by` int(11) NOT NULL,
   `checked_by` int(11) NOT NULL,
+  `has_invoice` tinyint(1) NOT NULL,
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `date_updated` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -311,14 +318,10 @@ CREATE TABLE `rq_list` (
 -- Dumping data for table `rq_list`
 --
 
-INSERT INTO `rq_list` (`id`, `rq_no`, `deliver_to`, `ordered_by`, `approved_by`, `department_name`, `building_name`, `p_id`, `notes`, `status`, `date_fulfilled`, `fulfilled_by`, `checked_by`, `date_created`, `date_updated`) VALUES
-(10, 'RQ-437375', 'Stenland', 2, 3, 'Security', 'Security Office', 2, '', 2, '2023-08-15 16:55:14', 4, 5, '2023-07-04 01:55:30', '2023-08-15 16:55:14'),
-(14, 'RQ-929088', 'Mutomo Mission Hospital', 2, 3, 'Repair & Maintenance', 'Repair Office 302', 4, '', 1, '2023-08-05 12:19:07', 4, 5, '2023-07-08 22:08:12', '2023-08-05 12:19:07'),
-(15, 'RQ-149671', 'Stenland', 2, 3, 'Agriculture', 'Agriculture Office 202', 2, '', 1, '2023-08-05 12:46:10', 4, 5, '2023-07-08 23:22:28', '2023-08-05 12:46:10'),
-(16, 'RQ-000268', 'Katundu Primary School', 2, 3, 'Accomodation', 'Gate Section', 6, '', 1, '2023-08-05 12:39:39', 4, 5, '2023-07-09 01:01:52', '2023-08-05 12:39:39'),
-(17, 'RQ-532818', 'Stenland', 2, 3, 'Admin Office', 'Admin Office', 2, '', 1, '2023-08-01 16:06:23', 4, 5, '2023-07-14 23:20:29', '2023-08-01 16:06:23'),
-(20, 'RQ-120927', 'Sten', 2, 3, 'Sten', 'Sten', 4, '', 1, '2023-08-06 11:50:04', 4, 5, '2023-08-06 11:49:15', '2023-08-06 11:50:04'),
-(21, 'RQ-817527', 'Mandazi road', 2, 3, 'Maandazi', 'Chifoo', 6, '', 2, '2023-08-15 17:02:58', 4, 5, '2023-08-06 12:00:19', '2023-08-15 17:02:58');
+INSERT INTO `rq_list` (`id`, `rq_no`, `deliver_to`, `ordered_by`, `approved_by`, `department_name`, `building_name`, `p_id`, `notes`, `status`, `date_fulfilled`, `fulfilled_by`, `checked_by`, `has_invoice`, `date_created`, `date_updated`) VALUES
+(1, 'RQ-041780', 'Stenaland', 2, 3, 'Adminstration', 'Admin Block', 1, '', 0, NULL, 4, 5, 0, '2023-08-25 08:09:45', NULL),
+(2, 'RQ-026317', 'Stenland', 2, 3, 'Adminstration', 'Admin Block', 3, '', 0, NULL, 4, 5, 0, '2023-08-25 18:20:37', NULL),
+(3, 'RQ-184666', 'Stenland', 2, 3, 'Adminstration', 'Admin Block', 4, '', 0, NULL, 4, 5, 0, '2023-08-25 18:38:27', NULL);
 
 -- --------------------------------------------------------
 
@@ -337,14 +340,6 @@ CREATE TABLE `supplier_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `supplier_list`
---
-
-INSERT INTO `supplier_list` (`id`, `name`, `address`, `contact_person`, `contact`, `email`, `status`, `date_created`) VALUES
-(1, 'Makutano', 'Machakos', 'Eric Thogo', '0790674324', 'eric.thogo@supplier.com', 1, '2023-06-22 20:27:12'),
-(2, 'Ngumu Ngumu Hardware', 'Thika', 'Samantha Lou', '0112876345', 'samanthalou@supplier2.com', 1, '2021-09-08 10:25:12');
-
 -- --------------------------------------------------------
 
 --
@@ -362,38 +357,16 @@ CREATE TABLE `system_info` (
 --
 
 INSERT INTO `system_info` (`id`, `meta_field`, `meta_value`) VALUES
-(1, 'name', 'Automated Logistics & Procurement System'),
-(6, 'short_name', 'ALPS'),
-(11, 'logo', 'uploads/1687632360_rsk logo.jpg'),
+(1, 'name', 'Remmy & Sons Group'),
+(6, 'short_name', 'RSG'),
+(11, 'logo', 'uploads/1692990060_WhatsApp Image 2023-06-24 at 9.45.30 PM(2).jpeg'),
 (13, 'user_avatar', 'uploads/user_avatar.jpg'),
-(14, 'cover', 'uploads/1687336800_1687332600_login-bg.jpg'),
+(14, 'cover', 'uploads/1692990420_RSK.jpg'),
 (15, 'company_name', 'Remmy & Sons Group'),
-(16, 'company_email', 'info@remmy.co.ke'),
-(17, 'company_address', 'P.O Box 16-90201'),
+(16, 'company_email', 'info@remmygroup.co.ke'),
+(17, 'company_address', 'P.O Box 151-90201'),
 (18, 'company_location', 'Mutomo, Kibwezi-Kitui Road'),
-(19, 'company_mobile', '0737899456');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `test_table`
---
-
-CREATE TABLE `test_table` (
-  `rq_id` int(11) NOT NULL,
-  `item_id` int(11) NOT NULL,
-  `quantity` float NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `test_table`
---
-
-INSERT INTO `test_table` (`rq_id`, `item_id`, `quantity`) VALUES
-(22, 8, 5),
-(22, 4, 14),
-(22, 5, 12),
-(22, 6, 28);
+(19, 'company_mobile', '0727601329');
 
 -- --------------------------------------------------------
 
@@ -420,10 +393,10 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `username`, `password`, `avatar`, `last_login`, `type`, `date_added`, `date_updated`) VALUES
 (1, 'Adminstrator', 'Admin', 'admin', '0192023a7bbd73250516f069df18b500', 'uploads/1687336620_1624240500_avatar.png', NULL, 1, '2021-01-20 14:02:37', '2023-06-21 11:37:55'),
-(2, 'Chris', 'Ongeta', 'chris', '6b34fe24ac2ff8103f6fce1f0da2ef57', 'uploads/1687336620_1624240500_avatar.png', NULL, 2, '2023-06-21 11:37:24', NULL),
+(2, 'Chris', 'Ongeta', 'chris', '9d45115956829da8285c0acafc35393b', 'uploads/1687336620_1624240500_avatar.png', NULL, 2, '2023-06-21 11:37:24', '2023-08-25 19:42:44'),
 (3, 'Remmy', 'Amya', 'remmy', '8769ddc9ece9050a5c3072d4fda6b49e', 'uploads/1687336680_1630999200_avatar5.png', NULL, 3, '2023-06-21 11:38:24', NULL),
-(4, 'Mariam', 'Lisa', 'mariam', '13c6cf272b6dc642b9712d5dfccc2e42', 'uploads/1688150700_1687336620_1624240500_avatar.png', NULL, 4, '2023-06-28 11:41:00', '2023-06-30 21:45:29'),
-(5, 'Maneno', 'Mingi', 'maneno', 'c0c4651b65e030fa9a8056318ccff013', 'uploads/1688722260_1687336620_1624240500_avatar.png', NULL, 5, '2023-06-28 11:41:42', '2023-07-07 12:31:54');
+(4, 'Mariam', 'Hemed', 'mariam', '13c6cf272b6dc642b9712d5dfccc2e42', 'uploads/1688150700_1687336620_1624240500_avatar.png', NULL, 4, '2023-06-28 11:41:00', '2023-08-25 19:13:01'),
+(5, 'Maneno', 'Jappies', 'maneno', 'c0c4651b65e030fa9a8056318ccff013', 'uploads/1688722260_1687336620_1624240500_avatar.png', NULL, 5, '2023-06-28 11:41:42', '2023-08-25 07:14:13');
 
 --
 -- Indexes for dumped tables
@@ -444,6 +417,12 @@ ALTER TABLE `backorder_items`
 ALTER TABLE `backorder_list`
   ADD PRIMARY KEY (`id`),
   ADD KEY `rq_id` (`rq_id`);
+
+--
+-- Indexes for table `client_list`
+--
+ALTER TABLE `client_list`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `delivery_items`
@@ -467,7 +446,7 @@ ALTER TABLE `delivery_list`
 --
 ALTER TABLE `invoice_list`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `p_id` (`rq_id`);
+  ADD KEY `rq_id` (`rq_id`) USING BTREE;
 
 --
 -- Indexes for table `item_list`
@@ -493,7 +472,23 @@ ALTER TABLE `po_list`
 -- Indexes for table `project_list`
 --
 ALTER TABLE `project_list`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `client` (`client`);
+
+--
+-- Indexes for table `quotation_items`
+--
+ALTER TABLE `quotation_items`
+  ADD KEY `po_id` (`qo_id`),
+  ADD KEY `item_no` (`item_id`),
+  ADD KEY `dn_id` (`qo_id`);
+
+--
+-- Indexes for table `quotation_list`
+--
+ALTER TABLE `quotation_list`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `supplier_id` (`client_id`);
 
 --
 -- Indexes for table `requisition_items`
@@ -536,49 +531,61 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `backorder_list`
 --
 ALTER TABLE `backorder_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `client_list`
+--
+ALTER TABLE `client_list`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `delivery_list`
 --
 ALTER TABLE `delivery_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invoice_list`
 --
 ALTER TABLE `invoice_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `item_list`
 --
 ALTER TABLE `item_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `po_list`
 --
 ALTER TABLE `po_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `project_list`
 --
 ALTER TABLE `project_list`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `quotation_list`
+--
+ALTER TABLE `quotation_list`
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `rq_list`
 --
 ALTER TABLE `rq_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `supplier_list`
 --
 ALTER TABLE `supplier_list`
-  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(30) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `system_info`
@@ -623,6 +630,12 @@ ALTER TABLE `delivery_list`
   ADD CONSTRAINT `delivery_list_ibfk_1` FOREIGN KEY (`rq_no`) REFERENCES `rq_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
+-- Constraints for table `invoice_list`
+--
+ALTER TABLE `invoice_list`
+  ADD CONSTRAINT `invoice_list_ibfk_1` FOREIGN KEY (`rq_id`) REFERENCES `rq_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
 -- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
@@ -634,6 +647,25 @@ ALTER TABLE `order_items`
 --
 ALTER TABLE `po_list`
   ADD CONSTRAINT `po_list_ibfk_1` FOREIGN KEY (`supplier_id`) REFERENCES `supplier_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `project_list`
+--
+ALTER TABLE `project_list`
+  ADD CONSTRAINT `project_list_ibfk_1` FOREIGN KEY (`client`) REFERENCES `client_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `quotation_items`
+--
+ALTER TABLE `quotation_items`
+  ADD CONSTRAINT `quotation_items_ibfk_1` FOREIGN KEY (`qo_id`) REFERENCES `quotation_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  ADD CONSTRAINT `quotation_items_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `item_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
+
+--
+-- Constraints for table `quotation_list`
+--
+ALTER TABLE `quotation_list`
+  ADD CONSTRAINT `quotation_list_ibfk_1` FOREIGN KEY (`client_id`) REFERENCES `client_list` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `requisition_items`
