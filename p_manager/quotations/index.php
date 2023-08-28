@@ -45,10 +45,12 @@
 						<tr>
 							<td class="text-center"><?php echo $i++; ?></td>
 							<td class=""><?php echo date("M d,Y H:i",strtotime($row['date_created'])) ; ?></td>
-							<td class=""><?php echo $row['qo_no'] ?></td>
+							<td class="">
+								<a href="?page=quotations/view_details&id=<?php echo $row['id'] ?>"><?php echo $row['qo_no'] ?></a>
+							</td>
 							<td class=""><?php echo $row['client_name'] ?></td>
 							<td class="text-right"><?php echo number_format($row['item_count']) ?></td>
-							<td class="text-right"><?php echo number_format($row['total_amount']) ?></td>
+							<td class="text-right"><?php echo number_format(($row['total_amount'] + $row['labor_amount']) - $row['discount_amount']) ?></td>
 
 							<td align="center">
 								<button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
@@ -82,7 +84,7 @@
 		$('.table th,.table td').addClass('px-1 py-0 align-middle')
 		$('.table').dataTable();
 	})
-	function delete_rq($id){
+	function delete_qo($id){
 		start_loader();
 		$.ajax({
 			url:_base_url_+"classes/Master.php?f=delete_qo",

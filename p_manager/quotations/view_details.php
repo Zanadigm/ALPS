@@ -40,7 +40,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         <h3 class="card-title"><?php echo("Quotation Details") ?> </h3>
         <div class="card-tools">
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
-            <a class="btn btn-sm btn-flat btn-primary" href="?page=quotations/manage_quote&id=<?php echo $id ?>">Edit</a>
+            <a class="btn btn-sm btn-flat btn-primary" href="?page=quotations/manage_quote&id=<?php echo $_GET['id'] ?>">Edit</a>
             <a class="btn btn-sm btn-flat btn-default" href="?page=quotations">Back</a>
         </div>
     </div>
@@ -105,7 +105,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                     <tbody>
                         <?php
                         if (isset($id)) :
-                            $order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.description, i.selling_price FROM `quotation_items` o inner join item_list i on o.item_id = i.id where o.`qo_id` = '$id' ");
+                            $order_items_qry = $conn->query("SELECT o.*,i.name, i.unit, i.description, i.selling_price FROM `quotation_items` o inner join item_list i on o.item_id = i.id where o.`qo_id` = '{$_GET['id']}' ");
                             $sub_total = 0;
                             while ($row = $order_items_qry->fetch_assoc()) :
                                 $sub_total += ($row['quantity'] * $row['selling_price']);

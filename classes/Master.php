@@ -335,7 +335,7 @@ class Master extends DBConnection
 			if ($this->capture_err())
 				return $this->capture_err();
 			if ($check > 0) {
-				$resp['status'] = 'po_failed';
+				$resp['status'] = 'qo_failed';
 				$resp['msg'] = "Quotation Number already exist.";
 				return json_encode($resp);
 				exit;
@@ -346,7 +346,6 @@ class Master extends DBConnection
 				$qo_no = "	QO-" . (sprintf("%'.06d", mt_rand(1, 999999)));
 				$check = $this->conn->query("SELECT * FROM `quotation_list` where `qo_no` = '{$qo_no}'")->num_rows;
 				if ($check <= 0)
-				    echo($qo_no);
 					break;
 			}
 		}
@@ -390,7 +389,7 @@ class Master extends DBConnection
 
 		extract($_POST);
 
-		$del = $this->conn->query("DELETE FROM `qoutation_list` where id = '{$id}'");
+		$del = $this->conn->query("DELETE FROM `quotation_list` where id = '{$id}'");
 		if ($del) {
 			$resp['status'] = 'success';
 			$this->settings->set_flashdata('success', "Quotation successfully deleted.");
