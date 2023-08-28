@@ -98,7 +98,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>admin/?page=clients" class="nav-link nav-clients">
-                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <i class="nav-icon fas fa-user-circle"></i>
                   <p>
                     Client List
                   </p>

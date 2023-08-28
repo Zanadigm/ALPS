@@ -314,7 +314,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 				success: function(resp) {
 					if (typeof resp == 'object' && resp.status == 'success') {
 						location.href = "./?page=quotations/view_details&id=" + resp.id;
-					} else if ((resp.status == 'failed' || resp.status == 'po_failed') && !!resp.msg) {
+					} else if ((resp.status == 'failed' || resp.status == 'qo_failed') && !!resp.msg) {
 						var el = $('<div>')
 						el.addClass("alert alert-danger err-msg").text(resp.msg)
 						_this.prepend(el)
@@ -323,7 +323,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 							scrollTop: 0
 						}, "fast");
 						end_loader()
-						if (resp.status == 'po_failed') {
+						if (resp.status == 'qo_failed') {
 							$('[name="qo_no"]').addClass('border-danger').focus()
 						}
 					} else {
