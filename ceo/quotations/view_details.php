@@ -128,8 +128,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                                 <th class="p-1 text-right" id="sub_total"><?php echo number_format($sub_total) ?></th>
                             </tr>
                             <tr>
-                                <th class="p-1 text-right" colspan="5">Labor (<?php echo isset($labor_percentage) ? $labor_percentage : 0 ?>%)
-                                </th>
+                                <th class="p-1 text-right" colspan="5">Labor</th>
                                 <th class="p-1 text-right"><?php echo isset($labor_amount) ? number_format($labor_amount) : 0 ?></th>
                             </tr>
                             <tr>

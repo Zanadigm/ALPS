@@ -51,6 +51,15 @@
               </li>
 
               <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>s_manager/?page=quotations" class="nav-link nav-quotations">
+                  <i class="nav-icon fas fa-file-invoice"></i>
+                  <p>
+                    quotations
+                  </p>
+                </a>
+              </li>
+
+              <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=deliveries" class="nav-link nav-deliveries">
                   <i class="nav-icon fas fa-truck"></i>
                   <p>
