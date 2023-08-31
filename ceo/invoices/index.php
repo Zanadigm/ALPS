@@ -74,8 +74,6 @@
 									</button>
 									<div class="dropdown-menu" role="menu">
 										<a class="dropdown-item" href="?page=invoices/view_details&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-										<div class="dropdown-divider"></div>
-										<a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
 									</div>
 								</td>
 							</tr>
@@ -98,28 +96,4 @@
 		$('.table').dataTable();
 	})
 
-	function delete_in($id) {
-		start_loader();
-		$.ajax({
-			url: _base_url_ + "classes/Master.php?f=delete_in",
-			method: "POST",
-			data: {
-				id: $id
-			},
-			dataType: "json",
-			error: err => {
-				console.log(err)
-				alert_toast("An error occured.", 'error');
-				end_loader();
-			},
-			success: function(resp) {
-				if (typeof resp == 'object' && resp.status == 'success') {
-					location.reload();
-				} else {
-					alert_toast("An error occured.", 'error');
-					end_loader();
-				}
-			}
-		})
-	}
 </script>
