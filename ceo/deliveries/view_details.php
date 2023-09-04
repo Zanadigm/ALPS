@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT d.*, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d  inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT d.*, r.id as rid, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d  inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -58,7 +58,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <div>
                     <H2>DELIVERY NOTE</H2>
                     <p class="m-0">Ref No : <?php echo ($dn_no) ?></p>
-                    <p class="m-0">Requisition No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Requisition No : <a href="?page=store_requisitions/view_rq&id=<?php echo ($rid) ?>" style="text-decoration: none;"><?php echo ($rq_no) ?></a></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
                 </div>
             </div>
@@ -66,21 +66,6 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
         </div>
 
         <div class="row">
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Request No #:</label>
-                <p><?php echo isset($rq_no) ? $rq_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="deliver_to" class="contorol-label">Ref No #:</label>
-                <p><?php echo isset($dn_no) ? $dn_no : "" ?></p>
-            </div>
-
-            <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
-                <label for="date_created" class="contorol-label">Date Ordered:</label>
-                <p><?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-            </div>
 
             <div class="col-md-4 form-group" style="border: 1px solid #dee2e6;">
                 <label for="deliver_to" class="contorol-label">Deliver To:</label>

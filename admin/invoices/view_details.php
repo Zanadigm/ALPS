@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT v.*,c.*, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client where v.id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT v.*, r.id as rid, r.rq_no, c.name, c.location, c.contact, c.email, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client where v.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -36,6 +36,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
     <div class="card-header">
         <h3 class="card-title"><?php echo "Invoice" ?> </h3>
         <div class="card-tools">
+             <?php if ($status == 0) : ?>
+                <a class="btn btn-flat btn-primary confirm_payment" href="javascript:void(0)" data-id="<?php echo $_GET['id'] ?>" style="margin-right: 10px‒;margin-right: 309px;">Confirm Payment</a>
+            <?php endif?>
             <button class="btn btn-sm btn-flat btn-success" id="print" type="button"><i class="fa fa-print"></i> Print</button>
             <a class="btn btn-sm btn-flat btn-default" href="?page=store_requisitions">Back</a>
         </div>
@@ -70,9 +73,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             <div class="col-3 d-flex align-items-center">
                 <div>
                     <H2>INVOICE</H2>
-                    <p class="m-0">Invoice N0 : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Invoice # : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Requisition No : <a href="?page=store_requisitions/view_rq&id=<?php echo ($rid) ?>" style="text-decoration: none;"><?php echo ($rq_no) ?></a></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-                    <p class="m-0">Due Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
 
                 </div>
             </div>
@@ -139,6 +142,38 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 </div>
 
 <script>
+
+    $(document).ready(function() {
+        $('.confirm_payment').click(function() {
+            _conf("Are you sure to confirm payment of this invoice? This action cannot be undone.", "confirm_payment", [$(this).attr('data-id')])
+        })
+    })
+
+    function confirm_payment($id) {
+        start_loader();
+        $.ajax({
+            url: _base_url_ + "classes/Master.php?f=confirm_payment",
+            method: "POST",
+            data: {
+                id: $id
+            },
+            dataType: "json",
+            error: err => {
+                console.log(err)
+                alert_toast("An error occured.", 'error');
+                end_loader();
+            },
+            success: function(resp) {
+                if (typeof resp == 'object' && resp.status == 'success') {
+                    location.reload();
+                } else {
+                    alert_toast("An error occured.", 'error');
+                    end_loader();
+                }
+            }
+        })
+    }
+
     $(function() {
         
         $('#print').click(function(e) {

@@ -80,7 +80,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>admin/?page=quotations" class="nav-link nav-quotations">
-                  <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                  <i class="nav-icon fas fa-receipt"></i>
                   <p>
                     Quotations
                   </p>
