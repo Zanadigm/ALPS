@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT v.*,c.*, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client where v.id = '{$_GET['id']}'");
+    $qry = $conn->query("SELECT v.*, r.id as rid, r.rq_no, c.name, c.location, c.contact, c.email, p.name as project_name FROM `invoice_list` v inner join `rq_list` r on r.id = v.rq_id inner join project_list p on r.p_id = p.id inner join client_list c on c.id = p.client where v.id = '{$_GET['id']}'");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = stripslashes($v);
@@ -70,9 +70,9 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
             <div class="col-3 d-flex align-items-center">
                 <div>
                     <H2>INVOICE</H2>
-                    <p class="m-0">Invoice N0 : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Invoice # : <?php echo ($in_no) ?></p>
+                    <p class="m-0">Requisition No : <a href="?page=store_requisitions/view_rq&id=<?php echo ($rid) ?>" style="text-decoration: none;"><?php echo ($rq_no) ?></a></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
-                    <p class="m-0">Due Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
 
                 </div>
             </div>

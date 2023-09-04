@@ -834,14 +834,12 @@ class Master extends DBConnection
 		$save = $this->conn->query($sql);
 
 		if ($save) {
-			$this->conn->query("UPDATE rq_list set has_invoice = 1 where id = '{$id}'");
 			$resp['status'] = 'success';
 			$resp['id'] = $this->conn->insert_id;
+			$this->conn->query("UPDATE rq_list set has_invoice = 1 where id = '{$id}'");
 
-			if (empty($id))
-				$this->settings->set_flashdata('success', "Invoice successfully saved.");
-			else
-				$this->settings->set_flashdata('success', "Invoice successfully updated.");
+			$this->settings->set_flashdata('success', "Invoice successfully saved.");
+			
 		} else {
 			$resp['status'] = 'failed';
 			$resp['err'] = $this->conn->error . "[{$sql}]";
@@ -862,6 +860,23 @@ class Master extends DBConnection
 			$resp['status'] = 'failed';
 			$resp['error'] = $this->conn->error;
 		}
+		return json_encode($resp);
+	}
+
+	function confirm_payment(){
+		
+		extract($_POST);
+		
+		$confirm = $this->conn->query("UPDATE `invoice_list` SET `status` = '1' where id = '{$id}'");
+		if ($confirm) {
+            
+			$resp['status'] = 'success';
+			$this->settings->set_flashdata('success', "Payment Succesfully Confirmed.");
+		} else {
+			$resp['status'] = 'failed';
+			$resp['error'] = $this->conn->error;
+		}
+
 		return json_encode($resp);
 	}
 
@@ -936,6 +951,9 @@ switch ($action) {
 		break;
 	case 'delete_in':
 		echo $Master->delete_in();
+		break;
+	case 'confirm_payment':
+		echo $Master->confirm_payment();
 		break;
 
 	default:

@@ -6,9 +6,6 @@
 <div class="card card-outline card-primary">
 	<div class="card-header">
 		<h3 class="card-title">List of Store Requisitions</h3>
-		<div class="card-tools">
-			<a href="?page=store_requisitions/manage_rq" class="btn btn-flat btn-primary"><span class="fas fa-plus"></span>  Create New</a>
-		</div>
 	</div>
 	<div class="card-body">
 		<div class="container-fluid">
@@ -70,19 +67,13 @@
 								?>
 							</td>
 							<td align="center">
-								 <button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
-				                  		Action
-				                    <span class="sr-only">Toggle Dropdown</span>
-				                  </button>
-				                  <div class="dropdown-menu" role="menu">
-								  	<a class="dropdown-item" href="?page=store_requisitions/view_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
-									<?php if($row['status'] == 0): ?>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item" href="?page=store_requisitions/manage_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-edit text-primary"></span> Edit</a>
-				                    <div class="dropdown-divider"></div>
-				                    <a class="dropdown-item delete_data" href="javascript:void(0)" data-id="<?php echo $row['id'] ?>"><span class="fa fa-trash text-danger"></span> Delete</a>
-									<?php endif;?>
-				                  </div>
+								<button type="button" class="btn btn-flat btn-default btn-sm dropdown-toggle dropdown-icon" data-toggle="dropdown">
+				                 		Action
+				                   <span class="sr-only">Toggle Dropdown</span>
+				                </button>
+				                <div class="dropdown-menu" role="menu">
+								    <a class="dropdown-item" href="?page=store_requisitions/view_rq&id=<?php echo $row['id'] ?>"><span class="fa fa-eye text-primary"></span> View</a>
+				                </div>
 							</td>
 						</tr>
 					<?php endwhile; ?>

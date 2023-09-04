@@ -52,9 +52,9 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=quotations" class="nav-link nav-quotations">
-                  <i class="nav-icon fas fa-file-invoice"></i>
+                  <i class="nav-icon fas fa-receipt"></i>
                   <p>
-                    quotations
+                    Quotations
                   </p>
                 </a>
               </li>
@@ -64,6 +64,15 @@
                   <i class="nav-icon fas fa-truck"></i>
                   <p>
                     Deliveries
+                  </p>
+                </a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a href="<?php echo base_url ?>s_manager/?page=invoices" class="nav-link nav-invoices">
+                  <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                  <p>
+                    Invoices
                   </p>
                 </a>
               </li>
@@ -108,7 +117,7 @@
 
               <li class="nav-item dropdown">
                 <a href="<?php echo base_url ?>s_manager/?page=clients" class="nav-link nav-clients">
-                  <i class="nav-icon fas fa-truck-loading"></i>
+                  <i class="nav-icon fas fa-user-circle"></i>
                   <p>
                     Client List
                   </p>

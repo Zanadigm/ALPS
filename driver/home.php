@@ -21,6 +21,23 @@
     </a>
   </div>
 
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=store_requisitions" style="color:#343a40">
+      <div class="info-box mb-3">
+        <span class="info-box-icon bg-primary elevation-1"><i class="fas fa-warehouse"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Store Requisitions</span>
+          <span class="info-box-number">
+            <?php
+            $rq = $conn->query("SELECT * FROM rq_list where status = 3")->num_rows;
+            echo number_format($rq);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
 </div>
 
 <h2 class="text-dark" style="color: red;">Deliveries to make</h2>

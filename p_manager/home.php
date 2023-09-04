@@ -105,6 +105,23 @@
     </a>
   </div>
 
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=invoices/pending" style="color:#343a40">
+      <div class="info-box">
+        <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-receipt"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Quotations</span>
+          <span class="info-box-number">
+            <?php
+            $quotations = $conn->query("SELECT * FROM quotation_list")->num_rows;
+            echo number_format($quotations);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
 </div>
 
 <h2 class="text-dark" style="color: red;">Pending Tasks</h2>

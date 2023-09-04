@@ -5,7 +5,7 @@
 <?php endif; 
 
 if (isset($_GET['id']) && $_GET['id'] > 0) {
-    $qry = $conn->query("SELECT d.*, concat(u.firstname,' ', u.lastname) as username, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d inner join users u on d.driver_id = u.id inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
+    $qry = $conn->query("SELECT d.*, concat(u.firstname,' ', u.lastname) as username, r.id as rid, r.rq_no, r.deliver_to, r.department_name, r.building_name FROM delivery_list d inner join users u on d.driver_id = u.id inner join rq_list r on d.rq_no = r.id where d.id = '{$_GET['id']}' ");
     if ($qry->num_rows > 0) {
         foreach ($qry->fetch_assoc() as $k => $v) {
             $$k = $v;
@@ -58,7 +58,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                 <div>
                     <H2>DELIVERY NOTE</H2>
                     <p class="m-0">Ref No : <?php echo ($dn_no) ?></p>
-                    <p class="m-0">Requisition No : <?php echo ($rq_no) ?></p>
+                    <p class="m-0">Requisition No : <a href="?page=store_requisitions/view_rq&id=<?php echo ($rid) ?>" style="text-decoration: none;"><?php echo ($rq_no) ?></a></p>
                     <p class="m-0">Date : <?php echo date("Y-m-d", strtotime($date_created)) ?></p>
                 </div>
             </div>

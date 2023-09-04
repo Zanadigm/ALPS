@@ -87,6 +87,58 @@
       </div>
     </a>
   </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=user/list" style="color:#343a40">
+      <div class="info-box">
+        <span class="info-box-icon bg-navy elevation-1"><i class="fas fa-users"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Users</span>
+          <span class="info-box-number">
+            <?php
+            $users = $conn->query("SELECT * FROM users")->num_rows;
+            echo number_format($users-1);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=invoices/pending" style="color:#343a40">
+      <div class="info-box">
+        <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-file-invoice-dollar"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Invoices</span>
+          <span class="info-box-number">
+            <?php
+            $invoices = $conn->query("SELECT * FROM invoice_list")->num_rows;
+            echo number_format($invoices);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-12 col-sm-6 col-md-3">
+    <a href="?page=invoices/pending" style="color:#343a40">
+      <div class="info-box">
+        <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-receipt"></i></span>
+        <div class="info-box-content">
+          <span class="info-box-text">Quotations</span>
+          <span class="info-box-number">
+            <?php
+            $quotations = $conn->query("SELECT * FROM quotation_list")->num_rows;
+            echo number_format($quotations);
+            ?>
+          </span>
+        </div>
+      </div>
+    </a>
+  </div>
+
   
 </div>
 
