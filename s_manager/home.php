@@ -42,7 +42,7 @@
       <div class="info-box mb-3">
         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-file-invoice"></i></span>
         <div class="info-box-content">
-          <span class="info-box-text">Local Purchase Orders</span>
+          <span class="info-box-text">LPOs</span>
           <span class="info-box-number">
             <?php
             $pending_po = $conn->query("SELECT * FROM po_list")->num_rows;
@@ -72,7 +72,7 @@
   </div>
 
   <div class="col-12 col-sm-6 col-md-3">
-    <a href="?page=invoices/pending" style="color:#343a40">
+    <a href="?page=quotations" style="color:#343a40">
       <div class="info-box">
         <span class="info-box-icon bg-navy elevation-1"><i class=" fas fa-receipt"></i></span>
         <div class="info-box-content">
@@ -133,7 +133,7 @@
       <div class="info-box mb-3" style="background-color: #ffc10726;">
         <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-file-invoice"></i></span>
         <div class="info-box-content">
-          <span class="info-box-text">Local Purchase Orders</span>
+          <span class="info-box-text">LPOs</span>
           <span class="info-box-number" style="color: red;">
             <?php
             $pending_po = $conn->query("SELECT * FROM po_list WHERE `status` !=1")->num_rows;
