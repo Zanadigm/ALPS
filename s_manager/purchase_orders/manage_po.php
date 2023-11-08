@@ -136,7 +136,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 								<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($discount_amount) ? $discount_amount : 0 ?>" name="discount_amount"></th>
 							</tr>
 							<tr>
-								<th class="p-1 text-right" colspan="6">Tax Inclusive (%)
+								<th class="p-1 text-right" colspan="6">Tax Exclusive (%)
 									<input type="number" step="any" name="tax_percentage" class="border-light text-right" value="<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>">
 								</th>
 								<th class="p-1"><input type="text" class="w-100 border-0 text-right" readonly value="<?php echo isset($tax_amount) ? $tax_amount : 0 ?>" name="tax_amount"></th>
@@ -225,7 +225,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		var tax_amount = _total * (tax_perc / 100);
 		$('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
-		$('#total').text(parseFloat(_total - discount_amount).toLocaleString("en-US"))
+		$('#total').text(parseFloat(_total + tax_amount - discount_amount).toLocaleString("en-US"))
 	}
 
 	function _autocomplete(_item) {

@@ -148,12 +148,12 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
                             <th class="p-1 text-right"><?php echo isset($discount_amount) ? number_format($discount_amount) : 0 ?></th>
                         </tr>
                         <tr>
-                            <th class="p-1 text-right" colspan="5">Tax Inclusive (<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>%)</th>
+                            <th class="p-1 text-right" colspan="5">Tax Exclusive (<?php echo isset($tax_percentage) ? $tax_percentage : 0 ?>%)</th>
                             <th class="p-1 text-right"><?php echo isset($tax_amount) ? number_format($tax_amount) : 0 ?></th>
                         </tr>
                         <tr>
                             <th class="p-1 text-right" colspan="5">Total</th>
-                            <th class="p-1 text-right" id="total"><?php echo isset($tax_amount) ? number_format($sub_total - $discount_amount) : 0 ?></th>
+                            <th class="p-1 text-right" id="total"><?php echo isset($tax_amount) ? number_format($sub_total + $tax_amount - $discount_amount) : 0 ?></th>
                         </tr>
                         </tr>
                     </tfoot>
