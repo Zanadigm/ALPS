@@ -211,7 +211,7 @@ if (isset($_GET['id']) && $_GET['id'] > 0) {
 		var tax_amount = _total * (tax_perc / 100);
 		$('[name="tax_amount"]').val(parseFloat(tax_amount).toLocaleString("en-US"))
 		$('#sub_total').text(parseFloat(_total).toLocaleString("en-US"))
-		$('#total').text(parseFloat(_total - discount_amount).toLocaleString("en-US"))
+		$('#total').text(parseFloat(_total + tax_amount - discount_amount).toLocaleString("en-US"))
 	}
 
 	function _autocomplete(_item) {
