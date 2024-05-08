@@ -1,7 +1,7 @@
 # ALPS (Automated Logistics and Procurement System) Readme
 
 ## Introduction
-ALPS (Automated Logistics and Procurement System) is a web-based application designed to streamline the logistics and procurement processes within an organization. It provides a centralized platform for managing internal requisition orders, inventory availability, deliveries, and backorders. The system is developed using PHP, MySQL, and AJAX technologies.
+Automated Logistics and Procurement System is a web-based application designed to streamline the logistics and procurement processes within an organization. It provides a centralized platform for managing internal requisition orders, inventory availability, deliveries, and backorders. The system is developed using PHP, MySQL, and AJAX technologies.
 
 ## Features
 - User Roles: ALPS supports five user roles: Admin, Project Manager (PM), CEO, Driver, and Store Manager (SM).
