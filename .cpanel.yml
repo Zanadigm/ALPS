@@ -16,5 +16,5 @@ deployment:
     - /bin/cp -R uploads $DEPLOYPATH
     - /bin/cp .htaccess $DEPLOYPATH
     - /bin/cp 404.html $DEPLOYPATH
-    - /bin/cp README.md $DEPLOYPATH
+    - /bin/cp index.php $DEPLOYPATH
     - /bin/cp config.php $DEPLOYPATH
