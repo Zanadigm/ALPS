@@ -1,7 +1,18 @@
 <IfModule mod_rewrite.c>
-Header set Access-Control-Allow-Origin "*"
-RewriteEngine on
+RewriteEngine On
+RewriteBase /
+
+# If the request is for index.php, do nothing
+RewriteRule ^index.php$ - [L]
+
+# If the requested filename is not an existing file
 RewriteCond %{REQUEST_FILENAME} !-f
+# If the requested filename is not a directory
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$    /index.php/$2/?page=$1   [L]
+
+# Rewrite the request to index.php
+RewriteRule . index.php [L]
 </IfModule>
+
+# Custom 404 error page
+ErrorDocument 404.html
