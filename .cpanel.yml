@@ -5,7 +5,6 @@ deployment:
     - /bin/cp -R build $DEPLOYPATH
     - /bin/cp -R ceo $DEPLOYPATH
     - /bin/cp -R classes $DEPLOYPATH
-    - /bin/cp -R database $DEPLOYPATH
     - /bin/cp -R dist $DEPLOYPATH
     - /bin/cp -R driver $DEPLOYPATH
     - /bin/cp -R inc $DEPLOYPATH
